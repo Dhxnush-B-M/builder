@@ -51,6 +51,7 @@
 		"@reactive-resume/schema": "workspace:*",
 		"@reactive-resume/ui": "workspace:*",
 		"@reactive-resume/utils": "workspace:*",
+		"@supabase/supabase-js": "^2.112.2",
 		"@tailwindcss/vite": "^4.3.3",
 		"@tanstack/react-form": "^1.33.2",
 		"@tanstack/react-hotkeys": "^0.10.0",
