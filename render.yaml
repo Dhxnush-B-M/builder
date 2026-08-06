@@ -1,0 +1,39 @@
+services:
+  - type: web
+    name: rbuilder-backend
+    env: node
+    plan: free
+    region: singapore
+    buildCommand: corepack enable && pnpm install && pnpm build
+    startCommand: pnpm start
+    envVars:
+      - key: PORT
+        value: "3000"
+      - key: DATABASE_URL
+        value: "postgresql://postgres:Mysore%401234z@db.auxppvofumzpvpzvgfdw.supabase.co:5432/postgres"
+      - key: SUPABASE_URL
+        value: "https://auxppvofumzpvpzvgfdw.supabase.co"
+      - key: SUPABASE_ANON_KEY
+        value: "sb_publishable_DCZpWmFGiWaFsVHhNOjzLQ_SS6c8zXZ"
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        value: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF1eHBwdm9mdW16cHZwenZnZmR3Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4NjAyNDE1NCwiZXhwIjoyMTAxNjAwMTU0fQ.qbIm37eysTiWY31cWlz51JORwg38LEcTnPG0igkThcE"
+      - key: S3_ENDPOINT
+        value: "https://auxppvofumzpvpzvgfdw.storage.supabase.co/storage/v1/s3"
+      - key: S3_ACCESS_KEY_ID
+        value: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF1eHBwdm9mdW16cHZwenZnZmR3Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4NjAyNDE1NCwiZXhwIjoyMTAxNjAwMTU0fQ.qbIm37eysTiWY31cWlz51JORwg38LEcTnPG0igkThcE"
+      - key: S3_SECRET_ACCESS_KEY
+        value: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF1eHBwdm9mdW16cHZwenZnZmR3Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4NjAyNDE1NCwiZXhwIjoyMTAxNjAwMTU0fQ.qbIm37eysTiWY31cWlz51JORwg38LEcTnPG0igkThcE"
+      - key: S3_REGION
+        value: "us-east-1"
+      - key: S3_BUCKET
+        value: "rbuilder"
+      - key: S3_FORCE_PATH_STYLE
+        value: "true"
+      - key: AUTH_SECRET
+        value: "testing-secret-key-for-local-development-12345"
+      - key: GOOGLE_CLIENT_ID
+        value: "925681943886-acj4oijhq1cnl3vo7uar3o7v20atuh0h.apps.googleusercontent.com"
+      - key: GOOGLE_CLIENT_SECRET
+        value: "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"
+      - key: FLAG_DISABLE_EMAIL_AUTH
+        value: "true"
