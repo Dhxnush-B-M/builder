@@ -1,0 +1,248 @@
+import type { ResumeData } from "@reactive-resume/schema/resume/data";
+import { createSelectSchema } from "drizzle-zod";
+import z from "zod";
+import * as schema from "@reactive-resume/db/schema";
+import { jsonPatchOperationSchema } from "@reactive-resume/resume/patch";
+import { resumeDataSchema } from "@reactive-resume/schema/resume/data";
+import { semanticStylesheetSchema, stylesheetSourceSchema } from "@reactive-resume/schema/resume/stylesheet";
+
+const importedResumeDataSchema = z.custom<ResumeData>((value) => {
+	if (typeof value !== "object" || value === null) return false;
+	const data = value as Record<string, unknown>;
+	if (typeof data.metadata !== "object" || data.metadata === null) return false;
+	const { stylesheet: _stylesheet, ...metadata } = data.metadata as Record<string, unknown>;
+	return resumeDataSchema.safeParse({ ...data, metadata }).success;
+});
+
+const resumeSchema = createSelectSchema(schema.resume, {
+	id: z.string().describe("The ID of the resume."),
+	name: z.string().trim().min(1).describe("The name of the resume."),
+	slug: z.string().trim().min(1).describe("The slug of the resume."),
+	tags: z.array(z.string()).describe("The tags of the resume."),
+	isPublic: z.boolean().describe("Whether the resume is public."),
+	isLocked: z.boolean().describe("Whether the resume is locked."),
+	password: z.string().trim().min(6).max(64).nullable().describe("The password of the resume, if any."),
+	data: resumeDataSchema,
+	userId: z.string().describe("The ID of the user who owns the resume."),
+	createdAt: z.date().describe("The date and time the resume was created."),
+	updatedAt: z.date().describe("The date and time the resume was last updated."),
+}).omit({ stylesheetRevision: true, renderDataVersion: true });
+
+const stylesheetMutationCommon = {
+	id: z.string().describe("The ID of the resume."),
+	expectedRevision: z.number().int().nonnegative(),
+	expectedRenderDataVersion: z.number().int().nonnegative(),
+	editGeneration: z.number().int().nonnegative(),
+};
+const stylesheetDiagnosticSchema = z.strictObject({
+	code: z.string(),
+	severity: z.enum(["error", "warning"]),
+	message: z.string(),
+	range: z.strictObject({
+		start: z.strictObject({
+			line: z.number().int().positive(),
+			column: z.number().int().positive(),
+			offset: z.number().int().nonnegative(),
+		}),
+		end: z.strictObject({
+			line: z.number().int().positive(),
+			column: z.number().int().positive(),
+			offset: z.number().int().nonnegative(),
+		}),
+	}),
+});
+const stylesheetStateSchema = z.strictObject({
+	stylesheet: semanticStylesheetSchema,
+	revision: z.number().int().nonnegative(),
+	renderDataVersion: z.number().int().nonnegative(),
+});
+const publicPdfPageSizeSchema = z.union([
+	z.enum(["A4", "LETTER"]),
+	z.strictObject({ width: z.number().finite(), height: z.number().finite().optional() }),
+]);
+const publicPdfNodePresentationSchema = z.strictObject({
+	style: z.record(z.string(), z.union([z.string(), z.number().finite(), z.null()])).optional(),
+	size: publicPdfPageSizeSchema.optional(),
+	break: z.boolean().optional(),
+	wrap: z.boolean().optional(),
+	fixed: z.boolean().optional(),
+	minPresenceAhead: z.number().finite().optional(),
+	orphans: z.number().finite().optional(),
+	widows: z.number().finite().optional(),
+	hidden: z.boolean().optional(),
+	order: z.number().int().nonnegative().optional(),
+});
+const publicStyleProjectionSchema = z.strictObject({
+	formatVersion: z.literal(1),
+	languageVersion: z.number().int().positive(),
+	semanticTreeVersion: z.literal(1),
+	registryFingerprint: z.string().regex(/^[a-f0-9]{64}$/),
+	adapterFingerprint: z.string().regex(/^[a-f0-9]{64}$/),
+	renderDataHash: z.string().regex(/^[a-f0-9]{64}$/),
+	nodes: z.record(z.string(), publicPdfNodePresentationSchema),
+});
+
+export const resumeDto = {
+	list: {
+		input: z
+			.object({
+				tags: z.array(z.string()).optional().default([]),
+				sort: z.enum(["lastUpdatedAt", "createdAt", "name"]).optional().default("lastUpdatedAt"),
+			})
+			.optional()
+			.default({ tags: [], sort: "lastUpdatedAt" }),
+		output: z.array(resumeSchema.omit({ data: true, password: true, userId: true })),
+	},
+
+	getById: {
+		input: resumeSchema.pick({ id: true }),
+		output: resumeSchema.omit({ password: true, userId: true, createdAt: true }).extend({ hasPassword: z.boolean() }),
+	},
+
+	getBySlug: {
+		input: z.object({ username: z.string(), slug: z.string() }),
+		// `name` is the owner-chosen dashboard title and is intentionally redacted
+		// to an empty string for non-owner viewers (see redactResumeForViewer in
+		// features/resume/access-policy.ts). Relax the `min(1)` constraint here so
+		// the redacted public response passes output validation.
+		output: resumeSchema
+			.omit({ name: true, password: true, userId: true, createdAt: true, updatedAt: true })
+			.extend({ name: z.string(), stylesheetMode: z.enum(["legacy", "semantic"]) }),
+	},
+
+	getStyleProjection: {
+		input: z.strictObject({ username: z.string(), slug: z.string() }),
+		output: publicStyleProjectionSchema,
+	},
+
+	create: {
+		input: resumeSchema
+			.pick({ name: true, slug: true, tags: true })
+			.extend({ withSampleData: z.boolean().default(false) }),
+		output: z.string().describe("The ID of the created resume."),
+	},
+
+	import: {
+		input: z.object({ data: importedResumeDataSchema }),
+		output: z.string().describe("The ID of the imported resume."),
+	},
+
+	update: {
+		input: resumeSchema
+			.pick({ name: true, slug: true, tags: true, data: true, isPublic: true })
+			.partial()
+			.extend({ id: z.string() }),
+		output: resumeSchema.omit({ password: true, userId: true, createdAt: true }).extend({ hasPassword: z.boolean() }),
+	},
+
+	setLocked: {
+		input: resumeSchema.pick({ id: true, isLocked: true }),
+		output: z.void(),
+	},
+
+	setPassword: {
+		input: resumeSchema.pick({ id: true }).extend({ password: z.string().min(6).max(64) }),
+		output: z.void(),
+	},
+
+	removePassword: {
+		input: resumeSchema.pick({ id: true }),
+		output: z.void(),
+	},
+
+	patch: {
+		input: z.object({
+			id: z.string().describe("The ID of the resume to patch."),
+			expectedUpdatedAt: z.coerce
+				.date()
+				.optional()
+				.describe("If provided, the patch only applies when the resume version still matches this timestamp."),
+			operations: z
+				.array(jsonPatchOperationSchema)
+				.min(1)
+				.describe("An array of JSON Patch (RFC 6902) operations to apply to the resume data."),
+		}),
+		output: resumeSchema.omit({ password: true, userId: true, createdAt: true }).extend({ hasPassword: z.boolean() }),
+	},
+
+	duplicate: {
+		input: resumeSchema.pick({ id: true, name: true, slug: true, tags: true }),
+		output: z.string().describe("The ID of the duplicated resume."),
+	},
+
+	delete: {
+		input: resumeSchema.pick({ id: true }),
+		output: z.void(),
+	},
+
+	listVersions: {
+		input: z.object({ resumeId: z.string().describe("The ID of the resume whose version history to list.") }),
+		output: z.array(
+			z.object({
+				id: z.string().describe("The ID of the version snapshot."),
+				label: z.string().describe("A short description of what triggered the snapshot."),
+				createdAt: z.date().describe("The date and time the snapshot was taken."),
+			}),
+		),
+	},
+
+	restoreVersion: {
+		input: z.object({
+			resumeId: z.string().describe("The ID of the resume to restore."),
+			versionId: z.string().describe("The ID of the version snapshot to restore."),
+		}),
+		output: z.strictObject({
+			resume: resumeSchema.omit({ password: true, userId: true, createdAt: true }).extend({ hasPassword: z.boolean() }),
+			stylesheetState: stylesheetStateSchema,
+		}),
+	},
+
+	stylesheet: {
+		errors: {
+			validation: z.strictObject({
+				diagnostics: z.array(stylesheetDiagnosticSchema),
+			}),
+			parity: z.strictObject({
+				mismatches: z.array(z.string()),
+			}),
+			revisionConflict: z.strictObject({
+				state: stylesheetStateSchema,
+			}),
+		},
+		getState: {
+			input: z.strictObject({ id: z.string().describe("The ID of the resume.") }),
+			output: stylesheetStateSchema,
+		},
+		mutate: {
+			input: z.discriminatedUnion("transition", [
+				z.strictObject({
+					...stylesheetMutationCommon,
+					transition: z.literal("edit_source"),
+					source: stylesheetSourceSchema,
+				}),
+				z.strictObject({
+					...stylesheetMutationCommon,
+					transition: z.literal("activate"),
+					source: stylesheetSourceSchema,
+				}),
+				z.strictObject({
+					...stylesheetMutationCommon,
+					transition: z.literal("deactivate"),
+				}),
+				z.strictObject({
+					...stylesheetMutationCommon,
+					transition: z.literal("restore_history"),
+					restore: z.strictObject({
+						mode: z.enum(["legacy", "semantic"]),
+						source: stylesheetSourceSchema,
+						applied: stylesheetSourceSchema,
+					}),
+				}),
+			]),
+			output: stylesheetStateSchema.extend({
+				editGeneration: z.number().int().nonnegative(),
+				diagnostics: z.array(stylesheetDiagnosticSchema),
+			}),
+		},
+	},
+};
