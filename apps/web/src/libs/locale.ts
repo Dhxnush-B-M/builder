@@ -79,10 +79,12 @@ export const localeMap = {
 } satisfies Record<Locale, MessageDescriptor>;
 
 export function isLocale(locale: string): locale is Locale {
+	if (locale === "zu-ZA") return false;
 	return localeSchema.safeParse(locale).success;
 }
 
 export const resolveLocale = (locale: string): Locale => {
+	if (locale === "zu-ZA") return defaultLocale;
 	return isLocale(locale) ? locale : defaultLocale;
 };
 

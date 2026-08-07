@@ -40,7 +40,7 @@ export function createApp() {
 	app.use(
 		"*",
 		cors({
-			origin: (origin) => origin || "*",
+			origin: (origin) => origin || "https://builder-az7.pages.dev",
 			credentials: true,
 			allowMethods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
 			allowHeaders: ["Content-Type", "Authorization", "x-orpc-batch", "x-orpc-streaming", "Accept", "Origin"],
