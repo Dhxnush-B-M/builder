@@ -102,7 +102,10 @@ export function formatRelativeTime(value: Date | string, formatter: Intl.Relativ
 
 export const getLocale = () => {
 	const locale = Cookies.get(storageKey);
-	if (!locale || !isLocale(locale)) return defaultLocale;
+	if (!locale || locale === "zu-ZA" || !isLocale(locale)) {
+		if (locale === "zu-ZA") Cookies.remove(storageKey);
+		return defaultLocale;
+	}
 	return locale;
 };
 
@@ -123,14 +126,15 @@ export const getLocaleMessages = async (locale: string) => {
 		messages = await loadMessages(resolvedLocale);
 		return { locale: resolvedLocale, messages };
 	} catch {
-		messages = await loadMessages(defaultLocale);
+		messages = enUSMessages;
 		return { locale: defaultLocale, messages };
 	}
 };
 
 export const loadLocale = async (locale: string) => {
 	try {
-		const { locale: resolvedLocale, messages } = await getLocaleMessages(locale);
+		const targetLocale = locale === "zu-ZA" ? defaultLocale : locale;
+		const { locale: resolvedLocale, messages } = await getLocaleMessages(targetLocale);
 		i18n.load(resolvedLocale, messages);
 		i18n.activate(resolvedLocale);
 	} catch {
