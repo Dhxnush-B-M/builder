@@ -126,9 +126,18 @@ export const getLocaleMessages = async (locale: string) => {
 };
 
 export const loadLocale = async (locale: string) => {
-	const { locale: resolvedLocale, messages } = await getLocaleMessages(locale);
-	i18n.loadAndActivate({ locale: resolvedLocale, messages });
+	try {
+		const { locale: resolvedLocale, messages } = await getLocaleMessages(locale);
+		i18n.loadAndActivate({ locale: resolvedLocale, messages });
+	} catch {
+		i18n.loadAndActivate({ locale: defaultLocale, messages: {} });
+	}
 };
+
+// Immediately activate default fallback locale so i18n is never null
+if (!i18n.locale) {
+	i18n.loadAndActivate({ locale: defaultLocale, messages: {} });
+}
 
 export const changeLocale = (value: string | null) => {
 	if (!value || !isLocale(value)) return;
