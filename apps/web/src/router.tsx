@@ -19,25 +19,27 @@ const defaultFlags = {
 	allowUnsafeAiBaseUrl: false,
 };
 
-async function fetchSafe<T>(fn: () => Promise<T>, fallback: T): Promise<T> {
-	try {
-		return await fn();
-	} catch {
-		return fallback;
-	}
-}
-
 export const getRouter = async () => {
 	const queryClient = getQueryClient();
 
-	const [theme, locale, session, flags] = await Promise.all([
-		fetchSafe(() => getTheme(), "system" as const),
-		fetchSafe(() => getLocale(), "en-US" as const),
-		fetchSafe(() => getSession(), null),
-		fetchSafe(() => client.flags.get(), defaultFlags),
-	]);
+	const theme = getTheme();
+	const locale = getLocale();
 
 	await loadLocale(locale);
+
+	let session: AuthSession | null = null;
+	try {
+		session = await getSession();
+	} catch {
+		session = null;
+	}
+
+	let flags = defaultFlags;
+	try {
+		flags = await client.flags.get();
+	} catch {
+		flags = defaultFlags;
+	}
 
 	const router = createRouter({
 		routeTree,
