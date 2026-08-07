@@ -83,11 +83,22 @@ export const Route = createRootRouteWithContext<RouterContext>()({
 		};
 	},
 	beforeLoad: async () => {
-		const [theme, locale, session, flags] = await Promise.all([
-			getTheme(),
-			getLocale(),
-			getSession(),
-			client.flags.get(),
+		const theme = getTheme();
+		const locale = getLocale();
+
+		const defaultFlags = {
+			disableEmailAuth: false,
+			disableSignups: false,
+			disableImageProcessing: false,
+			disableApiRateLimit: false,
+			showSponsors: false,
+			allowUnsafeOAuthRedirectUri: false,
+			allowUnsafeAiBaseUrl: false,
+		};
+
+		const [session, flags] = await Promise.all([
+			getSession().catch(() => null),
+			client.flags.get().catch(() => defaultFlags),
 		]);
 
 		await loadLocale(locale);
