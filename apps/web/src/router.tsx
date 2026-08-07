@@ -9,14 +9,24 @@ import { getQueryClient } from "./libs/query/client";
 import { getTheme } from "./libs/theme";
 import { routeTree } from "./routeTree.gen";
 
+const defaultFlags = {
+	disableEmailAuth: false,
+	disableSignups: false,
+	disableImageProcessing: false,
+	disableApiRateLimit: false,
+	showSponsors: false,
+	allowUnsafeOAuthRedirectUri: false,
+	allowUnsafeAiBaseUrl: false,
+};
+
 export const getRouter = async () => {
 	const queryClient = getQueryClient();
 
 	const [theme, locale, session, flags] = await Promise.all([
-		getTheme(),
-		getLocale(),
-		getSession(),
-		client.flags.get(),
+		getTheme().catch(() => "system" as const),
+		getLocale().catch(() => "en-US" as const),
+		getSession().catch(() => null),
+		client.flags.get().catch(() => defaultFlags),
 	]);
 
 	await loadLocale(locale);
