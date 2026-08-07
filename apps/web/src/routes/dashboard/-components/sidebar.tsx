@@ -2,12 +2,7 @@ import type { MessageDescriptor } from "@lingui/core";
 import { msg } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react";
 import { Trans } from "@lingui/react/macro";
-import {
-	GearSixIcon,
-	MagnifyingGlassIcon,
-	ReadCvLogoIcon,
-	UserCircleIcon,
-} from "@phosphor-icons/react";
+import { GearSixIcon, MagnifyingGlassIcon, ReadCvLogoIcon, UserCircleIcon } from "@phosphor-icons/react";
 import { Link } from "@tanstack/react-router";
 import { Avatar, AvatarFallback, AvatarImage } from "@reactive-resume/ui/components/avatar";
 import { BrandIcon } from "@reactive-resume/ui/components/brand-icon";

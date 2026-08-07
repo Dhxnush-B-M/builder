@@ -55,8 +55,6 @@ function text(value: string): CallToolResult {
 	return { content: [{ type: "text", text: value }] };
 }
 
-
-
 function buildResumeShareUrl(username: string, slug: string): string {
 	const base = env.APP_URL.replace(/\/$/, "");
 	return `${base}/${encodeURIComponent(username)}/${encodeURIComponent(slug)}`;

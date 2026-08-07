@@ -2,11 +2,9 @@ import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import {
 	BriefcaseIcon,
-	ChatCircleDotsIcon,
 	GearIcon,
 	HouseSimpleIcon,
 	KeyIcon,
-	OpenAiLogoIcon,
 	PlusIcon,
 	ReadCvLogoIcon,
 	ShieldCheckIcon,
@@ -72,26 +70,6 @@ export function NavigationCommandGroup() {
 
 				<CommandItem
 					disabled={!session}
-					keywords={[t`Threads`, t`Agent`, t`Artificial Intelligence`]}
-					value="navigation.threads"
-					onSelect={() => onNavigate("/agent")}
-				>
-					<ChatCircleDotsIcon />
-					<Trans>Threads</Trans>
-				</CommandItem>
-
-				<CommandItem
-					disabled={!session}
-					keywords={[t`New Thread`, t`Agent`, t`Artificial Intelligence`]}
-					value="navigation.threads.new"
-					onSelect={() => onNavigate("/agent/new")}
-				>
-					<PlusIcon />
-					<Trans>New Thread</Trans>
-				</CommandItem>
-
-				<CommandItem
-					disabled={!session}
 					keywords={[t`Settings`]}
 					value="navigation.settings"
 					onSelect={() => pushPage("settings")}
@@ -136,15 +114,6 @@ export function NavigationCommandGroup() {
 				>
 					<KeyIcon />
 					<Trans>API Keys</Trans>
-				</CommandItem>
-
-				<CommandItem
-					keywords={[t`Integrations`, t`Artificial Intelligence`]}
-					value="navigation.settings.integrations"
-					onSelect={() => onNavigate("/dashboard/settings/integrations")}
-				>
-					<OpenAiLogoIcon />
-					<Trans>Integrations</Trans>
 				</CommandItem>
 
 				<CommandItem

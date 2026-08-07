@@ -4,11 +4,11 @@ import { paymentService } from "./service";
 
 export const paymentRouter = {
 	getStatus: protectedProcedure.handler(async ({ context }) => {
-		return paymentService.getSubscriptionStatus(context.user.id);
+		return await paymentService.getSubscriptionStatus(context.user.id);
 	}),
 
 	createOrder: protectedProcedure.handler(async ({ context }) => {
-		return paymentService.createOrder(context.user.id);
+		return await paymentService.createOrder(context.user.id);
 	}),
 
 	verifyPayment: protectedProcedure
@@ -20,7 +20,7 @@ export const paymentRouter = {
 			}),
 		)
 		.handler(async ({ context, input }) => {
-			return paymentService.verifyPayment({
+			return await paymentService.verifyPayment({
 				userId: context.user.id,
 				razorpayOrderId: input.razorpayOrderId,
 				razorpayPaymentId: input.razorpayPaymentId,

@@ -54,10 +54,10 @@ export function SocialAuth({ requestSignUp = false }: SocialAuthProps) {
 	const { data: providers = {}, isLoading } = useQuery(orpc.auth.providers.list.queryOptions());
 
 	return (
-		<div className="flex flex-col gap-y-3 w-full">
-			<div className="flex items-center gap-x-2 my-1">
+		<div className="flex w-full flex-col gap-y-3">
+			<div className="my-1 flex items-center gap-x-2">
 				<hr className="flex-1 border-border/60" />
-				<span className="font-medium text-xs text-muted-foreground tracking-wide uppercase">
+				<span className="font-medium text-muted-foreground text-xs uppercase tracking-wide">
 					<Trans context="Choose to authenticate with a social provider (Google, GitHub, etc.)">
 						Sign in with OAuth
 					</Trans>
@@ -72,7 +72,7 @@ export function SocialAuth({ requestSignUp = false }: SocialAuthProps) {
 
 function SocialAuthSkeleton() {
 	return (
-		<div className="flex flex-col gap-3 w-full">
+		<div className="flex w-full flex-col gap-3">
 			<Skeleton className="h-11 w-full rounded-xl" />
 		</div>
 	);
@@ -120,13 +120,13 @@ function SocialAuthButtons({ providers, requestSignUp }: SocialAuthButtonsProps)
 	};
 
 	return (
-		<div className="flex flex-col gap-3 w-full">
+		<div className="flex w-full flex-col gap-3">
 			{/* Primary Google OAuth 2.0 CTA Button */}
 			<Button
 				type="button"
 				size="lg"
 				onClick={handleGoogleSignIn}
-				className="w-full h-11 justify-center gap-3 rounded-xl bg-background text-foreground font-semibold text-sm border border-input shadow-xs transition-all hover:bg-accent hover:text-accent-foreground active:scale-[0.99] focus-visible:ring-2 focus-visible:ring-primary"
+				className="h-11 w-full justify-center gap-3 rounded-xl border border-input bg-background font-semibold text-foreground text-sm shadow-xs transition-all hover:bg-accent hover:text-accent-foreground focus-visible:ring-2 focus-visible:ring-primary active:scale-[0.99]"
 			>
 				<GoogleColorIcon />
 				<span>
@@ -157,7 +157,9 @@ function SocialAuthButtons({ providers, requestSignUp }: SocialAuthButtonsProps)
 						<Button
 							variant="secondary"
 							size="sm"
-							onClick={() => runSignIn(() => authClient.signIn.social(getSocialSignInOptions("linkedin", requestSignUp)))}
+							onClick={() =>
+								runSignIn(() => authClient.signIn.social(getSocialSignInOptions("linkedin", requestSignUp)))
+							}
 							className="h-9 justify-center gap-2 rounded-lg"
 						>
 							<LinkedinLogoIcon className="size-4" />

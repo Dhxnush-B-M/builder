@@ -1,11 +1,5 @@
 import { Trans } from "@lingui/react/macro";
-import {
-	CheckCircleIcon,
-	PaperPlaneTiltIcon,
-	QuotesIcon,
-	SparkleIcon,
-	StarIcon,
-} from "@phosphor-icons/react";
+import { CheckCircleIcon, PaperPlaneTiltIcon, QuotesIcon, SparkleIcon, StarIcon } from "@phosphor-icons/react";
 import { m } from "motion/react";
 import { useEffect, useState } from "react";
 import { Button } from "@reactive-resume/ui/components/button";
@@ -143,7 +137,7 @@ export function Testimonials() {
 	};
 
 	return (
-		<section id="testimonials" className="relative overflow-hidden py-16 md:py-24 border-t border-border/40">
+		<section id="testimonials" className="relative overflow-hidden border-border/40 border-t py-16 md:py-24">
 			{/* Header */}
 			<m.div
 				className="container mx-auto space-y-4 px-4 text-center will-change-[transform,opacity]"
@@ -152,22 +146,19 @@ export function Testimonials() {
 				viewport={{ once: true }}
 				transition={{ duration: 0.45 }}
 			>
-				<h2 className="font-extrabold text-3xl tracking-tight sm:text-4xl md:text-5xl bg-gradient-to-r from-foreground via-primary to-indigo-500 bg-clip-text text-transparent">
+				<h2 className="bg-gradient-to-r from-foreground via-primary to-indigo-500 bg-clip-text font-extrabold text-3xl text-transparent tracking-tight sm:text-4xl md:text-5xl">
 					<Trans>What Users Say About rbuilder</Trans>
 				</h2>
 
-				<p className="max-w-2xl mx-auto text-muted-foreground leading-relaxed text-base md:text-lg">
+				<p className="mx-auto max-w-2xl text-base text-muted-foreground leading-relaxed md:text-lg">
 					<Trans>
 						Explore real feedback in our rotating 3D orbit showcase or share your own experience with rbuilder below.
 					</Trans>
 				</p>
 
 				{/* Action Buttons */}
-				<div className="pt-2 flex justify-center gap-4">
-					<Button
-						onClick={() => setShowForm(!showForm)}
-						className="gap-2 px-6 py-5 font-semibold text-sm shadow-md"
-					>
+				<div className="flex justify-center gap-4 pt-2">
+					<Button onClick={() => setShowForm(!showForm)} className="gap-2 px-6 py-5 font-semibold text-sm shadow-md">
 						<SparkleIcon className="size-4" weight="fill" />
 						{showForm ? <Trans>Close Feedback Form</Trans> : <Trans>Share Your Feedback</Trans>}
 					</Button>
@@ -177,29 +168,29 @@ export function Testimonials() {
 			{/* Interactive Feedback Form Modal/Card */}
 			{showForm && (
 				<m.div
-					className="container mx-auto max-w-lg mt-8 px-4"
+					className="container mx-auto mt-8 max-w-lg px-4"
 					initial={{ opacity: 0, scale: 0.95 }}
 					animate={{ opacity: 1, scale: 1 }}
 					exit={{ opacity: 0, scale: 0.95 }}
 				>
 					<div className="rounded-2xl border border-primary/30 bg-card p-6 shadow-2xl backdrop-blur-md">
 						{isSubmitted ? (
-							<div className="flex flex-col items-center justify-center py-8 text-center space-y-3">
-								<CheckCircleIcon className="size-14 text-emerald-500 animate-bounce" weight="fill" />
-								<h3 className="font-bold text-xl text-foreground">Thank You for Your Feedback!</h3>
-								<p className="text-sm text-muted-foreground">
+							<div className="flex flex-col items-center justify-center space-y-3 py-8 text-center">
+								<CheckCircleIcon className="size-14 animate-bounce text-emerald-500" weight="fill" />
+								<h3 className="font-bold text-foreground text-xl">Thank You for Your Feedback!</h3>
+								<p className="text-muted-foreground text-sm">
 									Your feedback has been added directly to the circular rotating showcase!
 								</p>
 							</div>
 						) : (
 							<form onSubmit={handleSubmit} className="space-y-4">
-								<h3 className="font-bold text-lg text-foreground flex items-center gap-2">
+								<h3 className="flex items-center gap-2 font-bold text-foreground text-lg">
 									<PaperPlaneTiltIcon className="size-5 text-primary" weight="fill" />
 									Submit Your Feedback
 								</h3>
 
 								<div className="space-y-1">
-									<label htmlFor="fb-name" className="text-xs font-semibold text-muted-foreground">
+									<label htmlFor="fb-name" className="font-semibold text-muted-foreground text-xs">
 										Your Name *
 									</label>
 									<input
@@ -208,12 +199,12 @@ export function Testimonials() {
 										value={name}
 										onChange={(e) => setName(e.target.value)}
 										placeholder="e.g. John Doe"
-										className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground focus:border-primary focus:outline-none"
+										className="w-full rounded-lg border border-border bg-background px-3 py-2 text-foreground text-sm focus:border-primary focus:outline-none"
 									/>
 								</div>
 
 								<div className="space-y-1">
-									<label htmlFor="fb-role" className="text-xs font-semibold text-muted-foreground">
+									<label htmlFor="fb-role" className="font-semibold text-muted-foreground text-xs">
 										Role / Job Title
 									</label>
 									<input
@@ -221,12 +212,12 @@ export function Testimonials() {
 										value={role}
 										onChange={(e) => setRole(e.target.value)}
 										placeholder="e.g. Software Engineer"
-										className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground focus:border-primary focus:outline-none"
+										className="w-full rounded-lg border border-border bg-background px-3 py-2 text-foreground text-sm focus:border-primary focus:outline-none"
 									/>
 								</div>
 
 								<div className="space-y-1">
-									<label className="text-xs font-semibold text-muted-foreground">Rating</label>
+									<span className="font-semibold text-muted-foreground text-xs">Rating</span>
 									<div className="flex items-center gap-1.5 pt-1">
 										{[1, 2, 3, 4, 5].map((star) => (
 											<button
@@ -242,7 +233,7 @@ export function Testimonials() {
 								</div>
 
 								<div className="space-y-1">
-									<label htmlFor="fb-content" className="text-xs font-semibold text-muted-foreground">
+									<label htmlFor="fb-content" className="font-semibold text-muted-foreground text-xs">
 										Your Feedback *
 									</label>
 									<textarea
@@ -252,11 +243,11 @@ export function Testimonials() {
 										value={content}
 										onChange={(e) => setContent(e.target.value)}
 										placeholder="Share your experience building resumes with rbuilder..."
-										className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground focus:border-primary focus:outline-none resize-none"
+										className="w-full resize-none rounded-lg border border-border bg-background px-3 py-2 text-foreground text-sm focus:border-primary focus:outline-none"
 									/>
 								</div>
 
-								<Button type="submit" className="w-full py-2.5 font-bold gap-2">
+								<Button type="submit" className="w-full gap-2 py-2.5 font-bold">
 									<PaperPlaneTiltIcon size={18} />
 									Publish Feedback to Circle Animation
 								</Button>
@@ -267,8 +258,9 @@ export function Testimonials() {
 			)}
 
 			{/* 3D Circular Rotating Feedback Stage */}
-			<div
-				className="relative mt-12 flex h-[480px] md:h-[540px] w-full items-center justify-center overflow-hidden"
+			<section
+				aria-label="Testimonial Stage"
+				className="relative mt-12 flex h-[480px] w-full items-center justify-center overflow-hidden md:h-[540px]"
 				onMouseEnter={() => setIsPaused(true)}
 				onMouseLeave={() => setIsPaused(false)}
 			>
@@ -298,7 +290,7 @@ export function Testimonials() {
 									}}
 								>
 									<m.div
-										className="group relative w-64 sm:w-72 md:w-80 rounded-2xl border border-border/80 bg-card/95 p-6 shadow-2xl backdrop-blur-md transition-all duration-300 hover:scale-110 hover:border-primary/80"
+										className="group relative w-64 rounded-2xl border border-border/80 bg-card/95 p-6 shadow-2xl backdrop-blur-md transition-all duration-300 hover:scale-110 hover:border-primary/80 sm:w-72 md:w-80"
 										whileHover={{ y: -8 }}
 									>
 										<QuotesIcon
@@ -315,19 +307,19 @@ export function Testimonials() {
 											</div>
 
 											{/* Feedback Content */}
-											<p className="text-muted-foreground text-xs md:text-sm leading-relaxed line-clamp-4">
+											<p className="line-clamp-4 text-muted-foreground text-xs leading-relaxed md:text-sm">
 												"{item.content}"
 											</p>
 										</div>
 
 										{/* User Meta */}
-										<div className="relative mt-4 flex items-center gap-3 pt-3 border-t border-border/40">
-											<div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-tr from-primary to-indigo-600 text-white font-bold text-xs shadow-md">
+										<div className="relative mt-4 flex items-center gap-3 border-border/40 border-t pt-3">
+											<div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-tr from-primary to-indigo-600 font-bold text-white text-xs shadow-md">
 												{getInitials(item.name)}
 											</div>
 											<div className="overflow-hidden">
-												<h3 className="font-bold text-xs md:text-sm text-foreground truncate">{item.name}</h3>
-												<p className="text-[11px] text-muted-foreground truncate">{item.role}</p>
+												<h3 className="truncate font-bold text-foreground text-xs md:text-sm">{item.name}</h3>
+												<p className="truncate text-[11px] text-muted-foreground">{item.role}</p>
 											</div>
 										</div>
 									</m.div>
@@ -336,7 +328,7 @@ export function Testimonials() {
 						})}
 					</m.div>
 				</div>
-			</div>
+			</section>
 		</section>
 	);
 }

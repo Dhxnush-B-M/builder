@@ -27,7 +27,8 @@ export function Prefooter() {
 
 					<p className="text-muted-foreground leading-relaxed">
 						<Trans>
-							rbuilder empowers job seekers with powerful design tools, instant PDF generation, and full data privacy. Build your resume with confidence and land your dream role.
+							rbuilder empowers job seekers with powerful design tools, instant PDF generation, and full data privacy.
+							Build your resume with confidence and land your dream role.
 						</Trans>
 					</p>
 				</m.div>

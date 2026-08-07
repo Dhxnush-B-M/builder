@@ -6,14 +6,13 @@ import { Trans } from "@lingui/react/macro";
 import { DownloadSimpleIcon, FileIcon, UploadSimpleIcon } from "@phosphor-icons/react";
 import { useStore } from "@tanstack/react-form";
 import { useMutation } from "@tanstack/react-query";
-import { Link, useNavigate } from "@tanstack/react-router";
+import { useNavigate } from "@tanstack/react-router";
 import { useRef, useState } from "react";
 import { toast } from "sonner";
 import z from "zod";
 import { parseJSONResume } from "@reactive-resume/import/json-resume";
 import { parseReactiveResumeJSON } from "@reactive-resume/import/reactive-resume-json";
 import { parseReactiveResumeV4JSON } from "@reactive-resume/import/reactive-resume-v4-json";
-import { Badge } from "@reactive-resume/ui/components/badge";
 import { Button } from "@reactive-resume/ui/components/button";
 import {
 	DialogContent,
@@ -28,7 +27,7 @@ import { Spinner } from "@reactive-resume/ui/components/spinner";
 import { Combobox } from "@/components/ui/combobox";
 import { useFormBlocker } from "@/hooks/use-form-blocker";
 import { getOrpcErrorMessage } from "@/libs/error-message";
-import { client, orpc } from "@/libs/orpc/client";
+import { orpc } from "@/libs/orpc/client";
 import { useAppForm } from "@/libs/tanstack-form";
 import { useDialogStore } from "../store";
 import { detectJsonImportType } from "./import.utils";
@@ -37,21 +36,6 @@ const formSchema = z.discriminatedUnion("type", [
 	z.object({
 		type: z.literal(""),
 		file: z.undefined(),
-	}),
-	z.object({
-		type: z.literal("pdf"),
-		file: z.instanceof(File).refine((file) => file.type === "application/pdf", { message: "File must be a PDF" }),
-	}),
-	z.object({
-		type: z.literal("docx"),
-		file: z
-			.instanceof(File)
-			.refine(
-				(file) =>
-					file.type === "application/msword" ||
-					file.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-				{ message: "File must be a Microsoft Word document" },
-			),
 	}),
 	z.object({
 		type: z.literal("reactive-resume-json"),
@@ -73,39 +57,10 @@ const formSchema = z.discriminatedUnion("type", [
 	}),
 ]);
 
-function fileToBase64(file: File): Promise<string> {
-	return new Promise((resolve, reject) => {
-		const reader = new FileReader();
-		reader.onload = () => {
-			const result = reader.result as string;
-			// remove data URL prefix (e.g., "data:application/pdf;base64," or "data:application/vnd...;base64,")
-			resolve(result.split(",")[1]);
-		};
-		reader.onerror = reject;
-		reader.readAsDataURL(file);
-	});
-}
-
-// #7: sniff the source format from magic bytes + JSON shape rather than trusting the extension/MIME
-// (multiple resume interchange formats share the .json extension). Returns "" when unrecognized.
+// Sniff the JSON shape rather than trusting its extension or MIME type.
 async function detectImportType(file: File): Promise<ImportType> {
 	const name = file.name.toLowerCase();
 	const mime = file.type;
-
-	const header = new Uint8Array(await file.slice(0, 4).arrayBuffer());
-	const isPdf = header[0] === 0x25 && header[1] === 0x50 && header[2] === 0x44 && header[3] === 0x46; // "%PDF"
-	const isZip = header[0] === 0x50 && header[1] === 0x4b && header[2] === 0x03 && header[3] === 0x04; // "PK\x03\x04"
-
-	if (isPdf || mime === "application/pdf" || name.endsWith(".pdf")) return "pdf";
-	if (
-		isZip ||
-		mime === "application/msword" ||
-		mime === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
-		name.endsWith(".docx") ||
-		name.endsWith(".doc")
-	) {
-		return "docx";
-	}
 
 	if (mime === "application/json" || name.endsWith(".json")) {
 		try {
@@ -126,8 +81,6 @@ export function ImportResumeDialog(_: DialogProps<"resume.import">) {
 	const [isImporting, setIsImporting] = useState<boolean>(false);
 
 	const { mutateAsync: importResume } = useMutation(orpc.resume.import.mutationOptions());
-	const hasUsableProvider = true;
-	const isLoadingAiProviders = false;
 
 	const form = useAppForm({
 		defaultValues: {
@@ -140,9 +93,7 @@ export function ImportResumeDialog(_: DialogProps<"resume.import">) {
 
 			setIsImporting(true);
 
-			const toastId = toast.loading(t`Importing your resume...`, {
-				description: t`This may take a few minutes, depending on the response of the AI provider. Please do not close the window or refresh the page.`,
-			});
+			const toastId = toast.loading(t`Importing your resume...`);
 
 			try {
 				let data: ResumeData | undefined;
@@ -159,43 +110,8 @@ export function ImportResumeDialog(_: DialogProps<"resume.import">) {
 					data = parseReactiveResumeV4JSON(await value.file.text());
 				}
 
-				if (value.type === "pdf") {
-					if (isLoadingAiProviders) throw new Error(t`Loading AI providers. Please try again in a moment.`);
-					if (!hasUsableProvider)
-						throw new Error(t`This feature requires a connected AI provider. Please set one up in the settings.`);
-
-					const base64 = await fileToBase64(value.file);
-
-					data = await client.ai.parsePdf({
-						file: { name: value.file.name, data: base64 },
-					});
-				}
-
-				if (value.type === "docx") {
-					if (isLoadingAiProviders) throw new Error(t`Loading AI providers. Please try again in a moment.`);
-					if (!hasUsableProvider)
-						throw new Error(t`This feature requires a connected AI provider. Please set one up in the settings.`);
-
-					const base64 = await fileToBase64(value.file);
-
-					const mediaType =
-						value.file.type === "application/msword"
-							? ("application/msword" as const)
-							: ("application/vnd.openxmlformats-officedocument.wordprocessingml.document" as const);
-
-					data = await client.ai.parseDocx({
-						mediaType,
-						file: { name: value.file.name, data: base64 },
-					});
-				}
-
 				if (!data) {
-					throw new Error(
-						t({
-							comment: "Error shown when AI import endpoint returns no parsed resume data",
-							message: "No data was returned from the AI provider.",
-						}),
-					);
+					throw new Error(t`The selected file is not a supported JSON resume format.`);
 				}
 
 				const id = await importResume({ data });
@@ -230,7 +146,6 @@ export function ImportResumeDialog(_: DialogProps<"resume.import">) {
 
 	const type = useStore(form.store, (s) => s.values.type);
 	const file = useStore(form.store, (s) => s.values.file);
-	const aiRequired = type === "pdf" || type === "docx";
 
 	const onSelectFile = () => {
 		if (!inputRef.current) return;
@@ -257,8 +172,8 @@ export function ImportResumeDialog(_: DialogProps<"resume.import">) {
 				</DialogTitle>
 				<DialogDescription>
 					<Trans>
-						Continue where you left off by importing an existing resume you created using Reactive Resume or any another
-						resume builder. Supported formats include PDF, Microsoft Word, as well as JSON files from Reactive Resume.
+						Continue where you left off by importing a JSON resume exported from Reactive Resume or a compatible resume
+						builder.
 					</Trans>
 				</DialogDescription>
 			</DialogHeader>
@@ -278,7 +193,13 @@ export function ImportResumeDialog(_: DialogProps<"resume.import">) {
 								<Trans>File</Trans>
 							</FormLabel>
 							<FormControl>
-								<Input type="file" className="hidden" ref={inputRef} onChange={onUploadFile} />
+								<Input
+									type="file"
+									accept="application/json,.json"
+									className="hidden"
+									ref={inputRef}
+									onChange={onUploadFile}
+								/>
 
 								<Button
 									variant="outline"
@@ -338,32 +259,6 @@ export function ImportResumeDialog(_: DialogProps<"resume.import">) {
 														message: "JSON Resume",
 													}),
 												},
-												{
-													value: "pdf",
-													textValue: t({ comment: "File format label in import source selector", message: "PDF" }),
-													label: (
-														<div className="flex items-center gap-x-2">
-															{t({ comment: "File format label in import source selector", message: "PDF" })}{" "}
-															<Badge>{t`AI`}</Badge>
-														</div>
-													),
-												},
-												{
-													value: "docx",
-													textValue: t({
-														comment: "File format label in import source selector",
-														message: "Microsoft Word",
-													}),
-													label: (
-														<div className="flex items-center gap-x-2">
-															{t({
-																comment: "File format label in import source selector",
-																message: "Microsoft Word",
-															})}{" "}
-															<Badge>{t`AI`}</Badge>
-														</div>
-													),
-												},
 											]}
 										/>
 									}
@@ -378,23 +273,8 @@ export function ImportResumeDialog(_: DialogProps<"resume.import">) {
 						)}
 					</form.Field>
 				)}
-
-				{aiRequired && !isLoadingAiProviders && !hasUsableProvider && (
-					<div className="flex flex-col gap-3 rounded-md border border-dashed p-3 text-sm lg:flex-row lg:items-center lg:justify-between">
-						<span className="text-muted-foreground">
-							<Trans>Importing from PDF or Word requires a connected AI provider.</Trans>
-						</span>
-						<Button
-							size="sm"
-							variant="secondary"
-							nativeButton={false}
-							render={<Link to="/dashboard/settings/integrations">{t`Set up a provider`}</Link>}
-						/>
-					</div>
-				)}
-
 				<DialogFooter>
-					<Button type="submit" disabled={!type || !file || isImporting || (aiRequired && !hasUsableProvider)}>
+					<Button type="submit" disabled={!type || !file || isImporting}>
 						{isImporting ? <Spinner /> : null}
 						{isImporting ? t`Importing…` : t`Import`}
 					</Button>

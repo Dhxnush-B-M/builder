@@ -121,7 +121,7 @@ export function isEditableElementFocused(): boolean {
 }
 
 function externalUpdateMessage(mutation: ResumeUpdateMutation): string {
-	if (mutation === "patch") return t`This resume was updated by an AI agent.`;
+	if (mutation === "patch") return t`This resume was updated elsewhere.`;
 	if (mutation === "lock" || mutation === "password") return t`This resume's sharing settings changed elsewhere.`;
 	return t`Synced changes made in another tab.`;
 }
@@ -646,7 +646,7 @@ export function useBuilderResumeUpdateSubscription() {
 				return;
 			}
 
-			// #53: attribute cross-tab / AI-agent edits instead of silently swapping the document.
+			// Attribute cross-tab edits instead of silently swapping the document.
 			replaceResumeFromServer(resume);
 			notifyExternalUpdate(event.mutation);
 		},

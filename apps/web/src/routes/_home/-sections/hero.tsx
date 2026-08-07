@@ -16,19 +16,17 @@ export function Hero() {
 			<Spotlight />
 
 			<div className="relative z-10 flex max-w-4xl flex-col items-center gap-y-6 px-4 text-center">
-
-
 				{/* Headline */}
 				<m.div
-					className="will-change-[transform,opacity] space-y-3"
+					className="space-y-3 will-change-[transform,opacity]"
 					initial={{ opacity: 0, y: 20 }}
 					animate={{ opacity: 1, y: 0 }}
 					transition={{ duration: 0.45, delay: 0.35 }}
 				>
-					<h1 className="font-extrabold text-4xl tracking-tight sm:text-5xl md:text-6xl lg:text-7xl bg-gradient-to-r from-foreground via-primary to-indigo-500 bg-clip-text text-transparent leading-[1.1]">
+					<h1 className="bg-gradient-to-r from-foreground via-primary to-indigo-500 bg-clip-text font-extrabold text-4xl text-transparent leading-[1.1] tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
 						<Trans>Build Job-Winning Resumes in Minutes</Trans>
 					</h1>
-					<p className="font-semibold text-muted-foreground tracking-wide uppercase text-xs md:text-sm">
+					<p className="font-semibold text-muted-foreground text-xs uppercase tracking-wide md:text-sm">
 						<Trans>Free • Open Source • ATS-Friendly • Privacy-Focused</Trans>
 					</p>
 				</m.div>
@@ -41,13 +39,14 @@ export function Hero() {
 					transition={{ duration: 0.45, delay: 0.5 }}
 				>
 					<Trans>
-						rbuilder gives you complete control over your resume with real-time live previews, high-precision exports, and custom design tools.
+						rbuilder gives you complete control over your resume with real-time live previews, high-precision exports,
+						and custom design tools.
 					</Trans>
 				</m.p>
 
 				{/* CTA Buttons */}
 				<m.div
-					className="flex flex-col items-center gap-4 will-change-[transform,opacity] sm:flex-row sm:gap-6 pt-2"
+					className="flex flex-col items-center gap-4 pt-2 will-change-[transform,opacity] sm:flex-row sm:gap-6"
 					initial={{ opacity: 0, y: 20 }}
 					animate={{ opacity: 1, y: 0 }}
 					transition={{ duration: 0.45, delay: 0.65 }}
@@ -55,7 +54,7 @@ export function Hero() {
 					<Button
 						size="lg"
 						nativeButton={false}
-						className="group relative overflow-hidden px-8 py-6 text-base font-bold shadow-lg shadow-primary/25 transition-all hover:shadow-primary/40 hover:scale-105"
+						className="group relative overflow-hidden px-8 py-6 font-bold text-base shadow-lg shadow-primary/25 transition-all hover:scale-105 hover:shadow-primary/40"
 						render={
 							<Link to="/dashboard">
 								<span className="relative z-10 flex items-center gap-2.5">
@@ -73,16 +72,13 @@ export function Hero() {
 
 			{/* Video Showcase Card */}
 			<m.div
-				className="w-full mt-12 will-change-[transform,opacity]"
+				className="mt-12 w-full will-change-[transform,opacity]"
 				initial={{ opacity: 0, y: 60 }}
 				animate={{ opacity: 1, y: 0 }}
 				transition={{ duration: 0.8, delay: 0.8, ease: "easeOut" }}
 			>
-				<CometCard
-					glareOpacity={0}
-					className="relative mx-auto 3xl:max-w-7xl max-w-5xl px-4 md:px-12 lg:px-0"
-				>
-					<div className="relative rounded-2xl overflow-hidden border border-border/80 shadow-2xl bg-card/50 backdrop-blur-sm p-2">
+				<CometCard glareOpacity={0} className="relative mx-auto 3xl:max-w-7xl max-w-5xl px-4 md:px-12 lg:px-0">
+					<div className="relative overflow-hidden rounded-2xl border border-border/80 bg-card/50 p-2 shadow-2xl backdrop-blur-sm">
 						<video
 							loop
 							muted

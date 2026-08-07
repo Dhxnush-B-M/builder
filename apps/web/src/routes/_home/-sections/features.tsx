@@ -8,7 +8,6 @@ import {
 	LightningIcon,
 	PaletteIcon,
 	ShieldCheckIcon,
-	SparkleIcon,
 } from "@phosphor-icons/react";
 import { m } from "motion/react";
 import { BrandIcon } from "@reactive-resume/ui/components/brand-icon";
@@ -24,12 +23,6 @@ type Feature = {
 type FeatureCardProps = Feature;
 
 const getFeatures = (): Feature[] => [
-	{
-		id: "ai-assistant",
-		icon: SparkleIcon,
-		title: t`AI Resume Assistant`,
-		description: t`Generate tailored bullet points, optimize keywords, and improve content impact automatically.`,
-	},
 	{
 		id: "live-preview",
 		icon: LightningIcon,
@@ -105,10 +98,10 @@ export function Features() {
 	const features = getFeatures();
 
 	return (
-		<section id="features" className="container mx-auto py-16 px-4 md:py-24">
+		<section id="features" className="container mx-auto px-4 py-16 md:py-24">
 			{/* Header with Brand Logo */}
 			<m.div
-				className="mb-12 flex flex-col items-center text-center space-y-4 will-change-[transform,opacity]"
+				className="mb-12 flex flex-col items-center space-y-4 text-center will-change-[transform,opacity]"
 				initial={{ opacity: 0, y: 20 }}
 				whileInView={{ opacity: 1, y: 0 }}
 				viewport={{ once: true }}
@@ -118,20 +111,20 @@ export function Features() {
 					<BrandIcon variant="logo" />
 				</div>
 
-				<h2 className="font-extrabold text-3xl tracking-tight md:text-5xl bg-gradient-to-r from-foreground via-primary to-indigo-500 bg-clip-text text-transparent">
+				<h2 className="bg-gradient-to-r from-foreground via-primary to-indigo-500 bg-clip-text font-extrabold text-3xl text-transparent tracking-tight md:text-5xl">
 					<Trans>Powerful Resume Building Features</Trans>
 				</h2>
 
-				<p className="max-w-2xl text-muted-foreground text-base md:text-lg leading-relaxed">
+				<p className="max-w-2xl text-base text-muted-foreground leading-relaxed md:text-lg">
 					<Trans>
-						Everything you need to create, customize, and share job-winning resumes effortlessly. 
-						Select any feature below to edit or customize for your requirements.
+						Everything you need to create, customize, and share job-winning resumes effortlessly. Select any feature
+						below to edit or customize for your requirements.
 					</Trans>
 				</p>
 			</m.div>
 
 			{/* Features Grid (7 Selected Features) */}
-			<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+			<div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
 				{features.map((feature) => (
 					<FeatureCard key={feature.id} {...feature} />
 				))}

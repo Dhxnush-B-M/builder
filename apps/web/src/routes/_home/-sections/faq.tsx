@@ -29,9 +29,9 @@ const getFaqItems = (): FAQItemData[] => [
 		question: t`Is rbuilder available in multiple languages?`,
 		answer: (
 			<Trans>
-				Yes, rbuilder is available in multiple languages. You can choose your preferred language in the settings
-				page, or using the language switcher in the top right corner. If you don't see your language, or you would like
-				to improve the existing translations, you can{" "}
+				Yes, rbuilder is available in multiple languages. You can choose your preferred language in the settings page,
+				or using the language switcher in the top right corner. If you don't see your language, or you would like to
+				improve the existing translations, you can{" "}
 				<a
 					href={crowdinUrl}
 					target="_blank"

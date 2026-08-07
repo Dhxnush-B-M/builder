@@ -27,9 +27,7 @@ function RouteComponent() {
 	const router = useRouter();
 	const navigate = useNavigate();
 	const { sidebarState } = Route.useLoaderData();
-	const { data: subscription, isLoading: isSubscriptionLoading } = useQuery(
-		orpc.payment.getStatus.queryOptions(),
-	);
+	const { data: subscription, isLoading: isSubscriptionLoading } = useQuery(orpc.payment.getStatus.queryOptions());
 
 	useEffect(() => {
 		if (!isSubscriptionLoading && subscription && !subscription.hasPaid) {

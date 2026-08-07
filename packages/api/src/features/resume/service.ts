@@ -222,8 +222,7 @@ async function applyResumePatchTx(
 		throw new ORPCError("NOT_FOUND");
 	}
 
-	// Checkpoint every patch (AI/API edit) atomically within the same transaction as the edit.
-	// ponytail: a multi-patch agent turn writes one row per patch; the prune cap (30) bounds it.
+	// Checkpoint every patch atomically within the same transaction as the edit.
 	await writeResumeVersion(client, {
 		resumeId: resume.id,
 		userId: input.userId,

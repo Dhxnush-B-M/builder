@@ -111,7 +111,7 @@ describe("web app fallback classification", () => {
 		expect(response.headers.get("Content-Security-Policy-Report-Only")).toContain("frame-ancestors 'none'");
 	});
 
-	it.each(["/auth/login", "/dashboard", "/builder/resume-1", "/agent", "/templates", "/templates/azurill.pdf"])(
+	it.each(["/auth/login", "/dashboard", "/builder/resume-1", "/templates", "/templates/azurill.pdf"])(
 		"serves noindex shell for known app prefix %s",
 		async (pathname) => {
 			const response = await handleWebApp(new Request(`https://example.com${pathname}`));

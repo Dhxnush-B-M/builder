@@ -44,13 +44,13 @@ export function Footer() {
 	return (
 		<m.footer
 			id="footer"
-			className="p-4 pb-8 will-change-[opacity] md:p-8 md:pb-12 border-t border-border/30 container mx-auto"
+			className="container mx-auto border-border/30 border-t p-4 pb-8 will-change-[opacity] md:p-8 md:pb-12"
 			initial={{ opacity: 0 }}
 			whileInView={{ opacity: 1 }}
 			viewport={{ once: true }}
 			transition={{ duration: 0.45 }}
 		>
-			<div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3 pb-8">
+			<div className="grid grid-cols-1 gap-8 pb-8 sm:grid-cols-2 lg:grid-cols-3">
 				{/* Brand Column */}
 				<div className="space-y-4">
 					<BrandIcon variant="logo" className="size-10" />
@@ -59,7 +59,8 @@ export function Footer() {
 						<h2 className="font-semibold text-lg tracking-tight">rbuilder</h2>
 						<p className="max-w-xs text-muted-foreground text-sm leading-relaxed">
 							<Trans>
-								A modern resume builder designed to empower your career growth with intuitive tools, high impact designs, and privacy.
+								A modern resume builder designed to empower your career growth with intuitive tools, high impact
+								designs, and privacy.
 							</Trans>
 						</p>
 					</div>
@@ -95,7 +96,7 @@ export function Footer() {
 			</div>
 
 			{/* Copyright Row - Positioned at the bottom side */}
-			<div className="pt-6 border-t border-border/40 flex flex-col sm:flex-row items-center justify-between gap-4">
+			<div className="flex flex-col items-center justify-between gap-4 border-border/40 border-t pt-6 sm:flex-row">
 				<Copyright />
 			</div>
 		</m.footer>

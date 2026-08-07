@@ -15,8 +15,6 @@ import { useDialogStore } from "@/dialogs/store";
 import { useCurrentResume, useUpdateResumeData } from "@/features/resume/builder/draft";
 import { templates } from "./data";
 
-
-
 export function TemplateGalleryDialog(_: DialogProps<"resume.template.gallery">) {
 	const closeDialog = useDialogStore((state) => state.closeDialog);
 	const resume = useCurrentResume();

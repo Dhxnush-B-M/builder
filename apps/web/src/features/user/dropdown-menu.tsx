@@ -73,7 +73,6 @@ export function UserDropdownMenu({ children }: Props) {
 
 			<DropdownMenuContent align="start" side="top">
 				<DropdownMenuGroup>
-
 					<DropdownMenuSub>
 						<DropdownMenuSubTrigger>
 							<PaletteIcon />

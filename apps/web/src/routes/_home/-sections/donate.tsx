@@ -116,8 +116,8 @@ const FeatureCard = ({ icon: Icon, title, description, delay }: FeatureCardProps
 		>
 			<Icon size={24} weight="duotone" />
 		</m.div>
-		<h3 className="font-semibold tracking-tight text-lg">{title}</h3>
-		<p className="text-muted-foreground leading-relaxed text-sm">{description}</p>
+		<h3 className="font-semibold text-lg tracking-tight">{title}</h3>
+		<p className="text-muted-foreground text-sm leading-relaxed">{description}</p>
 	</m.div>
 );
 
@@ -133,10 +133,10 @@ export const DonationBanner = () => (
 			<FloatingIcon icon={TranslateIcon} className="bottom-[20%] left-[20%]" delay={2.5} />
 		</div>
 
-		<div className="container relative px-8 mx-auto">
+		<div className="container relative mx-auto px-8">
 			{/* Header */}
 			<m.div
-				className="flex flex-col items-center text-center space-y-4"
+				className="flex flex-col items-center space-y-4 text-center"
 				initial={{ opacity: 0, y: 20 }}
 				whileInView={{ opacity: 1, y: 0 }}
 				viewport={{ once: true }}
@@ -165,7 +165,7 @@ export const DonationBanner = () => (
 					</m.div>
 
 					<m.h2
-						className="font-extrabold text-3xl tracking-tight md:text-4xl xl:text-5xl bg-gradient-to-r from-foreground via-primary to-indigo-500 bg-clip-text text-transparent"
+						className="bg-gradient-to-r from-foreground via-primary to-indigo-500 bg-clip-text font-extrabold text-3xl text-transparent tracking-tight md:text-4xl xl:text-5xl"
 						initial={{ opacity: 0, y: 20 }}
 						whileInView={{ opacity: 1, y: 0 }}
 						viewport={{ once: true }}
@@ -192,14 +192,15 @@ export const DonationBanner = () => (
 				</div>
 
 				<m.p
-					className="max-w-2xl text-base md:text-lg text-muted-foreground leading-relaxed"
+					className="max-w-2xl text-base text-muted-foreground leading-relaxed md:text-lg"
 					initial={{ opacity: 0, y: 20 }}
 					whileInView={{ opacity: 1, y: 0 }}
 					viewport={{ once: true }}
 					transition={{ duration: 0.6, delay: 0.2 }}
 				>
 					<Trans>
-						rbuilder is committed to helping professionals craft standout resumes. We provide full guidance, round-the-clock support, and continuous platform enhancements.
+						rbuilder is committed to helping professionals craft standout resumes. We provide full guidance,
+						round-the-clock support, and continuous platform enhancements.
 					</Trans>
 				</m.p>
 			</m.div>
@@ -250,15 +251,13 @@ export const DonationBanner = () => (
 
 			{/* Footer note */}
 			<m.p
-				className="mt-8 text-center text-muted-foreground leading-relaxed text-sm"
+				className="mt-8 text-center text-muted-foreground text-sm leading-relaxed"
 				initial={{ opacity: 0 }}
 				whileInView={{ opacity: 1 }}
 				viewport={{ once: true }}
 				transition={{ duration: 0.6, delay: 0.8 }}
 			>
-				<Trans>
-					Reach out anytime for assistance or feedback. We are here to support your career journey!
-				</Trans>
+				<Trans>Reach out anytime for assistance or feedback. We are here to support your career journey!</Trans>
 			</m.p>
 		</div>
 	</section>
