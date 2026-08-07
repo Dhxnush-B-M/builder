@@ -11,12 +11,11 @@ import { I18nProvider } from "@lingui/react";
 import { IconContext } from "@phosphor-icons/react";
 import { HotkeysProvider } from "@tanstack/react-hotkeys";
 import { QueryClientProvider } from "@tanstack/react-query";
-import { createRootRouteWithContext, HeadContent, Outlet, useRouterState } from "@tanstack/react-router";
+import { createRootRouteWithContext, HeadContent, Outlet } from "@tanstack/react-router";
 import { domAnimation, LazyMotion, MotionConfig } from "motion/react";
 import { useEffect } from "react";
 import { Toaster } from "@reactive-resume/ui/components/sonner";
 import { TooltipProvider } from "@reactive-resume/ui/components/tooltip";
-import { DonationToast } from "@/components/ui/donation-toast";
 import { DialogManager } from "@/dialogs/manager";
 import { CommandPalette } from "@/features/command-palette";
 import { ThemeProvider } from "@/features/theme/provider";
@@ -101,9 +100,6 @@ function RootComponent() {
 	const { theme, locale, queryClient } = Route.useRouteContext();
 	const dir = isRTL(locale) ? "rtl" : "ltr";
 
-	// Suppress the app-wide donation toast inside the builder so it doesn't cover the right-sidebar controls.
-	const isBuilder = useRouterState({ select: (s) => s.location.pathname.startsWith("/builder") });
-
 	useEffect(() => {
 		document.documentElement.lang = locale;
 		document.documentElement.dir = dir;
@@ -127,7 +123,6 @@ function RootComponent() {
 													<PromptDialogProvider>
 														<Outlet />
 
-														{!isBuilder && <DonationToast />}
 														<DialogManager />
 														<CommandPalette />
 														<Toaster richColors position="bottom-center" />

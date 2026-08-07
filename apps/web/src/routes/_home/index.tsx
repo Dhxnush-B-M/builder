@@ -1,6 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { createRootStructuredDataScript, getCanonicalRootUrl } from "@/libs/seo";
-import { DonationBanner } from "./-sections/donate";
 import { Faq } from "./-sections/faq";
 import { Features } from "./-sections/features";
 import { Footer } from "./-sections/footer";
@@ -9,7 +8,6 @@ import { Prefooter } from "./-sections/prefooter";
 import { Sponsors } from "./-sections/sponsors";
 import { Statistics } from "./-sections/statistics";
 import { Templates } from "./-sections/templates";
-import { Testimonials } from "./-sections/testimonials";
 
 export const Route = createFileRoute("/_home/")({
 	component: RouteComponent,
@@ -40,8 +38,6 @@ function RouteComponent() {
 					<Sponsors show={flags.showSponsors} />
 					<Features />
 					<Templates />
-					<Testimonials />
-					<DonationBanner />
 					<Faq />
 					<Prefooter />
 					<Footer />
