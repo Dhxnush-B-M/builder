@@ -3,6 +3,7 @@ import type { Context } from "hono";
 import { isIP } from "node:net";
 import { getConnInfo } from "@hono/node-server/conninfo";
 import { Hono } from "hono";
+import { cors } from "hono/cors";
 import { handleMcp } from "../mcp/handler";
 import { handleOpenApi } from "../openapi/handler";
 import {
@@ -35,6 +36,18 @@ const getTrustedClient = (context: Context<ServerEnvironment>): string => {
 
 export function createApp() {
 	const app = new Hono<ServerEnvironment>();
+
+	app.use(
+		"*",
+		cors({
+			origin: (origin) => origin || "*",
+			credentials: true,
+			allowMethods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+			allowHeaders: ["Content-Type", "Authorization", "x-orpc-batch", "x-orpc-streaming", "Accept", "Origin"],
+			exposeHeaders: ["Content-Length", "Content-Type"],
+			maxAge: 86400,
+		}),
+	);
 
 	app.all("/api/rpc", (c) => handleRpc(c.req.raw, getTrustedClient(c)));
 	app.all("/api/rpc/*", (c) => handleRpc(c.req.raw, getTrustedClient(c)));
