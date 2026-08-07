@@ -157,33 +157,35 @@ The quickest way to run Reactive Resume locally:
 
 ```bash
 # Clone the repository
-git clone --depth=1  https://github.com/amruthpillai/reactive-resume.git
-cd reactive-resume
+git clone https://github.com/Dhxnush-B-M/builder.git
+cd builder
 
-# Start all services
-docker compose up -d
+# Install dependencies
+pnpm install
+
+# Run Database Migrations (Supabase / PostgreSQL)
+npx dotenv-cli -e .env -- npx pnpm db:migrate
+
+# Start all development services
+pnpm dev
 
 # Access the app
 open http://localhost:3000
 ```
 
-[![Build with Ona](https://ona.com/build-with-ona.svg)](https://app.ona.com/#https://github.com/amruthpillai/reactive-resume)
-
-For detailed setup instructions, environment configuration, and self-hosting guides, see the [documentation](https://docs.rxresu.me).
-
 ## Tech Stack
 
-| Category         | Technology                      |
-| ---------------- | ------------------------------- |
-| Framework        | TanStack Start (React 19, Vite) |
-| Runtime          | Node.js                         |
-| Language         | TypeScript                      |
-| Database         | PostgreSQL with Drizzle ORM     |
-| API              | ORPC (Type-safe RPC)            |
-| Auth             | Better Auth                     |
-| Styling          | Tailwind CSS                    |
-| UI Components    | Base UI + shadcn-style package  |
-| State Management | Zustand + TanStack Query        |
+| Category         | Technology                               |
+| ---------------- | ---------------------------------------- |
+| Framework        | TanStack Start (React 19, Vite)          |
+| Runtime          | Node.js                                  |
+| Language         | TypeScript                               |
+| Database         | Supabase / PostgreSQL with Drizzle ORM   |
+| API              | oRPC (Type-safe RPC)                     |
+| Auth             | Better Auth                              |
+| Styling          | Tailwind CSS                             |
+| UI Components    | Base UI + shadcn-style package           |
+| State Management | Zustand + TanStack Query                 |
 
 ## Documentation
 
