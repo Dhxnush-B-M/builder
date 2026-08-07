@@ -6,18 +6,18 @@ import { Alert, AlertDescription, AlertTitle } from "@reactive-resume/ui/compone
 import { BrandIcon } from "@reactive-resume/ui/components/brand-icon";
 import { Button, buttonVariants } from "@reactive-resume/ui/components/button";
 
-export function ErrorScreen({ reset }: ErrorComponentProps) {
+export function ErrorScreen({ error, reset }: ErrorComponentProps) {
 	return (
-		<div className="mx-auto flex h-svh max-w-md flex-col items-center justify-center gap-y-4">
+		<div className="mx-auto flex h-svh max-w-md flex-col items-center justify-center gap-y-4 px-4">
 			<BrandIcon variant="logo" className="size-12" />
 
-			<Alert>
+			<Alert variant="destructive">
 				<WarningIcon />
 				<AlertTitle>
 					<Trans>Something went wrong</Trans>
 				</AlertTitle>
-				<AlertDescription>
-					<Trans>An unexpected error stopped this page from loading. You can try again or head back.</Trans>
+				<AlertDescription className="break-words font-mono text-xs">
+					{error?.message || <Trans>An unexpected error stopped this page from loading.</Trans>}
 				</AlertDescription>
 			</Alert>
 

@@ -84,7 +84,10 @@ function StatisticCard({ statistic, index }: StatisticCardProps) {
 
 export function Statistics() {
 	const [userCountResult, resumeCountResult] = useQueries({
-		queries: [orpc.statistics.user.getCount.queryOptions(), orpc.statistics.resume.getCount.queryOptions()],
+		queries: [
+			{ ...orpc.statistics.user.getCount.queryOptions(), retry: false },
+			{ ...orpc.statistics.resume.getCount.queryOptions(), retry: false },
+		],
 	});
 
 	if (!userCountResult.data || !resumeCountResult.data) return null;
