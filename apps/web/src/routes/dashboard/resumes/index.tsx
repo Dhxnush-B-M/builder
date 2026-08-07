@@ -53,8 +53,8 @@ function RouteComponent() {
 	const navigate = useNavigate({ from: Route.fullPath });
 	const { openDialog } = useDialogStore();
 
-	const { data: allTags } = useQuery(orpc.resume.tags.list.queryOptions());
-	const { data: resumes } = useQuery(orpc.resume.list.queryOptions({ input: { tags, sort } }));
+	const { data: allTags } = useQuery({ ...orpc.resume.tags.list.queryOptions(), retry: false });
+	const { data: resumes } = useQuery({ ...orpc.resume.list.queryOptions({ input: { tags, sort } }), retry: false });
 
 	const filteredResumes = useMemo(() => {
 		const list = resumes ?? [];

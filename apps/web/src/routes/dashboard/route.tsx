@@ -27,22 +27,21 @@ function RouteComponent() {
 	const router = useRouter();
 	const navigate = useNavigate();
 	const { sidebarState } = Route.useLoaderData();
-	const { data: subscription, isLoading: isSubscriptionLoading } = useQuery(orpc.payment.getStatus.queryOptions());
+	const { data: subscription } = useQuery({
+		...orpc.payment.getStatus.queryOptions(),
+		retry: false,
+	});
 
 	useEffect(() => {
-		if (!isSubscriptionLoading && subscription && !subscription.hasPaid) {
+		if (subscription && !subscription.hasPaid) {
 			void navigate({ to: "/checkout", replace: true });
 		}
-	}, [isSubscriptionLoading, subscription, navigate]);
+	}, [subscription, navigate]);
 
 	const handleSidebarOpenChange = (open: boolean) => {
 		setDashboardSidebarState(open);
 		void router.invalidate();
 	};
-
-	if (isSubscriptionLoading) {
-		return null;
-	}
 
 	return (
 		<SidebarProvider open={sidebarState} onOpenChange={handleSidebarOpenChange}>

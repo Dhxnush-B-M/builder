@@ -4,6 +4,7 @@ import { i18n } from "@lingui/core";
 import { msg } from "@lingui/core/macro";
 import Cookies from "js-cookie";
 import { isRTL, localeSchema } from "@reactive-resume/utils/locale";
+import { messages as enUSMessages } from "../../locales/en-US.po";
 
 export { isRTL };
 
@@ -131,13 +132,13 @@ export const loadLocale = async (locale: string) => {
 		i18n.load(resolvedLocale, messages);
 		i18n.activate(resolvedLocale);
 	} catch {
-		i18n.load(defaultLocale, {});
+		i18n.load(defaultLocale, enUSMessages);
 		i18n.activate(defaultLocale);
 	}
 };
 
-// Immediately activate default fallback locale synchronously so Lingui i18n is never null
-i18n.load(defaultLocale, {});
+// Immediately activate English locale synchronously with full English messages
+i18n.load(defaultLocale, enUSMessages);
 i18n.activate(defaultLocale);
 
 export const changeLocale = (value: string | null) => {
