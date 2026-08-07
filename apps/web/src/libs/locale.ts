@@ -128,16 +128,17 @@ export const getLocaleMessages = async (locale: string) => {
 export const loadLocale = async (locale: string) => {
 	try {
 		const { locale: resolvedLocale, messages } = await getLocaleMessages(locale);
-		i18n.loadAndActivate({ locale: resolvedLocale, messages });
+		i18n.load(resolvedLocale, messages);
+		i18n.activate(resolvedLocale);
 	} catch {
-		i18n.loadAndActivate({ locale: defaultLocale, messages: {} });
+		i18n.load(defaultLocale, {});
+		i18n.activate(defaultLocale);
 	}
 };
 
-// Immediately activate default fallback locale so i18n is never null
-if (!i18n.locale) {
-	i18n.loadAndActivate({ locale: defaultLocale, messages: {} });
-}
+// Immediately activate default fallback locale synchronously so Lingui i18n is never null
+i18n.load(defaultLocale, {});
+i18n.activate(defaultLocale);
 
 export const changeLocale = (value: string | null) => {
 	if (!value || !isLocale(value)) return;
