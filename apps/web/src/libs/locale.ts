@@ -4,9 +4,26 @@ import { i18n } from "@lingui/core";
 import { msg } from "@lingui/core/macro";
 import Cookies from "js-cookie";
 import { isRTL, localeSchema } from "@reactive-resume/utils/locale";
-import { messages as enUSMessages } from "../../locales/en-US.js";
+import enUSCatalog from "../../locales/en-US.js";
 
 export { isRTL };
+
+const extractMessages = (mod: unknown): Messages => {
+	if (!mod || typeof mod !== "object") return {};
+	if ("messages" in mod && mod.messages && typeof mod.messages === "object") {
+		return mod.messages as Messages;
+	}
+	if ("default" in mod && mod.default && typeof mod.default === "object") {
+		const def = mod.default as Record<string, unknown>;
+		if ("messages" in def && def.messages && typeof def.messages === "object") {
+			return def.messages as Messages;
+		}
+		return def as Messages;
+	}
+	return mod as Messages;
+};
+
+const enUSMessages = extractMessages(enUSCatalog);
 
 const storageKey = "locale";
 const defaultLocale: Locale = "en-US";
@@ -117,8 +134,8 @@ const loadMessages = async (locale: Locale) => {
 
 	if (!load) throw new Error(`Unknown locale: ${locale}`);
 
-	const { messages } = await load();
-	return messages;
+	const mod = await load();
+	return extractMessages(mod);
 };
 
 export const getLocaleMessages = async (locale: string) => {
