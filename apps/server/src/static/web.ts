@@ -10,6 +10,9 @@ function resolveWebDistPath() {
 		fileURLToPath(new URL("../../../web/dist", import.meta.url)),
 		// Bundled layout: apps/server/dist/index.mjs -> apps/web/dist
 		fileURLToPath(new URL("../../web/dist", import.meta.url)),
+		// Working directory relative paths for Docker/Render
+		fileURLToPath(new URL("apps/web/dist", `file://${process.cwd()}/`)),
+		fileURLToPath(new URL("dist", `file://${process.cwd()}/`)),
 	];
 	const [fallback] = candidates;
 	if (!fallback) throw new Error("Could not resolve web dist path");

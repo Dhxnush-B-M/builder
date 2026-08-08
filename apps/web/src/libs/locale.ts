@@ -101,12 +101,15 @@ export function formatRelativeTime(value: Date | string, formatter: Intl.Relativ
 }
 
 export const getLocale = () => {
-	const locale = Cookies.get(storageKey);
-	if (!locale || locale === "zu-ZA" || !isLocale(locale)) {
-		if (locale === "zu-ZA") Cookies.remove(storageKey);
-		return defaultLocale;
+	if (typeof window !== "undefined") {
+		const locale = Cookies.get(storageKey);
+		if (!locale || locale === "zu-ZA" || !isLocale(locale)) {
+			Cookies.remove(storageKey);
+			return defaultLocale;
+		}
+		return locale;
 	}
-	return locale;
+	return defaultLocale;
 };
 
 const loadMessages = async (locale: Locale) => {

@@ -3,7 +3,6 @@ import { formatter } from "@lingui/format-po";
 
 export default defineConfig({
 	sourceLocale: "en-US",
-	pseudoLocale: "zu-ZA",
 	locales: [
 		"af-ZA",
 		"am-ET",
@@ -59,10 +58,8 @@ export default defineConfig({
 		"vi-VN",
 		"zh-CN",
 		"zh-TW",
-		"zu-ZA",
 	],
 	fallbackLocales: {
-		"zu-ZA": "en-US",
 		default: "en-US",
 	},
 	format: formatter({
