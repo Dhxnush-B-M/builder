@@ -4,13 +4,13 @@ import { i18n } from "@lingui/core";
 import { msg } from "@lingui/core/macro";
 import Cookies from "js-cookie";
 import { isRTL, localeSchema } from "@reactive-resume/utils/locale";
-import { messages as enUSMessages } from "../../locales/en-US.po";
+import { messages as enUSMessages } from "../../locales/en-US.js";
 
 export { isRTL };
 
 const storageKey = "locale";
 const defaultLocale: Locale = "en-US";
-const messageLoaders = import.meta.glob<{ messages: Messages }>("../../locales/*.po");
+const messageLoaders = import.meta.glob<{ messages: Messages }>("../../locales/*.js");
 const relativeTimeDivisions: Array<{ amount: number; unit: Intl.RelativeTimeFormatUnit }> = [
 	{ amount: 31_536_000_000, unit: "year" },
 	{ amount: 2_592_000_000, unit: "month" },
@@ -113,7 +113,7 @@ export const getLocale = () => {
 };
 
 const loadMessages = async (locale: Locale) => {
-	const load = messageLoaders[`../../locales/${locale}.po`];
+	const load = messageLoaders[`../../locales/${locale}.js`];
 
 	if (!load) throw new Error(`Unknown locale: ${locale}`);
 
