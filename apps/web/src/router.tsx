@@ -27,11 +27,33 @@ export const getRouter = async () => {
 
 	await loadLocale(locale);
 
-	let session: AuthSession | null = null;
+	const guestSession: AuthSession = {
+		user: {
+			id: "guest-user",
+			name: "Guest User",
+			email: "guest@rbuilder.com",
+			image: null,
+			emailVerified: true,
+			createdAt: new Date(),
+			updatedAt: new Date(),
+			username: "guest",
+		},
+		session: {
+			id: "guest-session",
+			userId: "guest-user",
+			token: "",
+			expiresAt: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000),
+			createdAt: new Date(),
+			updatedAt: new Date(),
+		},
+	};
+
+	let session: AuthSession | null = guestSession;
 	try {
-		session = await getSession();
+		const fetchedSession = await getSession();
+		if (fetchedSession) session = fetchedSession;
 	} catch {
-		session = null;
+		session = guestSession;
 	}
 
 	let flags = defaultFlags;

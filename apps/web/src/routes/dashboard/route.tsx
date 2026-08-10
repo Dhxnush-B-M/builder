@@ -11,7 +11,6 @@ import { DashboardSidebar } from "./-components/sidebar";
 export const Route = createFileRoute("/dashboard")({
 	component: RouteComponent,
 	beforeLoad: ({ context }) => {
-		if (!context.session) throw redirect({ to: "/auth/login", replace: true });
 		return { session: context.session };
 	},
 	loader: () => {
