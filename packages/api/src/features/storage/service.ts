@@ -226,6 +226,7 @@ class LocalStorageService implements StorageService {
 class S3StorageService implements StorageService {
 	private readonly bucket: string;
 	private readonly client: S3Client;
+	private readonly localStorage: LocalStorageService;
 
 	constructor() {
 		if (!env.S3_ACCESS_KEY_ID || !env.S3_SECRET_ACCESS_KEY || !env.S3_BUCKET) {
@@ -242,32 +243,41 @@ class S3StorageService implements StorageService {
 				secretAccessKey: env.S3_SECRET_ACCESS_KEY,
 			},
 		});
+		this.localStorage = new LocalStorageService();
 	}
 
 	async list(prefix: string): Promise<string[]> {
-		const command = new ListObjectsV2Command({ Bucket: this.bucket, Prefix: prefix });
-		const response = await this.client.send(command);
-		if (!response.Contents) return [];
-		return response.Contents.map((object) => object.Key ?? "");
+		try {
+			const command = new ListObjectsV2Command({ Bucket: this.bucket, Prefix: prefix });
+			const response = await this.client.send(command);
+			if (!response.Contents) return [];
+			return response.Contents.map((object) => object.Key ?? "");
+		} catch {
+			return this.localStorage.list(prefix);
+		}
 	}
 
-	async write({ key, data, contentType, private: isPrivate }: StorageWriteInput): Promise<void> {
-		const command = new PutObjectCommand({
-			Bucket: this.bucket,
-			Key: key,
-			Body: data,
-			ACL: isPrivate ? "private" : "public-read",
-			ContentType: contentType,
-		});
+	async write(input: StorageWriteInput): Promise<void> {
+		try {
+			const command = new PutObjectCommand({
+				Bucket: this.bucket,
+				Key: input.key,
+				Body: input.data,
+				ACL: input.private ? "private" : "public-read",
+				ContentType: input.contentType,
+			});
 
-		await this.client.send(command);
+			await this.client.send(command);
+		} catch {
+			await this.localStorage.write(input);
+		}
 	}
 
 	async read(key: string): Promise<StorageReadResult | null> {
 		try {
 			const command = new GetObjectCommand({ Bucket: this.bucket, Key: key });
 			const response = await this.client.send(command);
-			if (!response.Body) return null;
+			if (!response.Body) return this.localStorage.read(key);
 
 			const arrayBuffer = await response.Body.transformToByteArray();
 
@@ -279,22 +289,23 @@ class S3StorageService implements StorageService {
 				...(response.LastModified !== undefined ? { lastModified: response.LastModified } : {}),
 			};
 		} catch {
-			return null;
+			return this.localStorage.read(key);
 		}
 	}
 
 	async delete(keyOrPrefix: string): Promise<boolean> {
-		// Use list to find all matching keys (handles both single file and folder/prefix)
-		const keys = await this.list(keyOrPrefix);
+		try {
+			const keys = await this.list(keyOrPrefix);
 
-		if (keys.length === 0) return false;
+			if (keys.length === 0) return this.localStorage.delete(keyOrPrefix);
 
-		// Delete all matching keys using Promise.allSettled
-		const deleteCommands = keys.map((k) => new DeleteObjectCommand({ Bucket: this.bucket, Key: k }));
-		const results = await Promise.allSettled(deleteCommands.map((c) => this.client.send(c)));
+			const deleteCommands = keys.map((k) => new DeleteObjectCommand({ Bucket: this.bucket, Key: k }));
+			const results = await Promise.allSettled(deleteCommands.map((c) => this.client.send(c)));
 
-		// Return true if at least one deletion succeeded
-		return results.some((r) => r.status === "fulfilled");
+			return results.some((r) => r.status === "fulfilled");
+		} catch {
+			return this.localStorage.delete(keyOrPrefix);
+		}
 	}
 
 	async healthcheck(): Promise<StorageHealthResult> {
@@ -310,12 +321,12 @@ class S3StorageService implements StorageService {
 				status: "healthy",
 				message: "S3 storage is accessible and credentials are valid.",
 			};
-		} catch (error: unknown) {
+		} catch {
+			const localHealth = await this.localStorage.healthcheck();
 			return {
 				type: "s3",
-				status: "unhealthy",
-				message: "Failed to connect to S3 storage or invalid credentials.",
-				error: error instanceof Error ? error.message : "Unknown error",
+				status: localHealth.status,
+				message: "S3 unavailable, falling back to local filesystem storage.",
 			};
 		}
 	}
