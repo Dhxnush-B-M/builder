@@ -114,13 +114,7 @@ function SocialAuthButtons({ requestSignUp }: SocialAuthButtonsProps) {
 				className="h-11 w-full justify-center gap-3 rounded-xl border border-input bg-background font-semibold text-foreground text-sm shadow-xs transition-all hover:bg-accent hover:text-accent-foreground focus-visible:ring-2 focus-visible:ring-primary active:scale-[0.99]"
 			>
 				<GoogleColorIcon />
-				<span>
-					{requestSignUp ? (
-						<Trans comment="Label for Google sign-up button">Sign up with Google</Trans>
-					) : (
-						<Trans comment="Label for Google sign-in button">Continue with Google</Trans>
-					)}
-				</span>
+				<span>{requestSignUp ? "Sign up with Google" : "Continue with Google"}</span>
 			</Button>
 		</div>
 	);
