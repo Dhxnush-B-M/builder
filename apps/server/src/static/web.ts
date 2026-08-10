@@ -61,20 +61,20 @@ const BASE_SECURITY_HEADERS = {
 		"default-src 'self'; img-src 'self' data: blob:; font-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; object-src 'none'",
 };
 
-const ROOT_TITLE = "Reactive Resume — A free and open-source resume builder";
+const ROOT_TITLE = "rbuilder — A free and open-source resume builder";
 const ROOT_DESCRIPTION =
-	"Reactive Resume is a free and open-source resume builder that simplifies the process of creating, updating, and sharing your resume.";
+	"rbuilder is a free and modern resume builder that simplifies the process of creating, updating, and sharing your resume.";
 const ROOT_POSTER_PATH = "/videos/timelapse-v1.webp";
 const ROOT_FAQ_ITEMS = [
 	{
-		question: "Is Reactive Resume really free?",
+		question: "Is rbuilder really free?",
 		answer:
-			"Yes! Reactive Resume is completely free to use, with no hidden costs, premium tiers, or subscription fees. It's open-source and will always remain free.",
+			"Yes! rbuilder is completely free to use, with no hidden costs, premium tiers, or subscription fees. It's open-source and will always remain free.",
 	},
 	{
 		question: "How is my data protected?",
 		answer:
-			"Your data is stored securely and is never shared with third parties. You can also self-host Reactive Resume on your own servers for complete control over your data.",
+			"Your data is stored securely and is never shared with third parties. You can also self-host rbuilder on your own servers for complete control over your data.",
 	},
 	{
 		question: "Can I export my resume to PDF?",
@@ -82,14 +82,14 @@ const ROOT_FAQ_ITEMS = [
 			"Absolutely! You can export your resume to PDF with a single click. The exported PDF maintains all your formatting and styling perfectly.",
 	},
 	{
-		question: "Is Reactive Resume available in multiple languages?",
+		question: "Is rbuilder available in multiple languages?",
 		answer:
-			"Yes, Reactive Resume is available in multiple languages. You can choose your preferred language in the settings page, or using the language switcher in the top right corner. If you don't see your language, or you would like to improve the existing translations, you can contribute to the translations on Crowdin.",
+			"Yes, rbuilder is available in multiple languages. You can choose your preferred language in the settings page, or using the language switcher in the top right corner.",
 	},
 	{
-		question: "What makes Reactive Resume different from other resume builders?",
+		question: "What makes rbuilder different from other resume builders?",
 		answer:
-			"Reactive Resume is open-source, privacy-focused, and completely free. Unlike other resume builders, it doesn't show ads, track your data, or limit your features behind a paywall.",
+			"rbuilder is open-source, privacy-focused, and completely free. Unlike other resume builders, it doesn't show ads, track your data, or limit your features behind a paywall.",
 	},
 	{
 		question: "How do I share my resume?",
@@ -106,12 +106,12 @@ function createRootSeoMarkup(canonicalUrl: string) {
 		"@graph": [
 			{
 				"@type": "WebSite",
-				name: "Reactive Resume",
+				name: "rbuilder",
 				url: canonicalUrl,
 			},
 			{
 				"@type": ["SoftwareApplication", "WebApplication"],
-				name: "Reactive Resume",
+				name: "rbuilder",
 				url: canonicalUrl,
 				description: ROOT_DESCRIPTION,
 				applicationCategory: "BusinessApplication",
@@ -126,7 +126,7 @@ function createRootSeoMarkup(canonicalUrl: string) {
 			},
 			{
 				"@type": "Project",
-				name: "Reactive Resume",
+				name: "rbuilder",
 				url: canonicalUrl,
 				sameAs: ["https://github.com/amruthpillai/reactive-resume"],
 			},

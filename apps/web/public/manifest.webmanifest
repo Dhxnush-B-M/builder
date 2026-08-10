@@ -1,7 +1,7 @@
 {
-	"name": "Reactive Resume",
-	"short_name": "Reactive Resume",
-	"description": "A free and open-source resume builder.",
+	"name": "rbuilder",
+	"short_name": "rbuilder",
+	"description": "rbuilder is a free and modern resume builder that simplifies creating professional resumes.",
 	"id": "/?source=pwa",
 	"start_url": "/?source=pwa",
 	"scope": "/",

@@ -172,7 +172,7 @@ export function ImportResumeDialog(_: DialogProps<"resume.import">) {
 				</DialogTitle>
 				<DialogDescription>
 					<Trans>
-						Continue where you left off by importing a JSON resume exported from Reactive Resume or a compatible resume
+						Continue where you left off by importing a JSON resume exported from rbuilder or a compatible resume
 						builder.
 					</Trans>
 				</DialogDescription>
@@ -241,15 +241,15 @@ export function ImportResumeDialog(_: DialogProps<"resume.import">) {
 												{
 													value: "reactive-resume-json",
 													label: t({
-														comment: "Import source option for current Reactive Resume JSON format",
-														message: "Reactive Resume (JSON)",
+														comment: "Import source option for current rbuilder JSON format",
+														message: "rbuilder (JSON)",
 													}),
 												},
 												{
 													value: "reactive-resume-v4-json",
 													label: t({
-														comment: "Import source option for legacy Reactive Resume v4 JSON format",
-														message: "Reactive Resume v4 (JSON)",
+														comment: "Import source option for legacy rbuilder v4 JSON format",
+														message: "rbuilder v4 (JSON)",
 													}),
 												},
 												{
