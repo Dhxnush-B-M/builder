@@ -5,6 +5,7 @@ import { useEffect, useRef } from "react";
 import { useMediaQuery } from "usehooks-ts";
 import { useBuilderResumeUpdateSubscription, useResumeCleanup, useResumeStore } from "@/features/resume/builder/draft";
 import { initializeStylesheetStore, useStylesheetStore } from "@/features/resume/stylesheet/store";
+import { getSession } from "@/libs/auth/session";
 import { orpc } from "@/libs/orpc/client";
 import { createNoindexFollowMeta } from "@/libs/seo";
 import { DesktopBuilderShell } from "./-components/desktop-builder-shell";
@@ -13,11 +14,15 @@ import { getBuilderLayout } from "./-store/sidebar";
 
 export const Route = createFileRoute("/builder/$resumeId")({
 	component: RouteComponent,
-	beforeLoad: ({ context }) => {
-		if (!context.session || context.session.user?.id === "guest-user") {
+	beforeLoad: async ({ context }) => {
+		let session = context.session;
+		if (!session || session.user?.id === "guest-user") {
+			session = await getSession().catch(() => null);
+		}
+		if (!session || session.user?.id === "guest-user") {
 			throw redirect({ to: "/auth/login", replace: true });
 		}
-		return { session: context.session };
+		return { session };
 	},
 	loader: async ({ params, context }) => {
 		const [layout, resume] = await Promise.all([
