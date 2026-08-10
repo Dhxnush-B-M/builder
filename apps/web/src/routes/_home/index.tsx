@@ -9,6 +9,7 @@ import { Sponsors } from "./-sections/sponsors";
 import { Statistics } from "./-sections/statistics";
 import { Templates } from "./-sections/templates";
 import { Testimonials } from "./-sections/testimonials";
+import { Support } from "./-sections/support";
 
 export const Route = createFileRoute("/_home/")({
 	component: RouteComponent,
@@ -40,6 +41,7 @@ function RouteComponent() {
 					<Features />
 					<Templates />
 					<Testimonials />
+					<Support />
 					<Faq />
 					<Prefooter />
 					<Footer />
