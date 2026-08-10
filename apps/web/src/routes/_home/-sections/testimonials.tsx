@@ -1,4 +1,4 @@
-import { ChatTeardropDotsIcon, HeartIcon, PaperPlaneIcon, StarIcon, UserCheckIcon } from "@phosphor-icons/react";
+import { ChatTeardropDotsIcon, HeartIcon, PaperPlaneIcon, StarIcon, UserCheckIcon, XIcon } from "@phosphor-icons/react";
 import { useEffect, useState } from "react";
 
 type FeedbackItem = {
@@ -60,6 +60,7 @@ export function Testimonials() {
 		return initialFeedbacks;
 	});
 
+	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [name, setName] = useState("");
 	const [rating, setRating] = useState(5);
 	const [hoverRating, setHoverRating] = useState(0);
@@ -99,7 +100,10 @@ export function Testimonials() {
 		setDescription("");
 		setIsSubmitted(true);
 
-		setTimeout(() => setIsSubmitted(false), 3000);
+		setTimeout(() => {
+			setIsSubmitted(false);
+			setIsModalOpen(false);
+		}, 1800);
 	};
 
 	const getInitials = (str: string) => {
@@ -162,11 +166,11 @@ export function Testimonials() {
 					</h2>
 
 					<p className="mt-4 max-w-2xl text-base text-muted-foreground leading-relaxed sm:text-lg">
-						Submit your feedback below and watch your review join the live 360° rotating circle animated showcase!
+						Click the button below to submit your review and watch your feedback join the live 360° rotating circle animated showcase!
 					</p>
 				</div>
 
-				{/* ROTATING CIRCLE ANIMATED SHOWCASE */}
+				{/* 360° ROTATING CIRCLE ANIMATED SHOWCASE */}
 				<div className="mt-16 relative flex items-center justify-center min-h-[420px] sm:min-h-[480px]">
 					{/* Orbit Circle Path */}
 					<div className="absolute size-[320px] sm:size-[440px] md:size-[500px] rounded-full border border-dashed border-primary/30 opacity-60" />
@@ -235,94 +239,136 @@ export function Testimonials() {
 					</div>
 				</div>
 
-				{/* INTERACTIVE FEEDBACK FORM */}
-				<div className="mt-20 mx-auto max-w-xl rounded-3xl border border-primary/20 bg-background/80 p-8 shadow-2xl backdrop-blur-xl">
-					<div className="flex items-center gap-3 border-b border-border/60 pb-4">
-						<div className="flex size-10 items-center justify-center rounded-xl bg-primary/20 text-primary">
-							<PaperPlaneIcon weight="fill" className="size-5" />
+				{/* CTA BANNER WITH GIVE FEEDBACK BUTTON */}
+				<div className="mt-16 flex flex-col items-center justify-between gap-6 rounded-3xl border border-primary/20 bg-gradient-to-r from-primary/10 via-purple-600/10 to-indigo-600/10 p-8 text-center sm:flex-row sm:text-left shadow-xl">
+					<div className="flex items-center gap-4">
+						<div className="flex size-14 items-center justify-center rounded-2xl bg-primary/20 text-primary shadow-inner shrink-0">
+							<ChatTeardropDotsIcon weight="fill" className="size-7" />
 						</div>
 						<div>
-							<h3 className="font-bold text-foreground text-lg">Give Your Feedback</h3>
-							<p className="text-muted-foreground text-xs">Fill out your name, rating, and review to join the circle!</p>
+							<h3 className="font-bold text-foreground text-lg">We Value Your Feedback!</h3>
+							<p className="text-muted-foreground text-sm">Click below to submit your review and join the rotating circle showcase.</p>
 						</div>
 					</div>
 
-					{isSubmitted && (
-						<div className="mt-6 flex items-center justify-center rounded-2xl bg-emerald-500/10 p-4 text-emerald-500 border border-emerald-500/30">
-							<UserCheckIcon weight="bold" className="size-5 mr-2" />
-							<span className="font-semibold text-sm">Thank you! Your feedback has joined the rotating circle showcase.</span>
-						</div>
-					)}
-
-					<form onSubmit={handleSubmit} className="mt-6 space-y-5">
-						{/* Name Input */}
-						<div>
-							<label htmlFor="feedback-name" className="block text-xs font-semibold text-foreground">
-								Your Name
-							</label>
-							<input
-								id="feedback-name"
-								type="text"
-								required
-								value={name}
-								onChange={(e) => setName(e.target.value)}
-								placeholder="Enter your name"
-								className="mt-1.5 w-full rounded-xl border border-border bg-muted/40 px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
-							/>
-						</div>
-
-						{/* Star Rating Input */}
-						<div>
-							<label className="block text-xs font-semibold text-foreground">Rating</label>
-							<div className="mt-1.5 flex items-center gap-1">
-								{[1, 2, 3, 4, 5].map((star) => (
-									<button
-										key={star}
-										type="button"
-										onClick={() => setRating(star)}
-										onMouseEnter={() => setHoverRating(star)}
-										onMouseLeave={() => setHoverRating(0)}
-										className="p-1 transition-transform hover:scale-125 focus:outline-none"
-									>
-										<StarIcon
-											weight="fill"
-											className={`size-7 ${
-												star <= (hoverRating || rating) ? "text-amber-400" : "text-muted-foreground/30"
-											}`}
-										/>
-									</button>
-								))}
-								<span className="ml-2 font-bold text-sm text-muted-foreground">{rating} / 5</span>
-							</div>
-						</div>
-
-						{/* Description Input */}
-						<div>
-							<label htmlFor="feedback-description" className="block text-xs font-semibold text-foreground">
-								Feedback / Review
-							</label>
-							<textarea
-								id="feedback-description"
-								required
-								rows={3}
-								value={description}
-								onChange={(e) => setDescription(e.target.value)}
-								placeholder="Share your thoughts about rbuilder..."
-								className="mt-1.5 w-full rounded-xl border border-border bg-muted/40 p-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
-							/>
-						</div>
-
-						{/* Submit Button */}
-						<button
-							type="submit"
-							className="w-full flex h-12 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-primary via-indigo-600 to-purple-600 font-bold text-white text-sm shadow-xl shadow-primary/25 transition-all hover:scale-[1.02] active:scale-[0.98]"
-						>
-							<PaperPlaneIcon weight="fill" className="size-4" />
-							<span>Submit Feedback</span>
-						</button>
-					</form>
+					<button
+						type="button"
+						onClick={() => setIsModalOpen(true)}
+						className="inline-flex h-12 items-center gap-2.5 justify-center rounded-2xl bg-gradient-to-r from-primary via-indigo-600 to-purple-600 px-7 font-bold text-white text-sm shadow-xl shadow-primary/25 transition-transform hover:scale-105 active:scale-95 shrink-0"
+					>
+						<PaperPlaneIcon weight="fill" className="size-4" />
+						<span>Give Feedback</span>
+					</button>
 				</div>
 			</div>
+
+			{/* POPUP MODAL DIALOG (OPENS ON BUTTON CLICK) */}
+			{isModalOpen && (
+				<div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-md animate-in fade-in duration-200">
+					<div className="relative w-full max-w-lg rounded-3xl border border-primary/30 bg-background/95 p-8 shadow-2xl backdrop-blur-2xl animate-in zoom-in-95 duration-200">
+						{/* Close Button */}
+						<button
+							type="button"
+							onClick={() => setIsModalOpen(false)}
+							className="absolute top-5 right-5 rounded-full p-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+						>
+							<XIcon className="size-5" />
+						</button>
+
+						{isSubmitted ? (
+							<div className="flex flex-col items-center py-8 text-center">
+								<div className="flex size-16 items-center justify-center rounded-full bg-emerald-500/20 text-emerald-500 animate-bounce">
+									<UserCheckIcon weight="bold" className="size-8" />
+								</div>
+								<h3 className="mt-4 font-bold text-xl text-foreground">Thank You!</h3>
+								<p className="mt-2 text-muted-foreground text-sm">
+									Your feedback has joined the 360° rotating circle showcase!
+								</p>
+							</div>
+						) : (
+							<div>
+								<div className="flex items-center gap-3 border-b border-border/60 pb-4">
+									<div className="flex size-11 items-center justify-center rounded-2xl bg-primary/20 text-primary shrink-0">
+										<PaperPlaneIcon weight="fill" className="size-6" />
+									</div>
+									<div>
+										<h3 className="font-bold text-foreground text-xl">Give Your Feedback</h3>
+										<p className="text-muted-foreground text-xs">Fill out your name, rating, and review to join the circle!</p>
+									</div>
+								</div>
+
+								<form onSubmit={handleSubmit} className="mt-6 space-y-5">
+									{/* Your Name */}
+									<div>
+										<label htmlFor="modal-name" className="block text-xs font-semibold text-foreground">
+											Your Name
+										</label>
+										<input
+											id="modal-name"
+											type="text"
+											required
+											value={name}
+											onChange={(e) => setName(e.target.value)}
+											placeholder="Enter your name"
+											className="mt-1.5 w-full rounded-xl border border-border bg-muted/40 px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+										/>
+									</div>
+
+									{/* Rating (1-5 Stars) */}
+									<div>
+										<label className="block text-xs font-semibold text-foreground">Rating</label>
+										<div className="mt-1.5 flex items-center gap-1.5">
+											{[1, 2, 3, 4, 5].map((star) => (
+												<button
+													key={star}
+													type="button"
+													onClick={() => setRating(star)}
+													onMouseEnter={() => setHoverRating(star)}
+													onMouseLeave={() => setHoverRating(0)}
+													className="p-1 transition-transform hover:scale-125 focus:outline-none"
+												>
+													<StarIcon
+														weight="fill"
+														className={`size-7 ${
+															star <= (hoverRating || rating) ? "text-amber-400" : "text-muted-foreground/30"
+														}`}
+													/>
+												</button>
+											))}
+											<span className="ml-2 font-bold text-sm text-muted-foreground">{rating} / 5</span>
+										</div>
+									</div>
+
+									{/* Feedback / Review */}
+									<div>
+										<label htmlFor="modal-description" className="block text-xs font-semibold text-foreground">
+											Feedback / Review
+										</label>
+										<textarea
+											id="modal-description"
+											required
+											rows={4}
+											value={description}
+											onChange={(e) => setDescription(e.target.value)}
+											placeholder="Share your thoughts about rbuilder..."
+											className="mt-1.5 w-full rounded-xl border border-border bg-muted/40 p-3.5 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+										/>
+									</div>
+
+									{/* Submit Button */}
+									<button
+										type="submit"
+										className="w-full flex h-12 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-primary via-indigo-600 to-purple-600 font-bold text-white text-sm shadow-xl shadow-primary/25 transition-all hover:scale-[1.02] active:scale-[0.98]"
+									>
+										<PaperPlaneIcon weight="fill" className="size-4" />
+										<span>Submit Feedback</span>
+									</button>
+								</form>
+							</div>
+						)}
+					</div>
+				</div>
+			)}
 		</section>
 	);
 }
