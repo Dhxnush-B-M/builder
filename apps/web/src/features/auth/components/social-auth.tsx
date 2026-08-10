@@ -22,7 +22,9 @@ type SocialSignInOptions = {
 };
 
 function getSocialSignInOptions(provider: string, requestSignUp: boolean): SocialSignInOptions {
-	const options: SocialSignInOptions = { provider, callbackURL: "/dashboard" };
+	const callbackURL =
+		typeof window !== "undefined" ? `${window.location.origin}/dashboard` : "https://builder-az7.pages.dev/dashboard";
+	const options: SocialSignInOptions = { provider, callbackURL };
 	if (requestSignUp) options.requestSignUp = true;
 	return options;
 }
