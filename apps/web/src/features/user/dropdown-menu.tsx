@@ -64,12 +64,30 @@ export function UserDropdownMenu({ children }: Props) {
 		});
 	};
 
-	if (!isClient) return null;
-	if (!session?.user) return null;
+	const activeSession: AuthSession = (session as AuthSession) ?? {
+		user: {
+			id: "guest",
+			name: "Guest User",
+			email: "guest@rbuilder.com",
+			image: null,
+			emailVerified: false,
+			createdAt: new Date(),
+			updatedAt: new Date(),
+			username: "guest",
+		},
+		session: {
+			id: "guest-session",
+			userId: "guest",
+			token: "",
+			expiresAt: new Date(),
+			createdAt: new Date(),
+			updatedAt: new Date(),
+		},
+	};
 
 	return (
 		<DropdownMenu>
-			<DropdownMenuTrigger render={children({ session: session as AuthSession })} />
+			<DropdownMenuTrigger render={children({ session: activeSession })} />
 
 			<DropdownMenuContent align="start" side="top">
 				<DropdownMenuGroup>
