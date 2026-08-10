@@ -14,14 +14,8 @@ import {
 import { createAuthClient } from "better-auth/react";
 
 const getAuthBaseUrl = () => {
-	const apiUrl = import.meta.env.VITE_API_URL;
-	if (apiUrl) {
-		return apiUrl.replace(/\/$/, "");
-	}
-	if (typeof window !== "undefined") {
-		return window.location.origin;
-	}
-	return "http://localhost:3000";
+	const apiUrl = import.meta.env.VITE_API_URL || "https://builder-3.onrender.com";
+	return apiUrl.replace(/\/$/, "");
 };
 
 export const authClient = createAuthClient({
