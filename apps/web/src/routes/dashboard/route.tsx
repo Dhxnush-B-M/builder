@@ -1,9 +1,6 @@
 import { Trans } from "@lingui/react/macro";
-import { useQuery } from "@tanstack/react-query";
-import { createFileRoute, Outlet, redirect, useNavigate, useRouter } from "@tanstack/react-router";
-import { useEffect } from "react";
+import { createFileRoute, Outlet, useRouter } from "@tanstack/react-router";
 import { SidebarProvider } from "@reactive-resume/ui/components/sidebar";
-import { orpc } from "@/libs/orpc/client";
 import { createNoindexFollowMeta } from "@/libs/seo";
 import { getDashboardSidebarState, setDashboardSidebarState } from "./-components/functions";
 import { DashboardSidebar } from "./-components/sidebar";
@@ -24,18 +21,7 @@ export const Route = createFileRoute("/dashboard")({
 
 function RouteComponent() {
 	const router = useRouter();
-	const navigate = useNavigate();
 	const { sidebarState } = Route.useLoaderData();
-	const { data: subscription } = useQuery({
-		...orpc.payment.getStatus.queryOptions(),
-		retry: false,
-	});
-
-	useEffect(() => {
-		if (subscription && !subscription.hasPaid) {
-			void navigate({ to: "/checkout", replace: true });
-		}
-	}, [subscription, navigate]);
 
 	const handleSidebarOpenChange = (open: boolean) => {
 		setDashboardSidebarState(open);
