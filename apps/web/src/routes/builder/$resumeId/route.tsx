@@ -14,6 +14,9 @@ import { getBuilderLayout } from "./-store/sidebar";
 export const Route = createFileRoute("/builder/$resumeId")({
 	component: RouteComponent,
 	beforeLoad: ({ context }) => {
+		if (!context.session || context.session.user?.id === "guest-user") {
+			throw redirect({ to: "/auth/login", replace: true });
+		}
 		return { session: context.session };
 	},
 	loader: async ({ params, context }) => {

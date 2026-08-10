@@ -10,7 +10,5 @@ export const Route = createFileRoute("/auth/login")({
 });
 
 function RouteComponent() {
-	const { flags } = Route.useRouteContext();
-
-	return <LoginPage disableEmailAuth={flags.disableEmailAuth} disableSignups={flags.disableSignups} />;
+	return <LoginPage />;
 }

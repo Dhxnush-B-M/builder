@@ -1,15 +1,11 @@
-import type { RouterOutput } from "@/libs/orpc/client";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
-import { GithubLogoIcon, LinkedinLogoIcon, VaultIcon } from "@phosphor-icons/react";
-import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Skeleton } from "@reactive-resume/ui/components/skeleton";
 import { cn } from "@reactive-resume/utils/style";
 import { authClient } from "@/libs/auth/client";
-import { orpc } from "@/libs/orpc/client";
 
 type SocialAuthProps = {
 	requestSignUp?: boolean;
@@ -53,21 +49,9 @@ function GoogleColorIcon({ className }: { className?: string }) {
 }
 
 export function SocialAuth({ requestSignUp = false }: SocialAuthProps) {
-	const { data: providers = {}, isLoading } = useQuery(orpc.auth.providers.list.queryOptions());
-
 	return (
 		<div className="flex w-full flex-col gap-y-3">
-			<div className="my-1 flex items-center gap-x-2">
-				<hr className="flex-1 border-border/60" />
-				<span className="font-medium text-muted-foreground text-xs uppercase tracking-wide">
-					<Trans context="Choose to authenticate with a social provider (Google, GitHub, etc.)">
-						Sign in with OAuth
-					</Trans>
-				</span>
-				<hr className="flex-1 border-border/60" />
-			</div>
-
-			{isLoading ? <SocialAuthSkeleton /> : <SocialAuthButtons providers={providers} requestSignUp={requestSignUp} />}
+			<SocialAuthButtons requestSignUp={requestSignUp} />
 		</div>
 	);
 }
@@ -81,15 +65,14 @@ function SocialAuthSkeleton() {
 }
 
 type SocialAuthButtonsProps = {
-	providers: RouterOutput["auth"]["providers"]["list"];
 	requestSignUp: boolean;
 };
 
-function SocialAuthButtons({ providers, requestSignUp }: SocialAuthButtonsProps) {
+function SocialAuthButtons({ requestSignUp }: SocialAuthButtonsProps) {
 	const router = useRouter();
 
 	const runSignIn = async (fn: () => Promise<{ error: { message?: string } | null }>) => {
-		const toastId = toast.loading(t`Signing in...`);
+		const toastId = toast.loading(t`Signing in with Google...`);
 		try {
 			const { error } = await fn();
 			if (error) {
@@ -139,56 +122,6 @@ function SocialAuthButtons({ providers, requestSignUp }: SocialAuthButtonsProps)
 					)}
 				</span>
 			</Button>
-
-			{/* Secondary social & auth providers */}
-			{("github" in providers || "linkedin" in providers || "custom" in providers) && (
-				<div className="grid grid-cols-2 gap-2.5 pt-1">
-					{"github" in providers && (
-						<Button
-							variant="secondary"
-							size="sm"
-							onClick={() => runSignIn(() => authClient.signIn.social(getSocialSignInOptions("github", requestSignUp)))}
-							className="h-9 justify-center gap-2 rounded-lg"
-						>
-							<GithubLogoIcon className="size-4" />
-							<span>GitHub</span>
-						</Button>
-					)}
-
-					{"linkedin" in providers && (
-						<Button
-							variant="secondary"
-							size="sm"
-							onClick={() =>
-								runSignIn(() => authClient.signIn.social(getSocialSignInOptions("linkedin", requestSignUp)))
-							}
-							className="h-9 justify-center gap-2 rounded-lg"
-						>
-							<LinkedinLogoIcon className="size-4" />
-							<span>LinkedIn</span>
-						</Button>
-					)}
-
-					{"custom" in providers && (
-						<Button
-							variant="secondary"
-							size="sm"
-							onClick={() =>
-								runSignIn(() =>
-									authClient.signIn.oauth2({
-										providerId: "custom",
-										callbackURL: "/dashboard",
-									}),
-								)
-							}
-							className="h-9 justify-center gap-2 rounded-lg"
-						>
-							<VaultIcon className="size-4" />
-							<span>{providers.custom}</span>
-						</Button>
-					)}
-				</div>
-			)}
 		</div>
 	);
 }
