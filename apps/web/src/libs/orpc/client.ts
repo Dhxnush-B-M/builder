@@ -6,7 +6,10 @@ import { BatchLinkPlugin } from "@orpc/client/plugins";
 import { createTanstackQueryUtils } from "@orpc/tanstack-query";
 
 const getRpcUrl = () => {
-	const apiUrl = import.meta.env.VITE_API_URL || "https://builder-3.onrender.com";
+	let apiUrl = import.meta.env.VITE_API_URL || "https://builder-3.onrender.com";
+	if (typeof window !== "undefined" && window.location.hostname !== "localhost" && apiUrl.includes("localhost")) {
+		apiUrl = "https://builder-3.onrender.com";
+	}
 	return `${apiUrl.replace(/\/$/, "")}/api/rpc`;
 };
 
