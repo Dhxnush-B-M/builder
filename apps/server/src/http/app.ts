@@ -43,25 +43,7 @@ export function createApp() {
 			origin: (origin) => origin || "https://builder-az7.pages.dev",
 			credentials: true,
 			allowMethods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-			allowHeaders: (_, c) => {
-				const reqHeaders = c.req.header("Access-Control-Request-Headers");
-				if (reqHeaders) {
-					return reqHeaders.split(",").map((h) => h.trim());
-				}
-				return [
-					"Content-Type",
-					"Authorization",
-					"x-orpc-batch",
-					"x-orpc-streaming",
-					"x-orpc-serializer",
-					"Accept",
-					"Origin",
-					"x-better-auth-client",
-					"x-requested-with",
-					"cookie",
-					"set-cookie",
-				];
-			},
+			allowHeaders: (header) => (header ? header.split(",").map((h) => h.trim()) : ["*"]),
 			exposeHeaders: ["Content-Length", "Content-Type", "Set-Cookie"],
 			maxAge: 86400,
 		}),
