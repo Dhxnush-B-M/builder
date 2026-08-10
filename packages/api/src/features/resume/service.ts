@@ -5,13 +5,12 @@ import type { Locale } from "@reactive-resume/utils/locale";
 import type { ResumeUpdatedEvent } from "./events";
 import { ORPCError } from "@orpc/client";
 import { compare, hash } from "bcrypt";
-import { and, arrayContains, asc, desc, eq, gte, isNotNull, notInArray, sql } from "drizzle-orm";
+import { and, arrayContains, asc, desc, eq, gte, isNotNull, notInArray, or, sql } from "drizzle-orm";
 import { get } from "es-toolkit/compat";
 import { match } from "ts-pattern";
 import { db } from "@reactive-resume/db/client";
 import * as schema from "@reactive-resume/db/schema";
 import { applyResumePatches, ResumePatchError } from "@reactive-resume/resume/patch";
-import { defaultResumeData } from "@reactive-resume/schema/resume/default";
 import { generateId } from "@reactive-resume/utils/string";
 import { getStorageService } from "../storage/service";
 import { grantResumeAccess, hasResumeAccess } from "./access";
@@ -577,7 +576,18 @@ export const resumeService = {
 			})
 			.from(schema.resume)
 			.innerJoin(schema.user, eq(schema.resume.userId, schema.user.id))
-			.where(and(eq(schema.resume.slug, input.slug), eq(schema.user.username, input.username)));
+			.where(
+				and(
+					eq(schema.resume.slug, input.slug),
+					or(
+						eq(schema.user.username, input.username),
+						eq(schema.user.displayUsername, input.username),
+						eq(sql`lower(${schema.user.username})`, input.username.toLowerCase()),
+						eq(sql`lower(${schema.user.displayUsername})`, input.username.toLowerCase()),
+						eq(schema.user.id, input.username),
+					),
+				),
+			);
 
 		if (!resume) throw new ORPCError("NOT_FOUND");
 
@@ -608,15 +618,15 @@ export const resumeService = {
 
 	create: async (input: {
 		id?: string;
-		userId: string;
 		name: string;
 		slug: string;
 		tags: string[];
+		data: ResumeData;
 		locale: Locale;
-		data?: ResumeData;
+		userId: string;
 	}) => {
 		const id = input.id ?? generateId();
-		const data = parseWritableResumeData(structuredClone(input.data ?? defaultResumeData));
+		const data = structuredClone(input.data);
 		data.metadata.page.locale = input.locale;
 
 		try {
@@ -627,6 +637,7 @@ export const resumeService = {
 				tags: input.tags,
 				userId: input.userId,
 				data,
+				isPublic: true,
 			});
 
 			await notifyResumeUpdated({

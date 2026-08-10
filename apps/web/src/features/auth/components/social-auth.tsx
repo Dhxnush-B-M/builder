@@ -1,5 +1,4 @@
 import { t } from "@lingui/core/macro";
-import { Trans } from "@lingui/react/macro";
 import { useRouter } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { Button } from "@reactive-resume/ui/components/button";

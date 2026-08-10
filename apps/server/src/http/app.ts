@@ -64,7 +64,7 @@ export function createApp() {
 			origin: (origin) => origin || "https://builder-az7.pages.dev",
 			credentials: true,
 			allowMethods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-			allowHeaders: (header) => (header ? header.split(",").map((h) => h.trim()) : ["*"]),
+			allowHeaders: ["Content-Type", "Authorization", "Cookie", "x-api-key", "x-requested-with"],
 			exposeHeaders: ["Content-Length", "Content-Type", "Set-Cookie"],
 			maxAge: 86400,
 		}),

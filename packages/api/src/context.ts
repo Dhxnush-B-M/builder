@@ -91,42 +91,6 @@ export const publicProcedure = base.use(async ({ context, next }) => {
 	});
 });
 
-async function getOrCreateGuestUser(): Promise<User> {
-	try {
-		const [existingUser] = await db.select().from(user).where(eq(user.id, "guest-user")).limit(1);
-		if (existingUser) return existingUser as User;
-
-		const [newUser] = await db
-			.insert(user)
-			.values({
-				id: "guest-user",
-				name: "Guest User",
-				email: "guest@rbuilder.com",
-				username: "guest",
-				displayUsername: "guest",
-				emailVerified: true,
-			})
-			.onConflictDoNothing()
-			.returning();
-
-		if (newUser) return newUser as User;
-
-		const [retryUser] = await db.select().from(user).where(eq(user.id, "guest-user")).limit(1);
-		if (retryUser) return retryUser as User;
-	} catch (error) {
-		console.warn("Failed to get or create guest user:", error);
-	}
-
-	return {
-		id: "guest-user",
-		name: "Guest User",
-		email: "guest@rbuilder.com",
-		emailVerified: true,
-		createdAt: new Date(),
-		updatedAt: new Date(),
-	} as User;
-}
-
 export const protectedProcedure = publicProcedure.use(async ({ context, next }) => {
 	if (!context.user) {
 		throw new ORPCError("UNAUTHORIZED", { message: "You must be signed in to perform this action." });
