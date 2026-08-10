@@ -343,8 +343,8 @@ const ResumeForm = withForm({
 	defaultValues,
 	render: function ResumeFormRenderer({ form }) {
 		const { data: session } = authClient.useSession();
-
-		const slugPrefix = `${window.location.origin}/${session?.user.username ?? ""}/`;
+		const username = session?.user?.username;
+		const slugPrefix = `${window.location.origin}/${username ? `${username}/` : ""}`;
 
 		const onGenerateName = () => {
 			form.setFieldValue("name", generateRandomName());
