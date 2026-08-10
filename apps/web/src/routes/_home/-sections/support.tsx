@@ -148,7 +148,7 @@ export function Support() {
 						<div>
 							<div className="flex items-center justify-between">
 								<div className="flex size-14 items-center justify-center rounded-2xl bg-primary/20 text-primary shadow-inner">
-									<SparklesIcon weight="fill" className="size-7 animate-pulse" />
+									<SparkleIcon weight="fill" className="size-7 animate-pulse" />
 								</div>
 								<span className="inline-flex items-center gap-1.5 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 font-bold text-[11px] text-primary">
 									Full Assistance
