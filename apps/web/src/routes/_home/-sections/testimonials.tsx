@@ -1,334 +1,181 @@
 import { Trans } from "@lingui/react/macro";
-import { CheckCircleIcon, PaperPlaneTiltIcon, QuotesIcon, SparkleIcon, StarIcon } from "@phosphor-icons/react";
-import { m } from "motion/react";
-import { useEffect, useState } from "react";
-import { Button } from "@reactive-resume/ui/components/button";
-
-const LOCAL_STORAGE_KEY = "rbuilder_user_testimonials";
+import { ChatTeardropDotsIcon, HeartIcon, StarIcon, UserCheckIcon } from "@phosphor-icons/react";
 
 type Testimonial = {
 	id: string;
 	name: string;
 	role: string;
+	company: string;
+	avatar: string;
+	initials: string;
+	gradient: string;
 	content: string;
-	stars: number;
+	rating: number;
 };
 
-const initialTestimonials: Testimonial[] = [
+const testimonials: Testimonial[] = [
 	{
-		id: "t1",
+		id: "1",
 		name: "Alex Rivera",
-		role: "Senior Frontend Engineer",
+		role: "Senior Software Engineer",
+		company: "Tech Corp",
+		avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
+		initials: "AR",
+		gradient: "from-blue-500 to-indigo-600",
 		content:
-			"rbuilder is by far the cleanest and most intuitive resume builder I've ever used. The live preview and ATS-friendly layouts helped me land interviews at top tech companies!",
-		stars: 5,
+			"rbuilder completely changed how I present my experience. The real-time preview and ATS-friendly templates landed me interviews at top tech companies within a week!",
+		rating: 5,
 	},
 	{
-		id: "t2",
-		name: "Sarah Chen",
-		role: "Product Manager",
+		id: "2",
+		name: "Sophia Chen",
+		role: "Product Designer",
+		company: "Creative Studio",
+		avatar: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=150&auto=format&fit=crop&q=80",
+		initials: "SC",
+		gradient: "from-purple-500 to-pink-600",
 		content:
-			"The speed and customization options in rbuilder are incredible. I tailored 3 different resumes for target roles in under 15 minutes. Highly recommend!",
-		stars: 5,
+			"The typography and design precision are top tier. I created three variations of my resume in minutes. Absolutely flawless experience!",
+		rating: 5,
 	},
 	{
-		id: "t3",
-		name: "Michael Vance",
-		role: "Data Scientist",
+		id: "3",
+		name: "Marcus Vance",
+		role: "Data Analyst",
+		company: "Analytics Co",
+		avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80",
+		initials: "MV",
+		gradient: "from-emerald-500 to-teal-600",
 		content:
-			"I love that rbuilder gives total data privacy without annoying paywalls. The high-resolution PDF exports look crisp and modern.",
-		stars: 5,
-	},
-	{
-		id: "t4",
-		name: "Elena Rostova",
-		role: "UX/UI Designer",
-		content:
-			"The design control in rbuilder is unmatched. Font pairs, custom spacing, section layouts—everything is fluid and easy to tweak.",
-		stars: 5,
-	},
-	{
-		id: "t5",
-		name: "David Kowalski",
-		role: "Full Stack Developer",
-		content:
-			"Imported my existing resume data, applied a fresh template, and had a job-winning CV ready instantly. Absolutely balance tool!",
-		stars: 5,
-	},
-	{
-		id: "t6",
-		name: "Jessica Taylor",
-		role: "Marketing Lead",
-		content:
-			"The 24/7 support and real-time live preview made resume building completely stress-free. Saved me hours of formatting headaches.",
-		stars: 5,
+			"Fast, privacy-focused, and completely free! No hidden paywalls when exporting to PDF. rbuilder is hands down the best resume builder available.",
+		rating: 5,
 	},
 ];
 
-function getInitials(name: string) {
-	return name
-		.split(" ")
-		.map((part) => part[0])
-		.join("")
-		.toUpperCase()
-		.slice(0, 2);
-}
-
 export function Testimonials() {
-	const [list, setList] = useState<Testimonial[]>(initialTestimonials);
-	const [isPaused, setIsPaused] = useState(false);
-
-	// Form State
-	const [showForm, setShowForm] = useState(false);
-	const [name, setName] = useState("");
-	const [role, setRole] = useState("");
-	const [content, setContent] = useState("");
-	const [stars, setStars] = useState(5);
-	const [isSubmitted, setIsSubmitted] = useState(false);
-
-	// Load custom feedback from localStorage on mount
-	useEffect(() => {
-		try {
-			const saved = localStorage.getItem(LOCAL_STORAGE_KEY);
-			if (saved) {
-				const parsed = JSON.parse(saved) as Testimonial[];
-				if (Array.isArray(parsed) && parsed.length > 0) {
-					setList([...parsed, ...initialTestimonials]);
-				}
-			}
-		} catch (e) {
-			console.error("Failed to load user testimonials", e);
-		}
-	}, []);
-
-	// Handle New Feedback Submission
-	const handleSubmit = (e: React.FormEvent) => {
-		e.preventDefault();
-		if (!name.trim() || !content.trim()) return;
-
-		const newFeedback: Testimonial = {
-			id: `user-${Date.now()}`,
-			name: name.trim(),
-			role: role.trim() || "Verified User",
-			content: content.trim(),
-			stars,
-		};
-
-		const updatedList = [newFeedback, ...list];
-		setList(updatedList);
-
-		// Save custom feedback
-		try {
-			const customOnly = updatedList.filter((item) => item.id.startsWith("user-"));
-			localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(customOnly));
-		} catch (err) {
-			console.error("Failed to save feedback", err);
-		}
-
-		setIsSubmitted(true);
-		setTimeout(() => {
-			setIsSubmitted(false);
-			setShowForm(false);
-			setName("");
-			setRole("");
-			setContent("");
-			setStars(5);
-		}, 2000);
-	};
-
 	return (
-		<section id="testimonials" className="relative overflow-hidden border-border/40 border-t py-16 md:py-24">
-			{/* Header */}
-			<m.div
-				className="container mx-auto space-y-4 px-4 text-center will-change-[transform,opacity]"
-				initial={{ opacity: 0, y: 20 }}
-				whileInView={{ opacity: 1, y: 0 }}
-				viewport={{ once: true }}
-				transition={{ duration: 0.45 }}
+		<section className="relative overflow-hidden px-6 py-24 md:py-32">
+			{/* Ambient background glow */}
+			<div
+				aria-hidden="true"
+				className="pointer-events-none absolute inset-0 flex items-center justify-center opacity-30"
 			>
-				<h2 className="bg-gradient-to-r from-foreground via-primary to-indigo-500 bg-clip-text font-extrabold text-3xl text-transparent tracking-tight sm:text-4xl md:text-5xl">
-					<Trans>What Users Say About rbuilder</Trans>
-				</h2>
+				<div className="size-[500px] animate-pulse rounded-full bg-gradient-to-tr from-primary/30 via-purple-600/20 to-blue-600/30 blur-3xl" />
+			</div>
 
-				<p className="mx-auto max-w-2xl text-base text-muted-foreground leading-relaxed md:text-lg">
-					<Trans>
-						Explore real feedback in our rotating 3D orbit showcase or share your own experience with rbuilder below.
-					</Trans>
-				</p>
+			<div className="relative mx-auto max-w-6xl">
+				{/* Section Header */}
+				<div className="flex flex-col items-center text-center">
+					<div className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-4 py-1.5 font-medium text-xs text-primary shadow-inner">
+						<HeartIcon weight="fill" className="size-4 animate-bounce text-red-500" />
+						<Trans>User Feedback & Reviews</Trans>
+					</div>
 
-				{/* Action Buttons */}
-				<div className="flex justify-center gap-4 pt-2">
-					<Button onClick={() => setShowForm(!showForm)} className="gap-2 px-6 py-5 font-semibold text-sm shadow-md">
-						<SparkleIcon className="size-4" weight="fill" />
-						{showForm ? <Trans>Close Feedback Form</Trans> : <Trans>Share Your Feedback</Trans>}
-					</Button>
+					<h2 className="mt-6 max-w-3xl font-extrabold text-3xl tracking-tight sm:text-4xl md:text-5xl">
+						<Trans>Loved by Job Seekers Worldwide</Trans>
+					</h2>
+
+					<p className="mt-4 max-w-2xl text-base text-muted-foreground leading-relaxed sm:text-lg">
+						<Trans>
+							See how rbuilder empowers professionals to build standout, ATS-compliant resumes and land their dream jobs.
+						</Trans>
+					</p>
 				</div>
-			</m.div>
 
-			{/* Interactive Feedback Form Modal/Card */}
-			{showForm && (
-				<m.div
-					className="container mx-auto mt-8 max-w-lg px-4"
-					initial={{ opacity: 0, scale: 0.95 }}
-					animate={{ opacity: 1, scale: 1 }}
-					exit={{ opacity: 0, scale: 0.95 }}
-				>
-					<div className="rounded-2xl border border-primary/30 bg-card p-6 shadow-2xl backdrop-blur-md">
-						{isSubmitted ? (
-							<div className="flex flex-col items-center justify-center space-y-3 py-8 text-center">
-								<CheckCircleIcon className="size-14 animate-bounce text-emerald-500" weight="fill" />
-								<h3 className="font-bold text-foreground text-xl">Thank You for Your Feedback!</h3>
-								<p className="text-muted-foreground text-sm">
-									Your feedback has been added directly to the circular rotating showcase!
+				{/* Animated Circle Highlights Showcase */}
+				<div className="mt-16 flex flex-wrap items-center justify-center gap-6 sm:gap-10">
+					{testimonials.map((t, idx) => (
+						<div key={t.id} className="group relative flex flex-col items-center">
+							{/* Rotating Animated Gradient Ring */}
+							<div className="relative flex size-20 items-center justify-center transition-transform duration-300 group-hover:scale-110 sm:size-24">
+								<div className="absolute inset-0 animate-spin-slow rounded-full bg-gradient-to-r from-primary via-indigo-500 to-purple-600 p-[3px] shadow-lg shadow-primary/20 transition-all duration-500 group-hover:shadow-primary/40 group-hover:p-[4px]">
+									<div className="size-full rounded-full bg-background" />
+								</div>
+
+								{/* Circular Avatar */}
+								<div className="relative z-10 flex size-[70px] items-center justify-center overflow-hidden rounded-full bg-muted shadow-inner sm:size-[84px]">
+									<img
+										src={t.avatar}
+										alt={t.name}
+										className="size-full object-cover transition-transform duration-500 group-hover:scale-110"
+										loading="lazy"
+									/>
+								</div>
+
+								{/* Floating Checkmark Circle Badge */}
+								<div className="absolute -bottom-1 -right-1 z-20 flex size-7 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-md ring-2 ring-background transition-transform group-hover:scale-125">
+									<UserCheckIcon weight="bold" className="size-4" />
+								</div>
+							</div>
+
+							<span className="mt-3 font-bold text-foreground text-sm tracking-tight">{t.name}</span>
+							<span className="text-xs text-muted-foreground">{t.role}</span>
+						</div>
+					))}
+				</div>
+
+				{/* Testimonial Cards Grid */}
+				<div className="mt-16 grid gap-8 md:grid-cols-3">
+					{testimonials.map((item) => (
+						<div
+							key={item.id}
+							className="group relative flex flex-col justify-between rounded-3xl border border-border/80 bg-background/60 p-8 backdrop-blur-xl transition-all duration-300 hover:-translate-y-2 hover:border-primary/50 hover:shadow-2xl hover:shadow-primary/10"
+						>
+							{/* Top Accent Line */}
+							<div className="absolute top-0 right-8 left-8 h-[2px] rounded-full bg-gradient-to-r from-transparent via-primary/40 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+
+							<div>
+								{/* Star Rating */}
+								<div className="flex items-center gap-1 text-amber-400">
+									{Array.from({ length: item.rating }).map((_, i) => (
+										// biome-ignore lint/suspicious/noArrayIndexKey: fixed array length
+										<StarIcon key={i} weight="fill" className="size-5" />
+									))}
+								</div>
+
+								{/* Quote Content */}
+								<p className="mt-6 text-foreground/90 text-sm leading-relaxed italic sm:text-base">
+									"{item.content}"
 								</p>
 							</div>
-						) : (
-							<form onSubmit={handleSubmit} className="space-y-4">
-								<h3 className="flex items-center gap-2 font-bold text-foreground text-lg">
-									<PaperPlaneTiltIcon className="size-5 text-primary" weight="fill" />
-									Submit Your Feedback
-								</h3>
 
-								<div className="space-y-1">
-									<label htmlFor="fb-name" className="font-semibold text-muted-foreground text-xs">
-										Your Name *
-									</label>
-									<input
-										id="fb-name"
-										required
-										value={name}
-										onChange={(e) => setName(e.target.value)}
-										placeholder="e.g. John Doe"
-										className="w-full rounded-lg border border-border bg-background px-3 py-2 text-foreground text-sm focus:border-primary focus:outline-none"
-									/>
+							{/* Author Info */}
+							<div className="mt-8 flex items-center gap-4 border-border/50 border-t pt-6">
+								<div className="relative flex size-12 shrink-0 items-center justify-center overflow-hidden rounded-full ring-2 ring-primary/30">
+									<img src={item.avatar} alt={item.name} className="size-full object-cover" loading="lazy" />
 								</div>
 
-								<div className="space-y-1">
-									<label htmlFor="fb-role" className="font-semibold text-muted-foreground text-xs">
-										Role / Job Title
-									</label>
-									<input
-										id="fb-role"
-										value={role}
-										onChange={(e) => setRole(e.target.value)}
-										placeholder="e.g. Software Engineer"
-										className="w-full rounded-lg border border-border bg-background px-3 py-2 text-foreground text-sm focus:border-primary focus:outline-none"
-									/>
+								<div>
+									<h4 className="font-bold text-foreground text-sm">{item.name}</h4>
+									<p className="text-xs text-muted-foreground">
+										{item.role} • <span className="font-medium text-primary">{item.company}</span>
+									</p>
 								</div>
-
-								<div className="space-y-1">
-									<span className="font-semibold text-muted-foreground text-xs">Rating</span>
-									<div className="flex items-center gap-1.5 pt-1">
-										{[1, 2, 3, 4, 5].map((star) => (
-											<button
-												key={star}
-												type="button"
-												onClick={() => setStars(star)}
-												className="text-amber-400 transition-transform hover:scale-125 focus:outline-none"
-											>
-												<StarIcon size={22} weight={star <= stars ? "fill" : "regular"} />
-											</button>
-										))}
-									</div>
-								</div>
-
-								<div className="space-y-1">
-									<label htmlFor="fb-content" className="font-semibold text-muted-foreground text-xs">
-										Your Feedback *
-									</label>
-									<textarea
-										id="fb-content"
-										required
-										rows={3}
-										value={content}
-										onChange={(e) => setContent(e.target.value)}
-										placeholder="Share your experience building resumes with rbuilder..."
-										className="w-full resize-none rounded-lg border border-border bg-background px-3 py-2 text-foreground text-sm focus:border-primary focus:outline-none"
-									/>
-								</div>
-
-								<Button type="submit" className="w-full gap-2 py-2.5 font-bold">
-									<PaperPlaneTiltIcon size={18} />
-									Publish Feedback to Circle Animation
-								</Button>
-							</form>
-						)}
-					</div>
-				</m.div>
-			)}
-
-			{/* 3D Circular Rotating Feedback Stage */}
-			<section
-				aria-label="Testimonial Stage"
-				className="relative mt-12 flex h-[480px] w-full items-center justify-center overflow-hidden md:h-[540px]"
-				onMouseEnter={() => setIsPaused(true)}
-				onMouseLeave={() => setIsPaused(false)}
-			>
-				<div className="relative flex size-full items-center justify-center [perspective:1200px]">
-					{/* 3D Rotating Orbit Ring */}
-					<m.div
-						className="relative flex size-full items-center justify-center [transform-style:preserve-3d]"
-						animate={{ rotateY: isPaused ? undefined : [0, 360] }}
-						transition={{
-							rotateY: {
-								duration: 36,
-								repeat: Number.POSITIVE_INFINITY,
-								ease: "linear",
-							},
-						}}
-					>
-						{list.map((item, index) => {
-							const total = list.length;
-							const angle = (360 / total) * index;
-
-							return (
-								<div
-									key={item.id}
-									className="absolute flex items-center justify-center transition-transform duration-300"
-									style={{
-										transform: `rotateY(${angle}deg) translateZ(420px)`,
-									}}
-								>
-									<m.div
-										className="group relative w-64 rounded-2xl border border-border/80 bg-card/95 p-6 shadow-2xl backdrop-blur-md transition-all duration-300 hover:scale-110 hover:border-primary/80 sm:w-72 md:w-80"
-										whileHover={{ y: -8 }}
-									>
-										<QuotesIcon
-											weight="fill"
-											className="absolute right-3 bottom-3 size-16 text-primary/10 transition-transform group-hover:scale-125"
-										/>
-
-										<div className="relative space-y-3">
-											{/* Rating Stars */}
-											<div className="flex items-center gap-1 text-amber-400">
-												{Array.from({ length: item.stars }).map((_, i) => (
-													<StarIcon key={`star-${item.id}-${i}`} size={16} weight="fill" />
-												))}
-											</div>
-
-											{/* Feedback Content */}
-											<p className="line-clamp-4 text-muted-foreground text-xs leading-relaxed md:text-sm">
-												"{item.content}"
-											</p>
-										</div>
-
-										{/* User Meta */}
-										<div className="relative mt-4 flex items-center gap-3 border-border/40 border-t pt-3">
-											<div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-tr from-primary to-indigo-600 font-bold text-white text-xs shadow-md">
-												{getInitials(item.name)}
-											</div>
-											<div className="overflow-hidden">
-												<h3 className="truncate font-bold text-foreground text-xs md:text-sm">{item.name}</h3>
-												<p className="truncate text-[11px] text-muted-foreground">{item.role}</p>
-											</div>
-										</div>
-									</m.div>
-								</div>
-							);
-						})}
-					</m.div>
+							</div>
+						</div>
+					))}
 				</div>
-			</section>
+
+				{/* Interactive Call to Action Banner */}
+				<div className="mt-16 flex flex-col items-center justify-between gap-6 rounded-3xl border border-primary/20 bg-gradient-to-r from-primary/10 via-purple-600/10 to-indigo-600/10 p-8 text-center sm:flex-row sm:text-left">
+					<div className="flex items-center gap-4">
+						<div className="flex size-14 items-center justify-center rounded-2xl bg-primary/20 text-primary shadow-inner">
+							<ChatTeardropDotsIcon weight="fill" className="size-7" />
+						</div>
+						<div>
+							<h3 className="font-bold text-foreground text-lg">Have feedback or suggestions?</h3>
+							<p className="text-muted-foreground text-sm">We'd love to hear how rbuilder helps your career path!</p>
+						</div>
+					</div>
+
+					<a
+						href="mailto:support@rbuilder.com"
+						className="inline-flex h-11 items-center justify-center rounded-xl bg-primary px-6 font-semibold text-primary-foreground text-sm shadow-lg transition-transform hover:scale-105 active:scale-95"
+					>
+						<Trans>Share Feedback</Trans>
+					</a>
+				</div>
+			</div>
 		</section>
 	);
 }
