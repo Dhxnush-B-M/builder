@@ -150,21 +150,24 @@ export function DashboardSidebar() {
 				<SidebarMenu>
 					<SidebarMenuItem>
 						<UserDropdownMenu>
-							{({ session }) => (
-								<SidebarMenuButton className="h-auto gap-x-3 group-data-[collapsible=icon]:p-1!">
-									<Avatar className="size-8 shrink-0 transition-all group-data-[collapsible=icon]:size-6">
-										<AvatarImage src={session.user.image ?? undefined} />
-										<AvatarFallback className="group-data-[collapsible=icon]:text-[0.5rem]">
-											{getInitials(session.user.name)}
-										</AvatarFallback>
-									</Avatar>
+							{({ session }) => {
+								const user = session?.user ?? { name: "Guest User", email: "guest@rbuilder.com", image: null };
+								return (
+									<SidebarMenuButton className="h-auto gap-x-3 group-data-[collapsible=icon]:p-1!">
+										<Avatar className="size-8 shrink-0 transition-all group-data-[collapsible=icon]:size-6">
+											<AvatarImage src={user.image ?? undefined} />
+											<AvatarFallback className="group-data-[collapsible=icon]:text-[0.5rem]">
+												{getInitials(user.name)}
+											</AvatarFallback>
+										</Avatar>
 
-									<div className="transition-[margin,opacity] duration-200 ease-in-out group-data-[collapsible=icon]:-ms-8 group-data-[collapsible=icon]:opacity-0">
-										<p className="font-medium">{session.user.name}</p>
-										<p className="text-muted-foreground text-xs">{session.user.email}</p>
-									</div>
-								</SidebarMenuButton>
-							)}
+										<div className="transition-[margin,opacity] duration-200 ease-in-out group-data-[collapsible=icon]:-ms-8 group-data-[collapsible=icon]:opacity-0">
+											<p className="font-medium">{user.name}</p>
+											<p className="text-muted-foreground text-xs">{user.email}</p>
+										</div>
+									</SidebarMenuButton>
+								);
+							}}
 						</UserDropdownMenu>
 					</SidebarMenuItem>
 				</SidebarMenu>

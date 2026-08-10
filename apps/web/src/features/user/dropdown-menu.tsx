@@ -64,7 +64,9 @@ export function UserDropdownMenu({ children }: Props) {
 		});
 	};
 
-	const activeSession: AuthSession = (session as AuthSession) ?? {
+	const activeSession: AuthSession = session?.user
+		? (session as AuthSession)
+		: {
 		user: {
 			id: "guest",
 			name: "Guest User",
