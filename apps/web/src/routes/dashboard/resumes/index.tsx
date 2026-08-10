@@ -28,12 +28,14 @@ import { ListView } from "./-components/list-view";
 
 type SortOption = "lastUpdatedAt" | "createdAt" | "name";
 
-const searchSchema = z.object({
-	search: z.string().default(""),
-	tags: z.array(z.string()).default([]),
-	sort: z.enum(["lastUpdatedAt", "createdAt", "name"]).default("lastUpdatedAt"),
-	view: z.enum(["grid", "list"]).default("grid"),
-});
+const searchSchema = z
+	.object({
+		search: z.string().default(""),
+		tags: z.array(z.string()).default([]),
+		sort: z.enum(["lastUpdatedAt", "createdAt", "name"]).default("lastUpdatedAt"),
+		view: z.enum(["grid", "list"]).default("grid"),
+	})
+	.passthrough();
 
 type Search = z.output<typeof searchSchema>;
 
