@@ -20,12 +20,6 @@ export const client: RouterClient<typeof router> = createORPCClient(
 	new RPCLink({
 		url: getRpcUrl(),
 		fetch: (request, init) => fetch(request, { ...init, credentials: "include" }),
-		plugins: [
-			new BatchLinkPlugin({
-				mode: "streaming",
-				groups: [{ condition: () => true, context: {} }],
-			}),
-		],
 		interceptors: [
 			onError((error) => {
 				if (error instanceof DOMException && error.name === "AbortError") return;
