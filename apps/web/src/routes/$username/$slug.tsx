@@ -11,11 +11,30 @@ export const Route = createFileRoute("/$username/$slug")({
 	component: lazyRouteComponent(() => import("@/features/resume/public/public-resume"), "PublicResumeRoute"),
 	loader: async ({ context, params }) => {
 		const { username, slug } = params;
-		const resume = await context.queryClient.ensureQueryData(
-			orpc.resume.getBySlug.queryOptions({ input: { username, slug } }),
-		);
+		const reserved = ["auth", "api", "dashboard", "builder", "templates", "assets"];
+		if (!username || !slug || reserved.includes(username.toLowerCase())) {
+			throw notFound();
+		}
 
-		return { resume: resume as LoaderData };
+		try {
+			const resume = await context.queryClient.ensureQueryData(
+				orpc.resume.getBySlug.queryOptions({ input: { username, slug } }),
+			);
+
+			return { resume: resume as LoaderData };
+		} catch (error) {
+			if (error instanceof ORPCError && error.code === "NEED_PASSWORD") {
+				const data = error.data as { username?: string; slug?: string } | undefined;
+				if (data?.username && data?.slug) {
+					throw redirect({
+						to: "/auth/resume-password",
+						search: { redirect: `/${data.username}/${data.slug}` },
+					});
+				}
+			}
+
+			throw notFound();
+		}
 	},
 	head: ({ loaderData, params }) => {
 		const resume = loaderData?.resume;
@@ -45,21 +64,5 @@ export const Route = createFileRoute("/$username/$slug")({
 			],
 			links: [{ rel: "canonical", href: canonicalUrl }],
 		};
-	},
-	onError: (error) => {
-		if (error instanceof ORPCError && error.code === "NEED_PASSWORD") {
-			const data = error.data as { username?: string; slug?: string } | undefined;
-			const username = data?.username;
-			const slug = data?.slug;
-
-			if (username && slug) {
-				throw redirect({
-					to: "/auth/resume-password",
-					search: { redirect: `/${username}/${slug}` },
-				});
-			}
-		}
-
-		throw notFound();
 	},
 });
