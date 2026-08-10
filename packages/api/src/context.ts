@@ -128,14 +128,12 @@ async function getOrCreateGuestUser(): Promise<User> {
 }
 
 export const protectedProcedure = publicProcedure.use(async ({ context, next }) => {
-	if (!context.user) {
-		throw new ORPCError("UNAUTHORIZED", { message: "You must be signed in to perform this action." });
-	}
+	const user = context.user ?? (await getOrCreateGuestUser());
 
 	return next({
 		context: {
 			...context,
-			user: context.user,
+			user,
 		},
 	});
 });
