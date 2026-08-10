@@ -37,6 +37,27 @@ const getTrustedClient = (context: Context<ServerEnvironment>): string => {
 export function createApp() {
 	const app = new Hono<ServerEnvironment>();
 
+	app.use("*", async (c, next) => {
+		if (c.req.method === "OPTIONS") {
+			const origin = c.req.header("origin") || "https://builder-az7.pages.dev";
+			const reqHeaders = c.req.header("access-control-request-headers") || "*";
+			return new Response(null, {
+				status: 204,
+				headers: {
+					"Access-Control-Allow-Origin": origin,
+					"Access-Control-Allow-Credentials": "true",
+					"Access-Control-Allow-Methods": "GET, POST, PUT, PATCH, DELETE, OPTIONS",
+					"Access-Control-Allow-Headers": reqHeaders,
+					"Access-Control-Expose-Headers": "Content-Length, Content-Type, Set-Cookie",
+					"Access-Control-Max-Age": "86400",
+					Vary: "Origin",
+				},
+			});
+		}
+
+		await next();
+	});
+
 	app.use(
 		"*",
 		cors({
