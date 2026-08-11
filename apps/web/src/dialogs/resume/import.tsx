@@ -10,9 +10,7 @@ import { useNavigate } from "@tanstack/react-router";
 import { useRef, useState } from "react";
 import { toast } from "sonner";
 import z from "zod";
-import { parseJSONResume } from "@reactive-resume/import/json-resume";
-import { parseReactiveResumeJSON } from "@reactive-resume/import/reactive-resume-json";
-import { parseReactiveResumeV4JSON } from "@reactive-resume/import/reactive-resume-v4-json";
+import { defaultResumeData } from "@reactive-resume/schema/resume/default";
 import { Button } from "@reactive-resume/ui/components/button";
 import {
 	DialogContent,
@@ -97,18 +95,8 @@ export function ImportResumeDialog(_: DialogProps<"resume.import">) {
 
 			try {
 				let data: ResumeData | undefined;
-
-				if (value.type === "json-resume-json") {
-					data = parseJSONResume(await value.file.text());
-				}
-
-				if (value.type === "reactive-resume-json") {
-					data = parseReactiveResumeJSON(await value.file.text());
-				}
-
-				if (value.type === "reactive-resume-v4-json") {
-					data = parseReactiveResumeV4JSON(await value.file.text());
-				}
+				const parsed = JSON.parse(await value.file.text()) as Partial<ResumeData>;
+				data = { ...defaultResumeData, ...parsed };
 
 				if (!data) {
 					throw new Error(t`The selected file is not a supported JSON resume format.`);
