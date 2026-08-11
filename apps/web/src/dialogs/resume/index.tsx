@@ -64,8 +64,6 @@ export function CreateResumeDialog(_: DialogProps<"resume.create">) {
 	// Skip the unsaved-changes guard when we close as a result of a successful create.
 	const didCreateRef = useRef(false);
 
-	const { mutate: createResume, isPending } = useMutation(orpc.resume.create.mutationOptions());
-
 	const form = useAppForm({
 		defaultValues: {
 			id: generateId(),
@@ -76,7 +74,7 @@ export function CreateResumeDialog(_: DialogProps<"resume.create">) {
 		validators: { onSubmit: formSchema },
 		onSubmit: ({ value }) => {
 			didCreateRef.current = true;
-			toast.success(t`Your resume has been created successfully.`);
+			toast.success("Your resume has been created successfully.");
 			closeDialog();
 			void navigate({ to: "/builder/$resumeId", params: { resumeId: value.id || generateId() } });
 		},
@@ -94,7 +92,7 @@ export function CreateResumeDialog(_: DialogProps<"resume.create">) {
 
 	const onCreateSampleResume = () => {
 		didCreateRef.current = true;
-		toast.success(t`Your resume has been created successfully.`);
+		toast.success("Your resume has been created successfully.");
 		closeDialog();
 		void navigate({ to: "/builder/$resumeId", params: { resumeId: generateId() } });
 	};
@@ -129,14 +127,14 @@ export function CreateResumeDialog(_: DialogProps<"resume.create">) {
 						})}
 						className="gap-x-px rtl:flex-row-reverse"
 					>
-						<Button type="submit" disabled={isPending}>
+						<Button type="submit">
 							<Trans>Create</Trans>
 						</Button>
 
 						<DropdownMenu>
 							<DropdownMenuTrigger
 								render={
-									<Button size="icon" disabled={isPending}>
+									<Button size="icon">
 										<CaretDownIcon />
 									</Button>
 								}
@@ -159,9 +157,6 @@ export function CreateResumeDialog(_: DialogProps<"resume.create">) {
 export function UpdateResumeDialog({ data }: DialogProps<"resume.update">) {
 	const closeDialog = useDialogStore((state) => state.closeDialog);
 	const patchResume = usePatchResume();
-	const params = useParams({ strict: false }) as { resumeId?: string };
-
-	const { mutate: updateResume, isPending } = useMutation(orpc.resume.update.mutationOptions());
 
 	const form = useAppForm({
 		defaultValues: {
@@ -178,7 +173,7 @@ export function UpdateResumeDialog({ data }: DialogProps<"resume.update">) {
 				draft.tags = value.tags;
 			});
 
-			toast.success(t`Your resume has been updated successfully.`);
+			toast.success("Your resume has been updated successfully.");
 			closeDialog();
 		},
 	});
@@ -237,7 +232,7 @@ export function DuplicateResumeDialog({ data }: DialogProps<"resume.duplicate">)
 		},
 		validators: { onSubmit: formSchema },
 		onSubmit: ({ value }) => {
-			toast.success(t`Your resume has been duplicated successfully.`);
+			toast.success("Your resume has been duplicated successfully.");
 			closeDialog();
 
 			if (!data.shouldRedirect) return;
@@ -277,7 +272,7 @@ export function DuplicateResumeDialog({ data }: DialogProps<"resume.duplicate">)
 				<ResumeForm form={form} />
 
 				<DialogFooter>
-					<Button type="submit" disabled={isPending}>
+					<Button type="submit">
 						<Trans>Duplicate</Trans>
 					</Button>
 				</DialogFooter>

@@ -197,17 +197,17 @@ function BuilderHeaderDropdown() {
 		patchResume((draft) => {
 			draft.isLocked = !isLocked;
 		});
-		toast.success(!isLocked ? t`Resume locked.` : t`Resume unlocked.`);
+		toast.success(!isLocked ? "Resume locked." : "Resume unlocked.");
 	};
 
 	const handleDelete = async () => {
-		const confirmation = await confirm(t`Are you sure you want to delete this resume?`, {
-			description: t`This action cannot be undone.`,
+		const confirmation = await confirm("Are you sure you want to delete this resume?", {
+			description: "This action cannot be undone.",
 		});
 
 		if (!confirmation) return;
 
-		toast.success(t`Your resume has been deleted successfully.`);
+		toast.success("Your resume has been deleted successfully.");
 		void navigate({ to: "/builder/demo" });
 	};
 
