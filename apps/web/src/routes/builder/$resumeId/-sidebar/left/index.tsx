@@ -89,19 +89,10 @@ function LockBanner() {
 	const { mutate: setLocked, isPending } = useMutation(orpc.resume.setLocked.mutationOptions());
 
 	const handleUnlock = () => {
-		setLocked(
-			{ id: resume.id, isLocked: false },
-			{
-				onSuccess: () => {
-					patchResume((draft) => {
-						draft.isLocked = false;
-					});
-				},
-				onError: (error) => {
-					toast.error(getResumeErrorMessage(error));
-				},
-			},
-		);
+		patchResume((draft) => {
+			draft.isLocked = false;
+		});
+		toast.success(t`Resume unlocked.`);
 	};
 
 	return (
@@ -115,7 +106,7 @@ function LockBanner() {
 					<Trans>Editing is disabled until you unlock it.</Trans>
 				</p>
 			</div>
-			<Button size="sm" variant="secondary" disabled={isPending} onClick={handleUnlock}>
+			<Button size="sm" variant="secondary" onClick={handleUnlock}>
 				<Trans>Enable editing</Trans>
 			</Button>
 		</div>
