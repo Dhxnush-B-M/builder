@@ -33,9 +33,9 @@ export function ThemeProvider({ children, theme }: Props) {
 		try {
 			const soundClip = value === "dark" ? "/sounds/switch-off.mp3" : "/sounds/switch-on.mp3";
 			const audio = new Audio(soundClip);
-			await audio.play();
+			await audio.play().catch(() => playSynthClick(value === "dark"));
 		} catch {
-			// ignore errors
+			playSynthClick(value === "dark");
 		}
 	}
 
@@ -52,4 +52,25 @@ export function useTheme() {
 	if (!value) throw new Error("useTheme must be used within a ThemeProvider");
 
 	return value;
+}
+
+function playSynthClick(isDark: boolean) {
+	try {
+		const AudioCtx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+		if (!AudioCtx) return;
+		const ctx = new AudioCtx();
+		const osc = ctx.createOscillator();
+		const gain = ctx.createGain();
+		osc.type = "sine";
+		osc.frequency.setValueAtTime(isDark ? 320 : 640, ctx.currentTime);
+		osc.frequency.exponentialRampToValueAtTime(isDark ? 120 : 880, ctx.currentTime + 0.08);
+		gain.gain.setValueAtTime(0.25, ctx.currentTime);
+		gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.08);
+		osc.connect(gain);
+		gain.connect(ctx.destination);
+		osc.start();
+		osc.stop(ctx.currentTime + 0.08);
+	} catch {
+		// ignore audio errors
+	}
 }
