@@ -1,10 +1,7 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { AuthLayout } from "@/features/auth/layout";
-import { createNoindexFollowMeta } from "@/libs/seo";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/auth")({
-	component: AuthLayout,
-	head: () => ({
-		meta: [createNoindexFollowMeta()],
-	}),
+	beforeLoad: () => {
+		throw redirect({ to: "/builder/demo", replace: true });
+	},
 });
