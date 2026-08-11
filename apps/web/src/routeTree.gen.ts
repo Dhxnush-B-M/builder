@@ -11,7 +11,6 @@
 import { Route as rootRouteImport } from "./routes/__root";
 import { Route as HomeRouteRouteImport } from "./routes/_home/route";
 import { Route as AuthRouteRouteImport } from "./routes/auth/route";
-import { Route as CheckoutRouteImport } from "./routes/checkout";
 import { Route as DashboardRouteRouteImport } from "./routes/dashboard/route";
 import { Route as UsernameSlugRouteImport } from "./routes/$username/$slug";
 import { Route as HomeIndexRouteImport } from "./routes/_home/index";
@@ -39,11 +38,6 @@ const HomeRouteRoute = HomeRouteRouteImport.update({
 const AuthRouteRoute = AuthRouteRouteImport.update({
   id: "/auth",
   path: "/auth",
-  getParentRoute: () => rootRouteImport,
-} as any);
-const CheckoutRoute = CheckoutRouteImport.update({
-  id: "/checkout",
-  path: "/checkout",
   getParentRoute: () => rootRouteImport,
 } as any);
 const DashboardRouteRoute = DashboardRouteRouteImport.update({
@@ -149,7 +143,6 @@ export interface FileRoutesByFullPath {
   "/": typeof HomeIndexRoute;
   "/auth": typeof AuthRouteRouteWithChildren;
   "/dashboard": typeof DashboardRouteRouteWithChildren;
-  "/checkout": typeof CheckoutRoute;
   "/builder/$resumeId": typeof BuilderResumeIdRouteRouteWithChildren;
   "/$username/$slug": typeof UsernameSlugRoute;
   "/auth/forgot-password": typeof AuthForgotPasswordRoute;
@@ -169,7 +162,6 @@ export interface FileRoutesByFullPath {
   "/dashboard/resumes/": typeof DashboardResumesIndexRoute;
 }
 export interface FileRoutesByTo {
-  "/checkout": typeof CheckoutRoute;
   "/$username/$slug": typeof UsernameSlugRoute;
   "/auth/forgot-password": typeof AuthForgotPasswordRoute;
   "/auth/login": typeof AuthLoginRoute;
@@ -193,7 +185,6 @@ export interface FileRoutesById {
   "/_home": typeof HomeRouteRouteWithChildren;
   "/auth": typeof AuthRouteRouteWithChildren;
   "/dashboard": typeof DashboardRouteRouteWithChildren;
-  "/checkout": typeof CheckoutRoute;
   "/builder/$resumeId": typeof BuilderResumeIdRouteRouteWithChildren;
   "/$username/$slug": typeof UsernameSlugRoute;
   "/auth/forgot-password": typeof AuthForgotPasswordRoute;
@@ -219,7 +210,6 @@ export interface FileRouteTypes {
     | "/"
     | "/auth"
     | "/dashboard"
-    | "/checkout"
     | "/builder/$resumeId"
     | "/$username/$slug"
     | "/auth/forgot-password"
@@ -239,7 +229,6 @@ export interface FileRouteTypes {
     | "/dashboard/resumes/";
   fileRoutesByTo: FileRoutesByTo;
   to:
-    | "/checkout"
     | "/$username/$slug"
     | "/auth/forgot-password"
     | "/auth/login"
@@ -262,7 +251,6 @@ export interface FileRouteTypes {
     | "/_home"
     | "/auth"
     | "/dashboard"
-    | "/checkout"
     | "/builder/$resumeId"
     | "/$username/$slug"
     | "/auth/forgot-password"
@@ -287,7 +275,6 @@ export interface RootRouteChildren {
   HomeRouteRoute: typeof HomeRouteRouteWithChildren;
   AuthRouteRoute: typeof AuthRouteRouteWithChildren;
   DashboardRouteRoute: typeof DashboardRouteRouteWithChildren;
-  CheckoutRoute: typeof CheckoutRoute;
   BuilderResumeIdRouteRoute: typeof BuilderResumeIdRouteRouteWithChildren;
   UsernameSlugRoute: typeof UsernameSlugRoute;
   TemplatesSplatRoute: typeof TemplatesSplatRoute;
@@ -307,13 +294,6 @@ declare module "@tanstack/react-router" {
       path: "/auth";
       fullPath: "/auth";
       preLoaderRoute: typeof AuthRouteRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/checkout": {
-      id: "/checkout";
-      path: "/checkout";
-      fullPath: "/checkout";
-      preLoaderRoute: typeof CheckoutRouteImport;
       parentRoute: typeof rootRouteImport;
     };
     "/dashboard": {
@@ -525,7 +505,6 @@ const rootRouteChildren: RootRouteChildren = {
   HomeRouteRoute: HomeRouteRouteWithChildren,
   AuthRouteRoute: AuthRouteRouteWithChildren,
   DashboardRouteRoute: DashboardRouteRouteWithChildren,
-  CheckoutRoute: CheckoutRoute,
   BuilderResumeIdRouteRoute: BuilderResumeIdRouteRouteWithChildren,
   UsernameSlugRoute: UsernameSlugRoute,
   TemplatesSplatRoute: TemplatesSplatRoute,
