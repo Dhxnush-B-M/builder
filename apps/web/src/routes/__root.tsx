@@ -69,12 +69,12 @@ export const Route = createRootRouteWithContext<RouterContext>()({
 				{ name: "apple-mobile-web-app-title", content: "rbuilder" },
 				{ name: "apple-mobile-web-app-status-bar-style", content: "black-translucent" },
 				// Twitter Tags
-				{ property: "twitter:image", content: `${appUrl}/opengraph/banner.jpg` },
-				{ property: "twitter:card", content: "summary_large_image" },
+				{ property: "twitter:image", content: `${appUrl}/favicon.svg` },
+				{ property: "twitter:card", content: "summary" },
 				{ property: "twitter:title", content: title },
 				{ property: "twitter:description", content: description },
 				// OpenGraph Tags
-				{ property: "og:image", content: `${appUrl}/opengraph/banner.jpg` },
+				{ property: "og:image", content: `${appUrl}/favicon.svg` },
 				{ property: "og:site_name", content: appName },
 				{ property: "og:title", content: title },
 				{ property: "og:description", content: description },
