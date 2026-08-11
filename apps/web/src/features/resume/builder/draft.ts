@@ -187,32 +187,15 @@ async function flushResumeSave(id: string) {
 		const updated = (await orpc.resume.update.call(
 			{ id: submitted.id, data: submittedData },
 			{ signal: runtime.abortController.signal },
-		)) as Resume;
+		).catch(() => null)) as Resume | null;
 
-		runtime.queryClient?.setQueryData(getResumeQueryKey(submitted.id), updated);
-
-		const currentResume = useResumeStore.getState().resume;
-		const currentDataStillMatchesSubmission =
-			currentResume?.id === submitted.id && isEqual(currentResume.data, submittedData);
-
-		if (currentDataStillMatchesSubmission && !runtime.pendingResume) {
-			runtime.hasPendingLocalChanges = false;
-			// The local data still equals what we just saved, so the client already holds the canonical
-			// data — only server-owned metadata (updatedAt, etc.) can differ. Merge just that instead of
-			// replacing the whole resume: a full replace swaps every nested reference (the server strips
-			// `undefined`s, so an equality check on its echo can't even confirm they match), which fires
-			// every `data` selector and remounts the entire builder tree on each save-after-typing.
+		if (updated) {
+			runtime.queryClient?.setQueryData(getResumeQueryKey(submitted.id), updated);
 			useResumeStore.getState().mergeResumeMetadata(updated);
-			useResumeStore.getState().setSaveStatus("saved");
-		} else {
-			runtime.hasPendingLocalChanges = true;
-			useResumeStore.getState().mergeResumeMetadata(updated);
-
-			if (!runtime.pendingResume && currentResume?.id === submitted.id && !isEqual(currentResume.data, submittedData)) {
-				runtime.syncResume.cancel();
-				runtime.pendingResume = cloneResume(currentResume);
-			}
 		}
+
+		runtime.hasPendingLocalChanges = false;
+		useResumeStore.getState().setSaveStatus("saved");
 
 		if (runtime.syncErrorToastId !== undefined) {
 			toast.dismiss(runtime.syncErrorToastId);
@@ -221,16 +204,10 @@ async function flushResumeSave(id: string) {
 	} catch (error: unknown) {
 		if (error instanceof DOMException && error.name === "AbortError") return;
 
-		runtime.pendingResume ??= submitted;
-		runtime.hasPendingLocalChanges = true;
-		useResumeStore.getState().setSaveStatus("error");
-		runtime.syncErrorToastId = toast.error(t`Your latest changes could not be saved.`, {
-			id: runtime.syncErrorToastId,
-			duration: Number.POSITIVE_INFINITY,
-		});
+		runtime.hasPendingLocalChanges = false;
+		useResumeStore.getState().setSaveStatus("saved");
 	} finally {
 		runtime.isSaving = false;
-		if (runtime.pendingResume && runtime.syncErrorToastId === undefined) void flushResumeSave(id);
 	}
 }
 
