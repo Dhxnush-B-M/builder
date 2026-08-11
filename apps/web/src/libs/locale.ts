@@ -120,11 +120,9 @@ export function formatRelativeTime(value: Date | string, formatter: Intl.Relativ
 export const getLocale = () => {
 	if (typeof window !== "undefined") {
 		const locale = Cookies.get(storageKey);
-		if (!locale || locale === "zu-ZA" || !isLocale(locale)) {
-			Cookies.remove(storageKey);
-			return defaultLocale;
+		if (locale && locale !== defaultLocale) {
+			Cookies.set(storageKey, defaultLocale);
 		}
-		return locale;
 	}
 	return defaultLocale;
 };

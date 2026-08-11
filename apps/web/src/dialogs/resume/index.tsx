@@ -289,9 +289,7 @@ export function DuplicateResumeDialog({ data }: DialogProps<"resume.duplicate">)
 const ResumeForm = withForm({
 	defaultValues,
 	render: function ResumeFormRenderer({ form }) {
-		const { data: session } = authClient.useSession();
-		const username = session?.user?.username;
-		const slugPrefix = `${window.location.origin}/${username ? `${username}/` : ""}`;
+		const slugPrefix = typeof window !== "undefined" ? `${window.location.origin}/` : "/";
 
 		const onGenerateName = () => {
 			form.setFieldValue("name", generateRandomName());
