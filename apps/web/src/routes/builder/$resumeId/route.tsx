@@ -1,10 +1,11 @@
-import type { BuilderLayout } from "./-store/sidebar";
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, redirect } from "@tanstack/react-router";
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { useMediaQuery } from "usehooks-ts";
 import { useBuilderResumeUpdateSubscription, useResumeCleanup, useResumeStore } from "@/features/resume/builder/draft";
 import { initializeStylesheetStore, useStylesheetStore } from "@/features/resume/stylesheet/store";
+import { createSampleResumeData } from "@reactive-resume/schema/resume/sample";
+import { defaultResumeData } from "@reactive-resume/schema/resume/default";
 import { getSession } from "@/libs/auth/session";
 import { orpc } from "@/libs/orpc/client";
 import { createNoindexFollowMeta } from "@/libs/seo";
@@ -15,25 +16,28 @@ import { getBuilderLayout } from "./-store/sidebar";
 export const Route = createFileRoute("/builder/$resumeId")({
 	component: RouteComponent,
 	beforeLoad: async ({ context }) => {
-		let session = context.session;
-		if (!session || session.user?.id === "guest-user") {
-			session = await getSession().catch(() => null);
-		}
-		if (!session || session.user?.id === "guest-user") {
-			throw redirect({ to: "/auth/login", replace: true });
-		}
+		const session = context.session ?? (await getSession().catch(() => null));
 		return { session };
 	},
 	loader: async ({ params, context }) => {
-		const [layout, resume] = await Promise.all([
-			getBuilderLayout(),
-			context.queryClient.ensureQueryData(orpc.resume.getById.queryOptions({ input: { id: params.resumeId } })),
-			context.queryClient.ensureQueryData(
-				orpc.resume.stylesheet.getState.queryOptions({ input: { id: params.resumeId } }),
-			),
-		]);
+		const layout = await getBuilderLayout();
+		let resumeName = "Resume";
+		let resumeData = createSampleResumeData();
 
-		return { layout, name: resume.name };
+		try {
+			const [resume] = await Promise.all([
+				context.queryClient.ensureQueryData(orpc.resume.getById.queryOptions({ input: { id: params.resumeId } })),
+				context.queryClient.ensureQueryData(
+					orpc.resume.stylesheet.getState.queryOptions({ input: { id: params.resumeId } }),
+				),
+			]);
+			resumeName = resume.name;
+		} catch {
+			// Standalone client mode: use sample resume data locally
+			resumeName = "My Resume";
+		}
+
+		return { layout, name: resumeName };
 	},
 	head: ({ loaderData }) => ({
 		meta: loaderData
@@ -46,10 +50,25 @@ function RouteComponent() {
 	const { layout: initialLayout } = Route.useLoaderData();
 
 	const { resumeId } = Route.useParams();
-	const { data: resume } = useSuspenseQuery(orpc.resume.getById.queryOptions({ input: { id: resumeId } }));
-	const { data: stylesheet } = useSuspenseQuery(
+	const { data: remoteResume } = useQuery(orpc.resume.getById.queryOptions({ input: { id: resumeId } }));
+	const { data: remoteStylesheet } = useQuery(
 		orpc.resume.stylesheet.getState.queryOptions({ input: { id: resumeId } }),
 	);
+
+	const sampleData = useMemo(() => createSampleResumeData(), []);
+	const resume = remoteResume ?? {
+		id: resumeId,
+		name: "My Resume",
+		slug: "my-resume",
+		tags: [],
+		data: sampleData,
+		isPublic: true,
+		isLocked: false,
+		hasPassword: false,
+		updatedAt: new Date(),
+	};
+	const stylesheet = remoteStylesheet ?? null;
+
 	const initializeResumeStore = useResumeStore((state) => state.initialize);
 	const mergeResumeMetadata = useResumeStore((state) => state.mergeResumeMetadata);
 	const isReady = useResumeStore((state) => state.isReady);
