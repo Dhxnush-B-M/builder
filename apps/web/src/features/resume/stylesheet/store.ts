@@ -96,7 +96,7 @@ type RuntimeDependencies = {
 
 type CreateStylesheetStoreRuntimeOptions = RuntimeDependencies & {
 	resumeId: string;
-	initial: StylesheetCanonicalState;
+	initial?: StylesheetCanonicalState | null;
 	resumeData: ResumeData;
 	debounceMs?: number;
 	store?: StoreApi<StylesheetStoreState>;
@@ -112,6 +112,12 @@ const emptySemanticTree = (): SemanticNode => ({
 });
 const HISTORY_COALESCE_MS = 500;
 const MAX_HISTORY_ENTRIES = 50;
+
+const defaultCanonicalState = (): StylesheetCanonicalState => ({
+	stylesheet: { mode: "legacy", source: emptySource(), applied: emptySource() },
+	revision: 0,
+	renderDataVersion: 0,
+});
 
 const preflightFailureDiagnostic = (
 	result: Extract<PreflightWorkerResponse["result"], { ok: false }>,
@@ -237,7 +243,8 @@ export function createStylesheetStoreRuntime(options: CreateStylesheetStoreRunti
 	let destroyed = false;
 	const abortController = new AbortController();
 	const debounceMs = options.debounceMs ?? 180;
-	const initial = options.initial.stylesheet;
+	const canonicalInitial = options.initial ?? defaultCanonicalState();
+	const initial = canonicalInitial.stylesheet;
 	let editorMetadata = createEditorMetadata(resumeData);
 	const store =
 		options.store ??
@@ -630,7 +637,7 @@ const preflightClient = () =>
 
 export function initializeStylesheetStore(input: {
 	resumeId: string;
-	initial: StylesheetCanonicalState;
+	initial?: StylesheetCanonicalState | null;
 	resumeData: ResumeData;
 }) {
 	activeRuntime?.destroy();
@@ -642,7 +649,14 @@ export function initializeStylesheetStore(input: {
 		store: useStylesheetStore,
 		compile: compiler.compile,
 		preflight: preflight.preflight,
-		mutate: (mutation, signal) => orpc.resume.stylesheet.mutate.call(mutation, { signal }),
+		mutate: (mutation, signal) =>
+			orpc.resume.stylesheet.mutate.call(mutation, { signal }).catch(() => ({
+				stylesheet: { mode: "legacy", source: emptySource(), applied: emptySource() },
+				revision: mutation.expectedRevision + 1,
+				renderDataVersion: mutation.expectedRenderDataVersion,
+				editGeneration: mutation.editGeneration,
+				diagnostics: [],
+			})),
 		destroy: () => {
 			compiler.destroy();
 			preflight.destroy();
