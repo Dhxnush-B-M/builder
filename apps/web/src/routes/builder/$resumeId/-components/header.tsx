@@ -194,19 +194,10 @@ function BuilderHeaderDropdown() {
 			if (!confirmation) return;
 		}
 
-		setLockedResume(
-			{ id, isLocked: !isLocked },
-			{
-				onSuccess: () => {
-					patchResume((draft) => {
-						draft.isLocked = !isLocked;
-					});
-				},
-				onError: (error) => {
-					toast.error(getResumeErrorMessage(error));
-				},
-			},
-		);
+		patchResume((draft) => {
+			draft.isLocked = !isLocked;
+		});
+		toast.success(!isLocked ? t`Resume locked.` : t`Resume unlocked.`);
 	};
 
 	const handleDelete = async () => {
@@ -216,20 +207,8 @@ function BuilderHeaderDropdown() {
 
 		if (!confirmation) return;
 
-		const toastId = toast.loading(t`Deleting your resume...`);
-
-		deleteResume(
-			{ id },
-			{
-				onSuccess: () => {
-					toast.success(t`Your resume has been deleted successfully.`, { id: toastId });
-					void navigate({ to: "/dashboard/resumes", search: { sort: "lastUpdatedAt", tags: [] } });
-				},
-				onError: (error) => {
-					toast.error(getResumeErrorMessage(error), { id: toastId });
-				},
-			},
-		);
+		toast.success(t`Your resume has been deleted successfully.`);
+		void navigate({ to: "/builder/demo" });
 	};
 
 	return (

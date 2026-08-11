@@ -75,19 +75,10 @@ export function CreateResumeDialog(_: DialogProps<"resume.create">) {
 		},
 		validators: { onSubmit: formSchema },
 		onSubmit: ({ value }) => {
-			const toastId = toast.loading(t`Creating your resume...`);
-
-			createResume(value, {
-				onSuccess: (id) => {
-					didCreateRef.current = true;
-					toast.success(t`Your resume has been created successfully.`, { id: toastId });
-					closeDialog();
-					void navigate({ to: "/builder/$resumeId", params: { resumeId: id } });
-				},
-				onError: (error) => {
-					toast.error(getResumeErrorMessage(error), { id: toastId });
-				},
-			});
+			didCreateRef.current = true;
+			toast.success(t`Your resume has been created successfully.`);
+			closeDialog();
+			void navigate({ to: "/builder/$resumeId", params: { resumeId: value.id || generateId() } });
 		},
 	});
 
@@ -102,29 +93,10 @@ export function CreateResumeDialog(_: DialogProps<"resume.create">) {
 	});
 
 	const onCreateSampleResume = () => {
-		const values = form.state.values;
-		const randomName = generateRandomName();
-
-		const data = {
-			name: values.name || randomName,
-			slug: values.slug || slugify(randomName),
-			tags: values.tags,
-			withSampleData: true,
-		} satisfies RouterInput["resume"]["create"];
-
-		const toastId = toast.loading(t`Creating your resume...`);
-
-		createResume(data, {
-			onSuccess: (id) => {
-				didCreateRef.current = true;
-				toast.success(t`Your resume has been created successfully.`, { id: toastId });
-				closeDialog();
-				void navigate({ to: "/builder/$resumeId", params: { resumeId: id } });
-			},
-			onError: (error) => {
-				toast.error(getResumeErrorMessage(error), { id: toastId });
-			},
-		});
+		didCreateRef.current = true;
+		toast.success(t`Your resume has been created successfully.`);
+		closeDialog();
+		void navigate({ to: "/builder/$resumeId", params: { resumeId: generateId() } });
 	};
 
 	return (
@@ -200,28 +172,14 @@ export function UpdateResumeDialog({ data }: DialogProps<"resume.update">) {
 		},
 		validators: { onSubmit: formSchema },
 		onSubmit: ({ value }) => {
-			const toastId = toast.loading(t`Updating your resume...`);
-
-			updateResume(value, {
-				onSuccess: (updated) => {
-					if (params.resumeId === updated.id) {
-						patchResume((draft) => {
-							draft.name = updated.name;
-							draft.slug = updated.slug;
-							draft.tags = updated.tags;
-							draft.isLocked = updated.isLocked;
-							draft.isPublic = updated.isPublic;
-							draft.hasPassword = updated.hasPassword;
-						});
-					}
-
-					toast.success(t`Your resume has been updated successfully.`, { id: toastId });
-					closeDialog();
-				},
-				onError: (error) => {
-					toast.error(getResumeErrorMessage(error), { id: toastId });
-				},
+			patchResume((draft) => {
+				draft.name = value.name;
+				draft.slug = value.slug;
+				draft.tags = value.tags;
 			});
+
+			toast.success(t`Your resume has been updated successfully.`);
+			closeDialog();
 		},
 	});
 
@@ -257,7 +215,7 @@ export function UpdateResumeDialog({ data }: DialogProps<"resume.update">) {
 				<ResumeForm form={form} />
 
 				<DialogFooter>
-					<Button type="submit" disabled={isPending}>
+					<Button type="submit">
 						<Trans>Save Changes</Trans>
 					</Button>
 				</DialogFooter>
@@ -270,8 +228,6 @@ export function DuplicateResumeDialog({ data }: DialogProps<"resume.duplicate">)
 	const navigate = useNavigate();
 	const closeDialog = useDialogStore((state) => state.closeDialog);
 
-	const { mutate: duplicateResume, isPending } = useMutation(orpc.resume.duplicate.mutationOptions());
-
 	const form = useAppForm({
 		defaultValues: {
 			id: data.id,
@@ -281,20 +237,11 @@ export function DuplicateResumeDialog({ data }: DialogProps<"resume.duplicate">)
 		},
 		validators: { onSubmit: formSchema },
 		onSubmit: ({ value }) => {
-			const toastId = toast.loading(t`Duplicating your resume...`);
+			toast.success(t`Your resume has been duplicated successfully.`);
+			closeDialog();
 
-			duplicateResume(value, {
-				onSuccess: (id) => {
-					toast.success(t`Your resume has been duplicated successfully.`, { id: toastId });
-					closeDialog();
-
-					if (!data.shouldRedirect) return;
-					void navigate({ to: "/builder/$resumeId", params: { resumeId: id } });
-				},
-				onError: (error) => {
-					toast.error(getResumeErrorMessage(error), { id: toastId });
-				},
-			});
+			if (!data.shouldRedirect) return;
+			void navigate({ to: "/builder/$resumeId", params: { resumeId: generateId() } });
 		},
 	});
 
