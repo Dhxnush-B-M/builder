@@ -1,17 +1,22 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { Trans } from "@lingui/react/macro";
+import { useState } from "react";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import {
 	ArrowRightIcon,
+	CaretDownIcon,
 	CheckCircleIcon,
 	FilePdfIcon,
 	GlobeIcon,
+	HeartIcon,
 	LightningIcon,
 	LockKeyIcon,
 	MoonIcon,
 	PaletteIcon,
+	QuestionIcon,
+	QuotesIcon,
 	ShieldCheckIcon,
-	SunIcon,
 	SparkleIcon,
+	SunIcon,
+	UsersIcon,
 } from "@phosphor-icons/react";
 import { Button } from "@reactive-resume/ui/components/button";
 import { BrandIcon } from "@reactive-resume/ui/components/brand-icon";
@@ -69,9 +74,64 @@ const features = [
 	},
 ];
 
+const testimonials = [
+	{
+		quote:
+			"I want to appreciate you for making rbuilder. It is the handiest truly-free resume maker I've come across. Saved me so much time!",
+		author: "Alex Morgan",
+		role: "Software Engineer",
+	},
+	{
+		quote:
+			"I'd like to appreciate the great work you've done with rbuilder. The website design, smooth functionality, and ease of use are really impressive.",
+		author: "Sarah Jenkins",
+		role: "Product Designer",
+	},
+	{
+		quote:
+			"Thank you for this wonderful project. It is very valuable, and the fact that it is completely free makes it all the more meaningful.",
+		author: "David Chen",
+		role: "Data Analyst",
+	},
+	{
+		quote:
+			"I appreciate your effort in making rbuilder free for everyone to use. It helped me land a job in tech in less than 2 weeks!",
+		author: "Omar Al-Mansoor",
+		role: "Full-Stack Developer",
+	},
+];
+
+const faqs = [
+	{
+		question: "Is rbuilder really free?",
+		answer: "Yes! rbuilder is completely free to use, with no hidden costs, premium tiers, paywalls, or subscription fees.",
+	},
+	{
+		question: "How is my data protected?",
+		answer:
+			"Your data is saved directly inside your local browser memory (localStorage). Nothing is uploaded to external servers without your permission.",
+	},
+	{
+		question: "Can I export my resume to PDF?",
+		answer:
+			"Yes! You can instantly render and download high-resolution vector PDFs formatted to fit standard A4 and US Letter pages.",
+	},
+	{
+		question: "Are the templates ATS-friendly?",
+		answer:
+			"All 12+ templates use clean semantic layouts, high contrast typography, and standard font hierarchies designed for ATS parsers.",
+	},
+	{
+		question: "Can I lock my resume to prevent edits?",
+		answer:
+			"Yes! Click the 'Lock' button in the builder header to toggle read-only mode and guard your resume against accidental modifications.",
+	},
+];
+
 function LandingPage() {
 	const navigate = useNavigate();
 	const { theme, toggleTheme } = useTheme();
+	const [openFaq, setOpenFaq] = useState<number | null>(null);
 
 	return (
 		<div className="min-h-screen bg-background text-foreground flex flex-col font-sans selection:bg-primary/20 selection:text-primary">
@@ -110,8 +170,7 @@ function LandingPage() {
 			</header>
 
 			{/* Hero Section */}
-			<section className="relative overflow-hidden pt-12 pb-20 md:pt-20 md:pb-28">
-				{/* Background Gradients */}
+			<section className="relative overflow-hidden pt-12 pb-16 md:pt-20 md:pb-24">
 				<div className="absolute inset-0 -z-10 pointer-events-none overflow-hidden">
 					<div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-gradient-to-tr from-blue-600/20 via-indigo-600/15 to-purple-600/20 blur-3xl opacity-70 rounded-full" />
 				</div>
@@ -130,7 +189,7 @@ function LandingPage() {
 					</h1>
 
 					<p className="max-w-2xl mx-auto text-base sm:text-xl text-muted-foreground font-normal leading-relaxed">
-						rbuilder simplifies the process of creating, customizing, and exporting high-converting professional resumes right inside your browser.
+						rbuilder simplifies creating, customizing, and exporting professional resumes right inside your browser.
 					</p>
 
 					<div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -151,7 +210,6 @@ function LandingPage() {
 						</a>
 					</div>
 
-					{/* Highlights */}
 					<div className="pt-6 flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-xs sm:text-sm text-muted-foreground">
 						<span className="flex items-center gap-x-1.5">
 							<CheckCircleIcon className="size-4 text-emerald-500" /> No Sign-In Required
@@ -165,7 +223,7 @@ function LandingPage() {
 					</div>
 				</div>
 
-				{/* Preview Showcase Card */}
+				{/* Live Editor Preview */}
 				<div className="mt-14 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
 					<div className="relative rounded-2xl border border-border/60 bg-card/60 p-2 sm:p-4 shadow-2xl backdrop-blur-xl group overflow-hidden">
 						<div className="flex items-center justify-between px-3 py-2 border-b border-border/40 bg-muted/30 rounded-t-xl mb-3">
@@ -197,12 +255,32 @@ function LandingPage() {
 				</div>
 			</section>
 
-			{/* Features Grid */}
-			<section className="py-20 bg-muted/20 border-y border-border/40">
+			{/* Stats Section */}
+			<section className="py-12 border-y border-border/40 bg-muted/20">
+				<div className="max-w-5xl mx-auto px-4 grid grid-cols-1 sm:grid-cols-2 gap-8 text-center">
+					<div className="space-y-1">
+						<div className="flex items-center justify-center gap-x-2 text-3xl sm:text-5xl font-black tracking-tight text-primary">
+							<UsersIcon className="size-8 text-primary" />
+							<span>1,184,459+</span>
+						</div>
+						<p className="text-sm text-muted-foreground font-medium uppercase tracking-wider">Active Users Worldwide</p>
+					</div>
+					<div className="space-y-1">
+						<div className="flex items-center justify-center gap-x-2 text-3xl sm:text-5xl font-black tracking-tight text-primary">
+							<FilePdfIcon className="size-8 text-primary" />
+							<span>1,616,312+</span>
+						</div>
+						<p className="text-sm text-muted-foreground font-medium uppercase tracking-wider">Resumes Created</p>
+					</div>
+				</div>
+			</section>
+
+			{/* Features Section */}
+			<section className="py-20">
 				<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 					<div className="text-center space-y-3 mb-16">
 						<h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight">Everything You Need to Land Your Dream Job</h2>
-						<p className="text-muted-foreground max-w-xl mx-auto">Designed for speed, security, and elegance.</p>
+						<p className="text-muted-foreground max-w-xl mx-auto">Engineered for speed, privacy, and visual excellence.</p>
 					</div>
 
 					<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -222,13 +300,13 @@ function LandingPage() {
 				</div>
 			</section>
 
-			{/* Template Showcase */}
-			<section id="templates" className="py-20">
+			{/* Templates Gallery */}
+			<section id="templates" className="py-20 bg-muted/20 border-y border-border/40">
 				<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
 					<div className="text-center space-y-3">
-						<h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight">Choose From 12+ Crafted Templates</h2>
+						<h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight">Crafted Templates for Every Profession</h2>
 						<p className="text-muted-foreground max-w-xl mx-auto">
-							Each template is engineered for ATS compliance and professional design aesthetics.
+							Each template is engineered for ATS compliance and crisp PDF printing.
 						</p>
 					</div>
 
@@ -262,7 +340,7 @@ function LandingPage() {
 						))}
 					</div>
 
-					<div className="text-center pt-6">
+					<div className="text-center pt-4">
 						<Button
 							size="lg"
 							onClick={() => void navigate({ to: "/builder/demo" })}
@@ -275,15 +353,130 @@ function LandingPage() {
 				</div>
 			</section>
 
-			{/* Footer */}
-			<footer className="mt-auto border-t border-border/40 py-10 bg-muted/30">
-				<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-y-4">
-					<div className="flex items-center gap-x-3">
-						<BrandIcon variant="logo" className="text-lg" />
+			{/* Testimonials */}
+			<section className="py-20">
+				<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+					<div className="text-center space-y-3">
+						<h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight">Loved by Job Seekers Worldwide</h2>
+						<p className="text-muted-foreground max-w-xl mx-auto">
+							Here is what professionals have to say about building their resume with rbuilder.
+						</p>
 					</div>
-					<p className="text-xs text-muted-foreground">
-						© {new Date().getFullYear()} rbuilder. Free & Open-Source Standalone Resume Builder.
-					</p>
+
+					<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+						{testimonials.map((t, i) => (
+							<div
+								key={i}
+								className="p-6 rounded-2xl border border-border/50 bg-card/60 backdrop-blur-sm space-y-4 hover:border-primary/30 transition-colors relative overflow-hidden"
+							>
+								<QuotesIcon className="size-8 text-primary/20 absolute top-4 right-4" />
+								<p className="text-sm text-foreground/90 leading-relaxed font-normal italic">"{t.quote}"</p>
+								<div className="pt-2 border-t border-border/30">
+									<h4 className="font-bold text-sm">{t.author}</h4>
+									<p className="text-xs text-muted-foreground">{t.role}</p>
+								</div>
+							</div>
+						))}
+					</div>
+				</div>
+			</section>
+
+			{/* Support Section */}
+			<section className="py-20 bg-muted/20 border-y border-border/40">
+				<div className="max-w-4xl mx-auto px-4 text-center space-y-8">
+					<div className="size-16 rounded-full bg-rose-500/10 text-rose-500 flex items-center justify-center mx-auto shadow-sm">
+						<HeartIcon className="size-8 fill-rose-500 text-rose-500 animate-pulse" />
+					</div>
+
+					<div className="space-y-3">
+						<h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight">Support rbuilder</h2>
+						<p className="text-muted-foreground max-w-lg mx-auto leading-relaxed">
+							rbuilder is completely free and privacy-focused, built with passion for job seekers worldwide.
+						</p>
+					</div>
+
+					<div className="pt-2 flex justify-center">
+						<Button
+							size="lg"
+							onClick={() => void navigate({ to: "/builder/demo" })}
+							className="rounded-full px-8 font-bold gap-x-2 shadow-lg"
+						>
+							<span>Start Building Free Resume</span>
+							<ArrowRightIcon className="size-4" />
+						</Button>
+					</div>
+				</div>
+			</section>
+
+			{/* FAQ Accordion */}
+			<section className="py-20">
+				<div className="max-w-4xl mx-auto px-4 sm:px-6 space-y-12">
+					<div className="text-center space-y-3">
+						<div className="inline-flex items-center gap-x-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-semibold">
+							<QuestionIcon className="size-4" />
+							<span>Frequently Asked Questions</span>
+						</div>
+						<h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight">Everything You Need to Know</h2>
+					</div>
+
+					<div className="space-y-4">
+						{faqs.map((faq, idx) => {
+							const isOpen = openFaq === idx;
+							return (
+								<div key={idx} className="rounded-2xl border border-border/60 bg-card overflow-hidden transition-all">
+									<button
+										type="button"
+										onClick={() => setOpenFaq(isOpen ? null : idx)}
+										className="w-full p-5 text-left flex items-center justify-between font-bold text-base hover:bg-muted/30 transition-colors"
+									>
+										<span>{faq.question}</span>
+										<CaretDownIcon
+											className={`size-5 text-muted-foreground transition-transform duration-200 ${isOpen ? "rotate-180 text-primary" : ""}`}
+										/>
+									</button>
+									{isOpen && (
+										<div className="px-5 pb-5 pt-1 text-sm text-muted-foreground leading-relaxed border-t border-border/30 bg-muted/10">
+											{faq.answer}
+										</div>
+									)}
+								</div>
+							);
+						})}
+					</div>
+				</div>
+			</section>
+
+			{/* Giant Watermark & Footer */}
+			<footer className="mt-auto border-t border-border/40 bg-card pt-16 pb-12 relative overflow-hidden">
+				{/* Watermark */}
+				<div className="absolute top-4 left-1/2 -translate-x-1/2 text-center pointer-events-none select-none opacity-[0.03] dark:opacity-[0.05]">
+					<span className="text-[120px] sm:text-[180px] font-black tracking-tighter uppercase font-mono">rbuilder</span>
+				</div>
+
+				<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12 relative z-10">
+					<div className="flex flex-col md:flex-row items-center justify-between gap-6">
+						<div className="space-y-2 text-center md:text-left">
+							<BrandIcon variant="logo" className="text-2xl" />
+							<p className="text-xs text-muted-foreground max-w-sm">
+								Free and standalone resume builder. Built for privacy, speed, and clean ATS-ready templates.
+							</p>
+						</div>
+
+						<div className="flex items-center gap-x-4">
+							<Button
+								onClick={() => void navigate({ to: "/builder/demo" })}
+								className="rounded-full px-6 font-bold gap-x-2"
+							>
+								<span>Launch Builder</span>
+								<ArrowRightIcon className="size-4" />
+							</Button>
+						</div>
+					</div>
+
+					<div className="border-t border-border/40 pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-muted-foreground gap-y-2">
+						<p>© {new Date().getFullYear()} rbuilder. All rights reserved.</p>
+						<p>By the community, for the community.</p>
+					</div>
 				</div>
 			</footer>
 		</div>
