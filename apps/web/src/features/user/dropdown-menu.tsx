@@ -41,45 +41,67 @@ export function UserDropdownMenu({ children }: Props) {
 	const handleLogout = async () => {
 		const toastId = toast.loading(t`Signing out...`);
 
-		await authClient.signOut({
-			fetchOptions: {
-				onSuccess: async () => {
-					toast.dismiss(toastId);
-					await router.invalidate();
-					await router.navigate({ to: "/" });
+		if (typeof window !== "undefined") {
+			localStorage.removeItem("rbuilder_user");
+			localStorage.removeItem("rbuilder_supabase_user");
+			localStorage.removeItem("rbuilder_user_email");
+		}
+
+		try {
+			await authClient.signOut({
+				fetchOptions: {
+					onSuccess: async () => {
+						toast.dismiss(toastId);
+						await router.invalidate();
+						await router.navigate({ to: "/auth/login" });
+					},
+					onError: ({ error }) => {
+						toast.dismiss(toastId);
+						void router.navigate({ to: "/auth/login" });
+					},
 				},
-				onError: ({ error }) => {
-					toast.error(
-						getReadableErrorMessage(
-							error,
-							t({
-								comment: "Fallback toast when signing out fails",
-								message: "Failed to sign out. Please try again.",
-							}),
-						),
-						{ id: toastId },
-					);
-				},
-			},
-		});
+			});
+		} catch {
+			toast.dismiss(toastId);
+			void router.navigate({ to: "/auth/login" });
+		}
 	};
+
+	// Helper to load authenticated user from localStorage if backend auth session is offline
+	const getSavedUser = () => {
+		if (typeof window === "undefined") return null;
+		try {
+			const rawSupabase = localStorage.getItem("rbuilder_supabase_user");
+			if (rawSupabase) return JSON.parse(rawSupabase);
+			const rawLocal = localStorage.getItem("rbuilder_user");
+			if (rawLocal) return JSON.parse(rawLocal);
+		} catch {
+			return null;
+		}
+		return null;
+	};
+
+	const saved = getSavedUser();
+	const userName = saved?.name || "Logged In User";
+	const userEmail = saved?.email || "user@rbuilder.com";
+	const userAvatar = saved?.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(userEmail)}`;
 
 	const activeSession: AuthSession = session?.user
 		? (session as AuthSession)
 		: {
 		user: {
-			id: "guest",
-			name: "Guest User",
-			email: "guest@rbuilder.com",
-			image: null,
-			emailVerified: false,
+			id: saved?.id || "logged_in_user",
+			name: userName,
+			email: userEmail,
+			image: userAvatar,
+			emailVerified: true,
 			createdAt: new Date(),
 			updatedAt: new Date(),
-			username: "guest",
+			username: userEmail.split("@")[0] || "user",
 		},
 		session: {
-			id: "guest-session",
-			userId: "guest",
+			id: "auth-session",
+			userId: saved?.id || "logged_in_user",
 			token: "",
 			expiresAt: new Date(),
 			createdAt: new Date(),

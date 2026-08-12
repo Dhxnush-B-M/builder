@@ -151,7 +151,22 @@ export function DashboardSidebar() {
 					<SidebarMenuItem>
 						<UserDropdownMenu>
 							{({ session }) => {
-								const user = session?.user ?? { name: "Guest User", email: "guest@rbuilder.com", image: null };
+								let savedUser: { name?: string; email?: string; avatar_url?: string } | null = null;
+								if (typeof window !== "undefined") {
+									try {
+										const rawSup = localStorage.getItem("rbuilder_supabase_user");
+										if (rawSup) savedUser = JSON.parse(rawSup);
+										else {
+											const rawLoc = localStorage.getItem("rbuilder_user");
+											if (rawLoc) savedUser = JSON.parse(rawLoc);
+										}
+									} catch {}
+								}
+								const user = session?.user ?? {
+									name: savedUser?.name || "Account User",
+									email: savedUser?.email || "user@rbuilder.com",
+									image: savedUser?.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(savedUser?.email || "user")}`,
+								};
 								return (
 									<SidebarMenuButton className="h-auto gap-x-3 group-data-[collapsible=icon]:p-1!">
 										<Avatar className="size-8 shrink-0 transition-all group-data-[collapsible=icon]:size-6">
