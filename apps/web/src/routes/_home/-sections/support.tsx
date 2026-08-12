@@ -64,10 +64,10 @@ export function Support() {
 					</h2>
 
 					<p className="mt-4 max-w-2xl text-base text-muted-foreground leading-relaxed sm:text-lg">
-						Have questions or need assistance? Our support team is active 24/7. Email us directly at{" "}
+						Email us directly at{" "}
 						<a
 							href="mailto:karthikdhanush686@gmail.com"
-							className="font-semibold text-primary underline underline-offset-4 hover:opacity-80"
+							className="font-semibold text-primary underline underline-offset-4 hover:opacity-80 break-all"
 						>
 							karthikdhanush686@gmail.com
 						</a>
@@ -123,13 +123,14 @@ export function Support() {
 							</p>
 						</div>
 
-						<div className="mt-8 border-t border-border/50 pt-6">
+						<div className="mt-8 border-t border-border/50 pt-6 overflow-hidden">
 							<a
 								href="mailto:karthikdhanush686@gmail.com"
-								className="inline-flex items-center gap-2 font-semibold text-emerald-500 text-sm hover:underline"
+								title="karthikdhanush686@gmail.com"
+								className="inline-flex max-w-full items-center gap-2 font-semibold text-emerald-500 text-xs sm:text-sm hover:underline overflow-hidden"
 							>
-								<EnvelopeSimpleIcon weight="bold" className="size-4" />
-								<span>karthikdhanush686@gmail.com</span>
+								<EnvelopeSimpleIcon weight="bold" className="size-4 shrink-0" />
+								<span className="truncate">karthikdhanush686@gmail.com</span>
 							</a>
 						</div>
 					</div>
