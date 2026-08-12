@@ -5,6 +5,7 @@ import { useResumeCleanup, useResumeStore } from "@/features/resume/builder/draf
 import { initializeStylesheetStore, useStylesheetStore } from "@/features/resume/stylesheet/store";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
 import { createNoindexFollowMeta } from "@/libs/seo";
+import { getLocalResumes } from "@/libs/resume/local-storage";
 import { DesktopBuilderShell } from "./-components/desktop-builder-shell";
 import { MobileBuilderShell } from "./-components/mobile-builder-shell";
 import { getBuilderLayout, type BuilderLayout } from "./-store/sidebar";
@@ -26,21 +27,30 @@ function RouteComponent() {
 	const { layout: initialLayout } = Route.useLoaderData();
 	const { resumeId } = Route.useParams();
 
-	// Clean default resume structure with 0 fake/demo items or pre-filled duplicate details
-	const cleanData = useMemo(() => structuredClone(defaultResumeData), []);
+	// Load existing saved resume if present in local storage
+	const savedResume = useMemo(() => {
+		const list = getLocalResumes();
+		return list.find((r) => r.id === resumeId);
+	}, [resumeId]);
+
+	const resumeData = useMemo(
+		() => savedResume?.data || structuredClone(defaultResumeData),
+		[savedResume],
+	);
+
 	const resume = useMemo(
 		() => ({
 			id: resumeId,
-			name: "My Resume",
-			slug: "my-resume",
-			tags: [],
-			data: cleanData,
+			name: savedResume?.name || "My Resume",
+			slug: savedResume?.slug || "my-resume",
+			tags: savedResume?.tags || [],
+			data: resumeData,
 			isPublic: true,
 			isLocked: false,
 			hasPassword: false,
-			updatedAt: new Date(),
+			updatedAt: savedResume?.updatedAt || new Date(),
 		}),
-		[resumeId, cleanData],
+		[resumeId, savedResume, resumeData],
 	);
 
 	const initializeResumeStore = useResumeStore((state) => state.initialize);

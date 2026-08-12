@@ -12,6 +12,7 @@ import { immer } from "zustand/middleware/immer";
 import { create } from "zustand/react";
 import { refreshStylesheetStore } from "@/features/resume/stylesheet/store";
 import { orpc, streamClient } from "@/libs/orpc/client";
+import { saveLocalResume } from "@/libs/resume/local-storage";
 
 export type Resume = {
 	id: string;
@@ -182,6 +183,15 @@ async function flushResumeSave(id: string) {
 	const submittedData = cloneResumeData(submitted.data);
 	runtime.pendingResume = undefined;
 	runtime.isSaving = true;
+
+	// Save to local storage and Supabase DB instantly
+	saveLocalResume({
+		id: submitted.id,
+		name: submitted.name,
+		slug: submitted.slug,
+		tags: submitted.tags,
+		data: submittedData,
+	});
 
 	try {
 		const updated = (await orpc.resume.update.call(
