@@ -1,4 +1,4 @@
-import { ArrowRightIcon, SparkleIcon } from "@phosphor-icons/react";
+import { ArrowRightIcon } from "@phosphor-icons/react";
 import { Link } from "@tanstack/react-router";
 import { m } from "motion/react";
 import { Button } from "@reactive-resume/ui/components/button";
@@ -66,42 +66,29 @@ export function Hero() {
 				</m.div>
 			</div>
 
-			{/* New Animated Hero Showcase Card */}
+			{/* Video Showcase Card */}
 			<m.div
 				className="mt-12 w-full will-change-[transform,opacity]"
 				initial={{ opacity: 0, y: 60 }}
 				animate={{ opacity: 1, y: 0 }}
 				transition={{ duration: 0.8, delay: 0.8, ease: "easeOut" }}
 			>
-				<CometCard glareOpacity={0.2} className="relative mx-auto 3xl:max-w-7xl max-w-5xl px-4 md:px-12 lg:px-0">
-					<div className="relative overflow-hidden rounded-2xl border border-white/20 dark:border-white/10 bg-card/60 p-2 shadow-2xl backdrop-blur-xl transition-transform duration-500 hover:scale-[1.01] group">
-						{/* Ambient Glow Spotlight */}
-						<div className="absolute -inset-1 rounded-2xl bg-gradient-to-r from-blue-500/20 via-indigo-500/20 to-purple-500/20 opacity-50 blur-xl group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
-
-						{/* Top Mac-style Window Bar */}
-						<div className="relative z-10 flex items-center justify-between px-3 py-2 border-b border-white/10 bg-background/50 rounded-t-xl">
-							<div className="flex items-center gap-1.5">
-								<div className="size-3 rounded-full bg-red-500/80" />
-								<div className="size-3 rounded-full bg-amber-500/80" />
-								<div className="size-3 rounded-full bg-emerald-500/80" />
-							</div>
-							<div className="flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-muted/60 text-[11px] font-mono text-muted-foreground border border-white/5">
-								<SparkleIcon className="size-3 text-primary animate-pulse" />
-								<span>rbuilder • Live AI Resume Editor</span>
-							</div>
-							<div className="size-12" />
-						</div>
-
-						{/* New Builder Preview Image */}
-						<div className="relative z-10 overflow-hidden rounded-b-xl">
-							<img
-								src="/images/hero-builder-preview.png"
-								alt="rbuilder Live Interactive Resume Editor UI"
-								width={1146}
-								height={720}
-								className="aspect-[1146/720] w-full object-cover transition-transform duration-700 group-hover:scale-[1.01]"
-							/>
-						</div>
+				<CometCard glareOpacity={0} className="relative mx-auto 3xl:max-w-7xl max-w-5xl px-4 md:px-12 lg:px-0">
+					<div className="relative overflow-hidden rounded-2xl border border-border/80 bg-card/50 p-2 shadow-2xl backdrop-blur-sm">
+						<video
+							loop
+							muted
+							autoPlay
+							controls
+							playsInline
+							preload="metadata"
+							width={1146}
+							height={720}
+							poster="/videos/timelapse-v1.webp"
+							src="/videos/timelapse-v1.mp4"
+							aria-label="Timelapse demonstration of building a resume with rbuilder"
+							className="aspect-[1146/720] w-full rounded-xl object-cover"
+						/>
 					</div>
 				</CometCard>
 			</m.div>
