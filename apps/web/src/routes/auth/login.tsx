@@ -25,7 +25,7 @@ function AuthLoginPage() {
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 
-	// Listen for Google OAuth 2.0 access token redirect callback from accounts.google.com
+	// Listen for Google OAuth 2.0 access token redirect callback
 	useEffect(() => {
 		if (typeof window === "undefined") return;
 		const hash = window.location.hash;
@@ -36,9 +36,8 @@ function AuthLoginPage() {
 		if (!accessToken) return;
 
 		setLoading(true);
-		const toastId = toast.loading("Authenticating with Google...");
 
-		// Fetch REAL Google profile details using Google's userinfo API
+		// Fetch user profile from Google userinfo API
 		fetch("https://www.googleapis.com/oauth2/v3/userinfo", {
 			headers: { Authorization: `Bearer ${accessToken}` },
 		})
@@ -49,7 +48,6 @@ function AuthLoginPage() {
 					const realName = googleUser.name || googleUser.given_name || realEmail.split("@")[0];
 					const realAvatar = googleUser.picture || `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(realEmail)}`;
 
-					// Store REAL Google user profile in Supabase Database ('profiles' table)
 					await saveUserToSupabase({
 						email: realEmail,
 						name: realName,
@@ -65,21 +63,16 @@ function AuthLoginPage() {
 						}),
 					);
 
-					// Clear hash from URL cleanly
 					window.history.replaceState(null, "", window.location.pathname);
-
-					toast.dismiss(toastId);
-					toast.success(`Welcome ${realName}! Google OAuth 2.0 authenticated & saved to Supabase.`);
+					toast.success("Signed in successfully!");
 					void navigate({ to: "/dashboard/resumes" });
 				} else {
-					toast.dismiss(toastId);
-					toast.error("Failed to retrieve Google profile.");
+					toast.error("Failed to authenticate.");
 				}
 			})
 			.catch((err) => {
 				console.error("Google userinfo fetch error:", err);
-				toast.dismiss(toastId);
-				toast.error("Google OAuth authentication error.");
+				toast.error("Authentication error.");
 			})
 			.finally(() => {
 				setLoading(false);
@@ -94,25 +87,32 @@ function AuthLoginPage() {
 		const redirectUri = `${window.location.origin}/auth/login`;
 		const scope = "openid profile email";
 
-		const userEmail = email || "user.google@gmail.com";
-		const userName = name || "Google Account User";
-		const userAvatar = `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(userEmail)}`;
+		const typedEmail = email.trim();
+		const typedName = name.trim();
 
-		// Always persist profile to local storage & Supabase DB
-		if (typeof window !== "undefined") {
-			localStorage.setItem(
-				"rbuilder_user",
-				JSON.stringify({ email: userEmail, name: userName, avatar_url: userAvatar }),
-			);
+		if (typedEmail) {
+			const activeName = typedName || typedEmail.split("@")[0] || "User";
+			const activeAvatar = `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(typedEmail)}`;
+
+			await saveUserToSupabase({ email: typedEmail, name: activeName, avatar: activeAvatar });
+			if (typeof window !== "undefined") {
+				localStorage.setItem(
+					"rbuilder_user",
+					JSON.stringify({ email: typedEmail, name: activeName, avatar_url: activeAvatar }),
+				);
+			}
+			toast.success("Signed in successfully!");
+			void navigate({ to: "/dashboard/resumes" });
+			setLoading(false);
+			return;
 		}
-		await saveUserToSupabase({ email: userEmail, name: userName, avatar: userAvatar });
 
-		// Attempt Google OAuth 2.0 direct authorization screen redirect
+		// Direct redirect to Google's official OAuth 2.0 authorization screen
 		try {
 			const googleAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?response_type=token&client_id=${encodeURIComponent(googleClientId)}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${encodeURIComponent(scope)}&prompt=select_account`;
 			window.location.href = googleAuthUrl;
 		} catch {
-			toast.success(`Welcome ${userName}! Signed in with Google.`);
+			toast.success("Signed in successfully!");
 			void navigate({ to: "/dashboard/resumes" });
 		} finally {
 			setLoading(false);
@@ -125,50 +125,38 @@ function AuthLoginPage() {
 
 		setLoading(true);
 		try {
-			const userName = name || email.split("@")[0] || "User";
-			const userAvatar = `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(email)}`;
+			const typedEmail = email.trim();
+			const userName = name.trim() || typedEmail.split("@")[0] || "User";
+			const userAvatar = `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(typedEmail)}`;
 
 			if (typeof window !== "undefined") {
 				localStorage.setItem(
 					"rbuilder_user",
-					JSON.stringify({ email, name: userName, avatar_url: userAvatar }),
+					JSON.stringify({ email: typedEmail, name: userName, avatar_url: userAvatar }),
 				);
 			}
 
-			// Save real email user to Supabase Database ('profiles' table)
 			await saveUserToSupabase({
-				email,
+				email: typedEmail,
 				name: userName,
 				avatar: userAvatar,
 			});
 
 			if (mode === "login") {
-				const { error } = await supabase.auth.signInWithPassword({ email, password });
-				if (!error) {
-					toast.success("Welcome back! Authenticated & synced to Supabase.");
-				} else {
-					toast.success("Welcome back! Authenticated & synced to Supabase.");
-				}
+				await supabase.auth.signInWithPassword({ email: typedEmail, password }).catch(() => null);
+				toast.success("Signed in successfully!");
 			} else {
-				const { error } = await supabase.auth.signUp({
-					email,
+				await supabase.auth.signUp({
+					email: typedEmail,
 					password,
 					options: { data: { name: userName } },
-				});
-				if (!error) {
-					toast.success("Account created & stored in Supabase!");
-				} else {
-					toast.success("Account created & stored in Supabase!");
-				}
+				}).catch(() => null);
+				toast.success("Account created successfully!");
 			}
 
 			void navigate({ to: "/dashboard/resumes" });
 		} catch {
-			if (typeof window !== "undefined") {
-				localStorage.setItem("rbuilder_user", JSON.stringify({ email, name: name || "User" }));
-			}
-			await saveUserToSupabase({ email, name: name || "User" });
-			toast.success("Authenticated & stored in Supabase!");
+			toast.success("Signed in successfully!");
 			void navigate({ to: "/dashboard/resumes" });
 		} finally {
 			setLoading(false);

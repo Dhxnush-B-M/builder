@@ -19,33 +19,34 @@ export interface SupabaseResumeRecord {
 }
 
 /**
- * Save or update Google OAuth 2.0 user profile in Supabase Database ('profiles' table)
+ * Save or update user profile in Supabase Database ('profiles' table)
  */
 export async function saveUserToSupabase(user: { email: string; name: string; avatar?: string }) {
+	const userEmail = user.email || "user@example.com";
+	const userName = user.name || userEmail.split("@")[0] || "User";
+
 	const profileData: SupabaseUserProfile = {
 		id: `user_${Date.now()}`,
-		email: user.email,
-		name: user.name,
-		avatar_url: user.avatar || "https://api.dicebear.com/7.x/avataaars/svg?seed=" + encodeURIComponent(user.email),
+		email: userEmail,
+		name: userName,
+		avatar_url: user.avatar || "https://api.dicebear.com/7.x/avataaars/svg?seed=" + encodeURIComponent(userEmail),
 		provider: "google_oauth2",
 		created_at: new Date().toISOString(),
 		last_login: new Date().toISOString(),
 	};
 
-	// Save to local storage cache as well for instant zero-latency client state
 	if (typeof window !== "undefined") {
 		localStorage.setItem("rbuilder_supabase_user", JSON.stringify(profileData));
-		localStorage.setItem("rbuilder_user_email", user.email);
+		localStorage.setItem("rbuilder_user_email", userEmail);
 	}
 
 	try {
-		// Attempt insert/upsert into Supabase database table 'profiles'
 		const { error } = await supabase.from("profiles").upsert(profileData, { onConflict: "email" });
 		if (error) {
-			console.warn("Supabase database note (table sync fallback):", error.message);
+			console.warn("Supabase profile sync note:", error.message);
 		}
 	} catch (e) {
-		console.warn("Supabase database sync exception:", e);
+		console.warn("Supabase profile sync exception:", e);
 	}
 
 	return profileData;
@@ -74,7 +75,7 @@ export async function saveResumeToSupabase(
 	}
 
 	const currentUserStr = typeof window !== "undefined" ? localStorage.getItem("rbuilder_supabase_user") : null;
-	const userId = currentUserStr ? JSON.parse(currentUserStr).id : "guest_user";
+	const userId = currentUserStr ? JSON.parse(currentUserStr).id : "user_active";
 
 	const record: SupabaseResumeRecord = {
 		id: resumeId,
@@ -94,4 +95,17 @@ export async function saveResumeToSupabase(
 	}
 
 	return record;
+}
+
+/**
+ * Fetch resumes from Supabase Database ('resumes' table)
+ */
+export async function getResumesFromSupabase(): Promise<SupabaseResumeRecord[]> {
+	try {
+		const { data, error } = await supabase.from("resumes").select("*");
+		if (error || !data) return [];
+		return data as SupabaseResumeRecord[];
+	} catch {
+		return [];
+	}
 }
