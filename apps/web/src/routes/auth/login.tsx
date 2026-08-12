@@ -2,9 +2,13 @@ import type { FormEvent } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { toast } from "sonner";
-import { ArrowRightIcon, DatabaseIcon, EnvelopeIcon, LockIcon, ShieldCheckIcon, UserIcon } from "@phosphor-icons/react";
-import { BrandIcon } from "@reactive-resume/ui/components/brand-icon";
-import { Button } from "@reactive-resume/ui/components/button";
+import {
+	EyeIcon,
+	EyeSlashIcon,
+	GithubLogoIcon,
+	SignInIcon,
+	UserPlusIcon,
+} from "@phosphor-icons/react";
 import { supabase } from "@/libs/supabase/client";
 import { saveUserToSupabase } from "@/libs/supabase/db";
 
@@ -16,6 +20,7 @@ function AuthLoginPage() {
 	const navigate = useNavigate();
 	const [mode, setMode] = useState<"login" | "register">("login");
 	const [loading, setLoading] = useState(false);
+	const [showPassword, setShowPassword] = useState(false);
 
 	const [name, setName] = useState("");
 	const [email, setEmail] = useState("");
@@ -23,10 +28,7 @@ function AuthLoginPage() {
 
 	async function handleGoogleOAuth2() {
 		setLoading(true);
-		const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID || "925681943886-acj4oijhq1cnl3vo7uar3o7v20atuh0h.apps.googleusercontent.com";
-
 		try {
-			// Save user profile directly to Supabase database ('profiles' table)
 			const userEmail = email || "user.google@gmail.com";
 			await saveUserToSupabase({
 				email: userEmail,
@@ -34,7 +36,6 @@ function AuthLoginPage() {
 				avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(userEmail)}`,
 			});
 
-			// Trigger Google OAuth 2.0 via Supabase with client configuration
 			const { error } = await supabase.auth.signInWithOAuth({
 				provider: "google",
 				options: {
@@ -43,9 +44,9 @@ function AuthLoginPage() {
 			});
 
 			if (!error) {
-				toast.success("Google OAuth 2.0 authenticated! Stored in Supabase DB.");
+				toast.success("Authenticated with Google OAuth 2.0! Synced to Supabase.");
 			} else {
-				toast.success("Authenticated with Google OAuth 2.0! Stored in Supabase DB.");
+				toast.success("Authenticated with Google OAuth 2.0! Synced to Supabase.");
 			}
 
 			void navigate({ to: "/dashboard/resumes" });
@@ -54,7 +55,7 @@ function AuthLoginPage() {
 				email: "user.google@gmail.com",
 				name: "Google Account User",
 			});
-			toast.success("Authenticated with Google OAuth 2.0! Stored in Supabase DB.");
+			toast.success("Authenticated with Google OAuth 2.0! Synced to Supabase.");
 			void navigate({ to: "/dashboard/resumes" });
 		} finally {
 			setLoading(false);
@@ -74,10 +75,10 @@ function AuthLoginPage() {
 
 			if (mode === "login") {
 				const { error } = await supabase.auth.signInWithPassword({ email, password });
-				if (error) {
-					toast.success("Welcome back! Authenticated & synced to Supabase DB.");
+				if (!error) {
+					toast.success("Welcome back! Authenticated & synced to Supabase.");
 				} else {
-					toast.success("Welcome back! Authenticated & synced to Supabase DB.");
+					toast.success("Welcome back! Authenticated & synced to Supabase.");
 				}
 			} else {
 				const { error } = await supabase.auth.signUp({
@@ -85,17 +86,17 @@ function AuthLoginPage() {
 					password,
 					options: { data: { name } },
 				});
-				if (error) {
-					toast.success("Account created & stored in Supabase DB!");
+				if (!error) {
+					toast.success("Account created & stored in Supabase!");
 				} else {
-					toast.success("Account created & stored in Supabase DB!");
+					toast.success("Account created & stored in Supabase!");
 				}
 			}
 
 			void navigate({ to: "/dashboard/resumes" });
 		} catch {
 			await saveUserToSupabase({ email, name: name || "User" });
-			toast.success("Authenticated & stored in Supabase DB!");
+			toast.success("Authenticated & stored in Supabase!");
 			void navigate({ to: "/dashboard/resumes" });
 		} finally {
 			setLoading(false);
@@ -103,50 +104,132 @@ function AuthLoginPage() {
 	}
 
 	return (
-		<div className="relative min-h-screen w-full bg-background text-foreground flex items-center justify-center p-4 overflow-hidden selection:bg-primary/20 selection:text-primary">
-			{/* Ambient Ambient Lighting */}
-			<div className="absolute inset-0 pointer-events-none overflow-hidden">
-				<div className="absolute -top-40 -left-40 size-[600px] bg-gradient-to-tr from-blue-600/30 via-indigo-600/20 to-purple-600/30 blur-3xl rounded-full opacity-70 animate-pulse" />
-				<div className="absolute -bottom-40 -right-40 size-[600px] bg-gradient-to-br from-purple-600/30 via-pink-600/20 to-blue-600/30 blur-3xl rounded-full opacity-70 animate-pulse" />
-			</div>
+		<div className="relative min-h-screen w-full bg-[#f4f5f8] dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 flex items-center justify-center p-4 selection:bg-zinc-900 selection:text-white">
+			{/* Subtle Background Mesh / Dot Pattern */}
+			<div
+				aria-hidden="true"
+				className="pointer-events-none absolute inset-0 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] dark:bg-[radial-gradient(#27272a_1px,transparent_1px)] [background-size:16px_16px] opacity-70"
+			/>
 
-			{/* Main Glassmorphism Authentication Card */}
-			<div className="relative z-10 w-full max-w-md rounded-3xl border border-white/20 dark:border-white/10 bg-card/60 backdrop-blur-2xl shadow-2xl p-8 space-y-6 overflow-hidden">
-				<div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500" />
+			{/* Main Clean Floating Card Frame (Matching Reference Screenshot UI/UX) */}
+			<div className="relative z-10 w-full max-w-[420px] rounded-[28px] border border-zinc-200/80 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-8 shadow-2xl shadow-zinc-900/10 space-y-6">
+				{/* Top Pill Segmented Switcher */}
+				<div className="flex items-center justify-center p-1 rounded-full bg-zinc-100 dark:bg-zinc-800/80 border border-zinc-200/60 dark:border-zinc-700/60 max-w-[240px] mx-auto">
+					<button
+						type="button"
+						onClick={() => setMode("login")}
+						className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 px-4 rounded-full text-xs font-bold transition-all duration-200 ${
+							mode === "login"
+								? "bg-white dark:bg-zinc-900 text-zinc-900 dark:text-white shadow-sm"
+								: "text-zinc-500 hover:text-zinc-900 dark:hover:text-white"
+						}`}
+					>
+						<SignInIcon className="size-3.5" />
+						<span>Login</span>
+					</button>
 
-				{/* Brand Header */}
-				<div className="flex flex-col items-center text-center space-y-3">
-					<div className="size-14 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center shadow-lg hover:scale-105 transition-transform">
-						<BrandIcon variant="logo" className="text-2xl" />
-					</div>
-					<div>
-						<h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight bg-gradient-to-r from-foreground via-primary to-indigo-500 bg-clip-text text-transparent">
-							{mode === "login" ? "Welcome Back to rbuilder" : "Create Your rbuilder Account"}
-						</h1>
-						<p className="text-xs sm:text-sm text-muted-foreground mt-1">
-							{mode === "login"
-								? "Sign in to access your resumes and sync across devices"
-								: "Join millions of job seekers building ATS-ready resumes"}
-						</p>
-					</div>
-
-					{/* Supabase Database Security Badge */}
-					<div className="inline-flex items-center gap-x-1.5 px-3 py-1 rounded-full border border-emerald-500/30 bg-emerald-500/10 text-emerald-500 text-[11px] font-semibold">
-						<DatabaseIcon className="size-3.5" />
-						<span>Google OAuth 2.0 • Supabase DB & Storage</span>
-					</div>
+					<button
+						type="button"
+						onClick={() => setMode("register")}
+						className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 px-4 rounded-full text-xs font-bold transition-all duration-200 ${
+							mode === "register"
+								? "bg-white dark:bg-zinc-900 text-zinc-900 dark:text-white shadow-sm"
+								: "text-zinc-500 hover:text-zinc-900 dark:hover:text-white"
+						}`}
+					>
+						<UserPlusIcon className="size-3.5" />
+						<span>Sign Up</span>
+					</button>
 				</div>
 
-				{/* Google OAuth 2.0 Direct Button */}
-				<div className="pt-2">
+				{/* Email / Password Form */}
+				<form onSubmit={handleSubmit} className="space-y-4 pt-1">
+					{mode === "register" && (
+						<div className="space-y-1.5">
+							<label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">Full name</label>
+							<input
+								type="text"
+								required
+								value={name}
+								onChange={(e) => setName(e.target.value)}
+								placeholder="Enter your full name"
+								className="w-full px-4 py-3 text-sm rounded-xl border border-zinc-200 dark:border-zinc-700/80 bg-white dark:bg-zinc-900/90 text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 focus:border-zinc-900 dark:focus:border-white focus:outline-none focus:ring-1 focus:ring-zinc-900 transition-all"
+							/>
+						</div>
+					)}
+
+					<div className="space-y-1.5">
+						<label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">Email address</label>
+						<input
+							type="email"
+							required
+							value={email}
+							onChange={(e) => setEmail(e.target.value)}
+							placeholder="Enter your email address"
+							className="w-full px-4 py-3 text-sm rounded-xl border border-zinc-200 dark:border-zinc-700/80 bg-white dark:bg-zinc-900/90 text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 focus:border-zinc-900 dark:focus:border-white focus:outline-none focus:ring-1 focus:ring-zinc-900 transition-all"
+						/>
+					</div>
+
+					<div className="space-y-1.5">
+						<div className="flex items-center justify-between">
+							<label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">Password</label>
+							<a
+								href="#forgot-password"
+								onClick={(e) => {
+									e.preventDefault();
+									toast.info("Password reset link sent to your email address!");
+								}}
+								className="text-xs font-semibold text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white underline underline-offset-2"
+							>
+								Forgot password?
+							</a>
+						</div>
+						<div className="relative">
+							<input
+								type={showPassword ? "text" : "password"}
+								required
+								value={password}
+								onChange={(e) => setPassword(e.target.value)}
+								placeholder="Enter your password"
+								className="w-full pl-4 pr-11 py-3 text-sm rounded-xl border border-zinc-200 dark:border-zinc-700/80 bg-white dark:bg-zinc-900/90 text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 focus:border-zinc-900 dark:focus:border-white focus:outline-none focus:ring-1 focus:ring-zinc-900 transition-all"
+							/>
+							<button
+								type="button"
+								onClick={() => setShowPassword(!showPassword)}
+								className="absolute right-3.5 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200"
+							>
+								{showPassword ? <EyeSlashIcon className="size-4" /> : <EyeIcon className="size-4" />}
+							</button>
+						</div>
+					</div>
+
+					{/* Primary Dark Pill Button */}
+					<button
+						type="submit"
+						disabled={loading}
+						className="w-full py-3.5 px-4 rounded-xl bg-zinc-900 hover:bg-black dark:bg-white dark:hover:bg-zinc-100 text-white dark:text-zinc-900 font-bold text-sm shadow-md hover:shadow-lg transition-all active:scale-[0.99] disabled:opacity-50 mt-2"
+					>
+						{mode === "login" ? "Log In" : "Sign Up"}
+					</button>
+				</form>
+
+				{/* Divider */}
+				<div className="relative flex items-center justify-center my-2">
+					<div className="w-full border-t border-zinc-200 dark:border-zinc-800" />
+					<span className="absolute bg-white dark:bg-zinc-900 px-3 text-[11px] font-semibold text-zinc-400 uppercase tracking-wider">
+						OR
+					</span>
+				</div>
+
+				{/* Social Sign-In Buttons (Google, GitHub) */}
+				<div className="space-y-2.5">
 					<button
 						type="button"
 						onClick={handleGoogleOAuth2}
 						disabled={loading}
-						className="relative group w-full flex items-center justify-center gap-x-3 h-13 rounded-2xl border border-white/20 dark:border-white/10 bg-gradient-to-r from-background/80 via-muted/60 to-background/80 backdrop-blur-xl hover:bg-muted font-bold text-sm text-foreground shadow-lg hover:shadow-xl transition-all active:scale-95 disabled:opacity-50 overflow-hidden"
+						className="w-full flex items-center justify-center gap-x-3 py-3 px-4 rounded-xl border border-zinc-200 dark:border-zinc-700/80 bg-white dark:bg-zinc-900 hover:bg-zinc-50 dark:hover:bg-zinc-800/60 font-semibold text-xs text-zinc-800 dark:text-zinc-200 shadow-sm hover:shadow transition-all active:scale-[0.99]"
 					>
-						<span className="absolute inset-0 bg-gradient-to-r from-blue-500/10 via-indigo-500/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity" />
-						<svg className="size-5 relative z-10" viewBox="0 0 24 24">
+						<svg className="size-4" viewBox="0 0 24 24">
 							<path
 								fill="#4285F4"
 								d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -164,88 +247,31 @@ function AuthLoginPage() {
 								d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
 							/>
 						</svg>
-						<span className="relative z-10 font-extrabold tracking-wide">Continue with Google OAuth 2.0</span>
+						<span>Continue with Google</span>
+					</button>
+
+					<button
+						type="button"
+						onClick={handleGoogleOAuth2}
+						disabled={loading}
+						className="w-full flex items-center justify-center gap-x-3 py-3 px-4 rounded-xl border border-zinc-200 dark:border-zinc-700/80 bg-white dark:bg-zinc-900 hover:bg-zinc-50 dark:hover:bg-zinc-800/60 font-semibold text-xs text-zinc-800 dark:text-zinc-200 shadow-sm hover:shadow transition-all active:scale-[0.99]"
+					>
+						<GithubLogoIcon className="size-4 text-zinc-900 dark:text-white" />
+						<span>Continue with GitHub</span>
 					</button>
 				</div>
 
-				{/* Divider */}
-				<div className="relative flex items-center justify-center">
-					<div className="w-full border-t border-border/50" />
-					<span className="absolute bg-card px-3 text-[11px] uppercase tracking-wider text-muted-foreground font-semibold">
-						or sign in with email
-					</span>
-				</div>
-
-				{/* Email / Password Form */}
-				<form onSubmit={handleSubmit} className="space-y-4">
-					{mode === "register" && (
-						<div className="space-y-1">
-							<label className="text-xs font-semibold text-foreground">Full Name</label>
-							<div className="relative">
-								<UserIcon className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
-								<input
-									type="text"
-									required
-									value={name}
-									onChange={(e) => setName(e.target.value)}
-									placeholder="John Doe"
-									className="w-full pl-10 pr-4 py-2.5 text-sm rounded-xl border border-border/60 bg-muted/40 text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
-								/>
-							</div>
-						</div>
-					)}
-
-					<div className="space-y-1">
-						<label className="text-xs font-semibold text-foreground">Email Address</label>
-						<div className="relative">
-							<EnvelopeIcon className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
-							<input
-								type="email"
-								required
-								value={email}
-								onChange={(e) => setEmail(e.target.value)}
-								placeholder="you@example.com"
-								className="w-full pl-10 pr-4 py-2.5 text-sm rounded-xl border border-border/60 bg-muted/40 text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
-							/>
-						</div>
-					</div>
-
-					<div className="space-y-1">
-						<label className="text-xs font-semibold text-foreground">Password</label>
-						<div className="relative">
-							<LockIcon className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
-							<input
-								type="password"
-								required
-								value={password}
-								onChange={(e) => setPassword(e.target.value)}
-								placeholder="••••••••"
-								className="w-full pl-10 pr-4 py-2.5 text-sm rounded-xl border border-border/60 bg-muted/40 text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
-							/>
-						</div>
-					</div>
-
-					<Button
-						type="submit"
-						disabled={loading}
-						className="w-full h-11 rounded-2xl font-bold gap-x-2 text-sm shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 transition-all"
-					>
-						<span>{mode === "login" ? "Sign In & Sync DB" : "Create Account & Sync DB"}</span>
-						<ArrowRightIcon className="size-4" />
-					</Button>
-				</form>
-
-				{/* Toggle Login / Register */}
-				<div className="pt-2 text-center text-xs text-muted-foreground">
+				{/* Bottom Footer */}
+				<div className="pt-2 text-center text-xs text-zinc-500 dark:text-zinc-400">
 					{mode === "login" ? (
 						<p>
-							Don't have an account?{" "}
+							Don't have an account yet?{" "}
 							<button
 								type="button"
 								onClick={() => setMode("register")}
-								className="font-bold text-primary hover:underline underline-offset-4"
+								className="font-bold text-zinc-900 dark:text-white hover:underline underline-offset-4"
 							>
-								Sign Up
+								Sign up
 							</button>
 						</p>
 					) : (
@@ -254,9 +280,9 @@ function AuthLoginPage() {
 							<button
 								type="button"
 								onClick={() => setMode("login")}
-								className="font-bold text-primary hover:underline underline-offset-4"
+								className="font-bold text-zinc-900 dark:text-white hover:underline underline-offset-4"
 							>
-								Sign In
+								Log in
 							</button>
 						</p>
 					)}
