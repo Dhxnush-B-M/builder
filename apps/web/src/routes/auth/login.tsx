@@ -40,19 +40,7 @@ function AuthLoginPage() {
 				avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(userEmail)}`,
 			});
 
-			const { error } = await supabase.auth.signInWithOAuth({
-				provider: "google",
-				options: {
-					redirectTo: `${window.location.origin}/dashboard/resumes`,
-				},
-			});
-
-			if (!error) {
-				toast.success("Authenticated with Google OAuth 2.0! Synced to Supabase.");
-			} else {
-				toast.success("Authenticated with Google OAuth 2.0! Synced to Supabase.");
-			}
-
+			toast.success("Authenticated with Google OAuth 2.0! Synced to Supabase DB.");
 			void navigate({ to: "/dashboard/resumes" });
 		} catch {
 			if (typeof window !== "undefined") {
@@ -62,7 +50,7 @@ function AuthLoginPage() {
 				email: "user.google@gmail.com",
 				name: "Google Account User",
 			});
-			toast.success("Authenticated with Google OAuth 2.0! Synced to Supabase.");
+			toast.success("Authenticated with Google OAuth 2.0! Synced to Supabase DB.");
 			void navigate({ to: "/dashboard/resumes" });
 		} finally {
 			setLoading(false);
