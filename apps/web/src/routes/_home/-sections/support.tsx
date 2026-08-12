@@ -156,7 +156,7 @@ export function Support() {
 
 						<div className="mt-8 border-t border-border/50 pt-6">
 							<a
-								href="/builder/demo"
+								href="/auth/login"
 								className="inline-flex items-center gap-2 font-semibold text-primary text-sm hover:underline"
 							>
 								<FileTextIcon weight="bold" className="size-4" />

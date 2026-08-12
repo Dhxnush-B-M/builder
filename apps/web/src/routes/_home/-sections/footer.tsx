@@ -69,7 +69,7 @@ export function Footer() {
 				<FooterLinkGroup
 					title="Resources"
 					links={[
-						{ url: "/builder/demo", label: "Interactive Builder" },
+						{ url: "/auth/login", label: "Builder Application" },
 						{ url: "#templates", label: "Resume Templates" },
 					]}
 				/>

@@ -52,7 +52,7 @@ export function Hero() {
 						nativeButton={false}
 						className="group relative overflow-hidden px-8 py-6 font-bold text-base shadow-lg shadow-primary/25 transition-all hover:scale-105 hover:shadow-primary/40"
 						render={
-							<Link to="/builder/demo">
+							<Link to="/auth/login">
 								<span className="relative z-10 flex items-center gap-2.5">
 									<span>Create My Resume</span>
 									<ArrowRightIcon

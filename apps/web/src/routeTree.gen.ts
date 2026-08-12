@@ -22,6 +22,7 @@ import { Route as AuthResetPasswordRouteImport } from "./routes/auth/reset-passw
 import { Route as AuthResumePasswordRouteImport } from "./routes/auth/resume-password";
 import { Route as AuthVerify2faRouteImport } from "./routes/auth/verify-2fa";
 import { Route as AuthVerify2faBackupRouteImport } from "./routes/auth/verify-2fa-backup";
+import { Route as BuilderIndexRouteImport } from "./routes/builder/index";
 import { Route as BuilderResumeIdRouteRouteImport } from "./routes/builder/$resumeId/route";
 import { Route as DashboardIndexRouteImport } from "./routes/dashboard/index";
 import { Route as TemplatesSplatRouteImport } from "./routes/templates/$";
@@ -95,6 +96,11 @@ const AuthVerify2faBackupRoute = AuthVerify2faBackupRouteImport.update({
   path: "/verify-2fa-backup",
   getParentRoute: () => AuthRouteRoute,
 } as any);
+const BuilderIndexRoute = BuilderIndexRouteImport.update({
+  id: "/builder/",
+  path: "/builder/",
+  getParentRoute: () => rootRouteImport,
+} as any);
 const BuilderResumeIdRouteRoute = BuilderResumeIdRouteRouteImport.update({
   id: "/builder/$resumeId",
   path: "/builder/$resumeId",
@@ -154,6 +160,7 @@ export interface FileRoutesByFullPath {
   "/auth/verify-2fa-backup": typeof AuthVerify2faBackupRoute;
   "/templates/$": typeof TemplatesSplatRoute;
   "/auth/": typeof AuthIndexRoute;
+  "/builder/": typeof BuilderIndexRoute;
   "/dashboard/": typeof DashboardIndexRoute;
   "/dashboard/settings/job-search": typeof DashboardSettingsJobSearchRoute;
   "/dashboard/settings/preferences": typeof DashboardSettingsPreferencesRoute;
@@ -173,6 +180,7 @@ export interface FileRoutesByTo {
   "/templates/$": typeof TemplatesSplatRoute;
   "/": typeof HomeIndexRoute;
   "/auth": typeof AuthIndexRoute;
+  "/builder": typeof BuilderIndexRoute;
   "/dashboard": typeof DashboardIndexRoute;
   "/dashboard/settings/job-search": typeof DashboardSettingsJobSearchRoute;
   "/dashboard/settings/preferences": typeof DashboardSettingsPreferencesRoute;
@@ -197,6 +205,7 @@ export interface FileRoutesById {
   "/templates/$": typeof TemplatesSplatRoute;
   "/_home/": typeof HomeIndexRoute;
   "/auth/": typeof AuthIndexRoute;
+  "/builder/": typeof BuilderIndexRoute;
   "/dashboard/": typeof DashboardIndexRoute;
   "/dashboard/settings/job-search": typeof DashboardSettingsJobSearchRoute;
   "/dashboard/settings/preferences": typeof DashboardSettingsPreferencesRoute;
@@ -221,6 +230,7 @@ export interface FileRouteTypes {
     | "/auth/verify-2fa-backup"
     | "/templates/$"
     | "/auth/"
+    | "/builder/"
     | "/dashboard/"
     | "/dashboard/settings/job-search"
     | "/dashboard/settings/preferences"
@@ -240,6 +250,7 @@ export interface FileRouteTypes {
     | "/templates/$"
     | "/"
     | "/auth"
+    | "/builder"
     | "/dashboard"
     | "/dashboard/settings/job-search"
     | "/dashboard/settings/preferences"
@@ -263,6 +274,7 @@ export interface FileRouteTypes {
     | "/templates/$"
     | "/_home/"
     | "/auth/"
+    | "/builder/"
     | "/dashboard/"
     | "/dashboard/settings/job-search"
     | "/dashboard/settings/preferences"
@@ -278,6 +290,7 @@ export interface RootRouteChildren {
   BuilderResumeIdRouteRoute: typeof BuilderResumeIdRouteRouteWithChildren;
   UsernameSlugRoute: typeof UsernameSlugRoute;
   TemplatesSplatRoute: typeof TemplatesSplatRoute;
+  BuilderIndexRoute: typeof BuilderIndexRoute;
 }
 
 declare module "@tanstack/react-router" {
@@ -372,6 +385,13 @@ declare module "@tanstack/react-router" {
       fullPath: "/auth/verify-2fa-backup";
       preLoaderRoute: typeof AuthVerify2faBackupRouteImport;
       parentRoute: typeof AuthRouteRoute;
+    };
+    "/builder/": {
+      id: "/builder/";
+      path: "/builder";
+      fullPath: "/builder/";
+      preLoaderRoute: typeof BuilderIndexRouteImport;
+      parentRoute: typeof rootRouteImport;
     };
     "/builder/$resumeId": {
       id: "/builder/$resumeId";
@@ -508,6 +528,7 @@ const rootRouteChildren: RootRouteChildren = {
   BuilderResumeIdRouteRoute: BuilderResumeIdRouteRouteWithChildren,
   UsernameSlugRoute: UsernameSlugRoute,
   TemplatesSplatRoute: TemplatesSplatRoute,
+  BuilderIndexRoute: BuilderIndexRoute,
 };
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

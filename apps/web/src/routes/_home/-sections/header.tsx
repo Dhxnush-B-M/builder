@@ -60,7 +60,7 @@ export function Header() {
 					<ThemeToggleButton />
 
 					<Link
-						to="/builder/demo"
+						to="/auth/login"
 						aria-label="Go to builder"
 						title="Go to builder"
 						className="relative flex size-10 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg shadow-primary/25 transition-all duration-300 hover:scale-105 active:scale-95 group"

@@ -26,17 +26,17 @@ function AuthLoginPage() {
 			const { error } = await supabase.auth.signInWithOAuth({
 				provider: "google",
 				options: {
-					redirectTo: `${window.location.origin}/builder/demo`,
+					redirectTo: `${window.location.origin}/builder`,
 				},
 			});
 
 			if (error) {
 				toast.success("Signed in successfully with Google!");
-				void navigate({ to: "/builder/demo" });
+				void navigate({ to: "/builder" });
 			}
 		} catch {
 			toast.success("Signed in successfully!");
-			void navigate({ to: "/builder/demo" });
+			void navigate({ to: "/builder" });
 		} finally {
 			setLoading(false);
 		}
@@ -71,11 +71,11 @@ function AuthLoginPage() {
 				}
 			}
 
-			void navigate({ to: "/builder/demo" });
+			void navigate({ to: "/builder" });
 		} catch {
 			localStorage.setItem("rbuilder_user_email", email);
 			toast.success("Signed in successfully!");
-			void navigate({ to: "/builder/demo" });
+			void navigate({ to: "/builder" });
 		} finally {
 			setLoading(false);
 		}

@@ -53,7 +53,7 @@ export function Templates() {
 							return (
 								<div
 									key={key}
-									onClick={() => void navigate({ to: "/builder/demo" })}
+									onClick={() => void navigate({ to: "/auth/login" })}
 									className="absolute flex cursor-pointer items-center justify-center transition-transform duration-300"
 									style={{
 										transform: `rotateY(${angle}deg) translateZ(480px)`,
