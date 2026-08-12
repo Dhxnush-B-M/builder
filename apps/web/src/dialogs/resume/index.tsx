@@ -41,6 +41,7 @@ import { getResumeErrorMessage } from "@/libs/error-message";
 import { orpc } from "@/libs/orpc/client";
 import { useAppForm, withForm } from "@/libs/tanstack-form";
 import { useDialogStore } from "../store";
+import { saveLocalResume } from "@/libs/resume/local-storage";
 
 const formSchema = z.object({
 	id: z.string(),
@@ -74,9 +75,17 @@ export function CreateResumeDialog(_: DialogProps<"resume.create">) {
 		validators: { onSubmit: formSchema },
 		onSubmit: ({ value }) => {
 			didCreateRef.current = true;
+			const newId = value.id || generateId();
+			const resumeName = value.name || "Untitled Resume";
+			saveLocalResume({
+				id: newId,
+				name: resumeName,
+				slug: value.slug || slugify(resumeName),
+				tags: value.tags || [],
+			});
 			toast.success("Your resume has been created successfully.");
 			closeDialog();
-			void navigate({ to: "/builder/$resumeId", params: { resumeId: value.id || generateId() } });
+			void navigate({ to: "/builder/$resumeId", params: { resumeId: newId } });
 		},
 	});
 
@@ -92,9 +101,16 @@ export function CreateResumeDialog(_: DialogProps<"resume.create">) {
 
 	const onCreateSampleResume = () => {
 		didCreateRef.current = true;
+		const newId = generateId();
+		saveLocalResume({
+			id: newId,
+			name: "Sample Resume",
+			slug: "sample-resume",
+			tags: [],
+		});
 		toast.success("Your resume has been created successfully.");
 		closeDialog();
-		void navigate({ to: "/builder/$resumeId", params: { resumeId: generateId() } });
+		void navigate({ to: "/builder/$resumeId", params: { resumeId: newId } });
 	};
 
 	return (

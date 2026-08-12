@@ -25,6 +25,7 @@ import { orpc } from "@/libs/orpc/client";
 import { DashboardHeader } from "../-components/header";
 import { GridView } from "./-components/grid-view";
 import { ListView } from "./-components/list-view";
+import { getLocalResumes } from "@/libs/resume/local-storage";
 
 type SortOption = "lastUpdatedAt" | "createdAt" | "name";
 
@@ -58,14 +59,23 @@ function RouteComponent() {
 	const { data: allTags } = useQuery({ ...orpc.resume.tags.list.queryOptions(), retry: false });
 	const { data: resumes } = useQuery({ ...orpc.resume.list.queryOptions({ input: { tags, sort } }), retry: false });
 
+	const localResumes = useMemo(() => getLocalResumes(), []);
+
 	const filteredResumes = useMemo(() => {
-		const list = resumes ?? [];
+		const list = [...(resumes ?? []), ...localResumes];
+		const uniqueMap = new Map();
+		for (const item of list) {
+			if (!uniqueMap.has(item.id)) {
+				uniqueMap.set(item.id, item);
+			}
+		}
+		const all = Array.from(uniqueMap.values());
 		const query = search.trim().toLowerCase();
-		if (!query) return list;
-		return list.filter(
+		if (!query) return all;
+		return all.filter(
 			(resume) => resume.name.toLowerCase().includes(query) || resume.slug.toLowerCase().includes(query),
 		);
-	}, [resumes, search]);
+	}, [resumes, localResumes, search]);
 
 	const tagOptions = useMemo(() => {
 		if (!allTags) return [];
