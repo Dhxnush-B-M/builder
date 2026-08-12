@@ -3,7 +3,7 @@ import { useEffect, useMemo } from "react";
 import { useMediaQuery } from "usehooks-ts";
 import { useResumeCleanup, useResumeStore } from "@/features/resume/builder/draft";
 import { initializeStylesheetStore, useStylesheetStore } from "@/features/resume/stylesheet/store";
-import { createSampleResumeData } from "@reactive-resume/schema/resume/sample";
+import { defaultResumeData } from "@reactive-resume/schema/resume/default";
 import { createNoindexFollowMeta } from "@/libs/seo";
 import { DesktopBuilderShell } from "./-components/desktop-builder-shell";
 import { MobileBuilderShell } from "./-components/mobile-builder-shell";
@@ -26,20 +26,21 @@ function RouteComponent() {
 	const { layout: initialLayout } = Route.useLoaderData();
 	const { resumeId } = Route.useParams();
 
-	const sampleData = useMemo(() => createSampleResumeData(), []);
+	// Clean default resume structure with 0 fake/demo items or pre-filled duplicate details
+	const cleanData = useMemo(() => structuredClone(defaultResumeData), []);
 	const resume = useMemo(
 		() => ({
 			id: resumeId,
 			name: "My Resume",
 			slug: "my-resume",
 			tags: [],
-			data: sampleData,
+			data: cleanData,
 			isPublic: true,
 			isLocked: false,
 			hasPassword: false,
 			updatedAt: new Date(),
 		}),
-		[resumeId, sampleData],
+		[resumeId, cleanData],
 	);
 
 	const initializeResumeStore = useResumeStore((state) => state.initialize);
