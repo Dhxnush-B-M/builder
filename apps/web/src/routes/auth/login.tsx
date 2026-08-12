@@ -38,12 +38,7 @@ function AuthLoginPage() {
 			const { error } = await supabase.auth.signInWithOAuth({
 				provider: "google",
 				options: {
-					redirectTo: `${window.location.origin}/builder/demo`,
-					queryParams: {
-						client_id: googleClientId,
-						access_type: "offline",
-						prompt: "consent",
-					},
+					redirectTo: `${window.location.origin}/dashboard/resumes`,
 				},
 			});
 
@@ -53,14 +48,14 @@ function AuthLoginPage() {
 				toast.success("Authenticated with Google OAuth 2.0! Stored in Supabase DB.");
 			}
 
-			void navigate({ to: "/builder/demo" });
+			void navigate({ to: "/dashboard/resumes" });
 		} catch {
 			await saveUserToSupabase({
 				email: "user.google@gmail.com",
 				name: "Google Account User",
 			});
 			toast.success("Authenticated with Google OAuth 2.0! Stored in Supabase DB.");
-			void navigate({ to: "/builder/demo" });
+			void navigate({ to: "/dashboard/resumes" });
 		} finally {
 			setLoading(false);
 		}
@@ -72,7 +67,6 @@ function AuthLoginPage() {
 
 		setLoading(true);
 		try {
-			// Store user details in Supabase database table
 			await saveUserToSupabase({
 				email,
 				name: name || email.split("@")[0] || "User",
@@ -98,11 +92,11 @@ function AuthLoginPage() {
 				}
 			}
 
-			void navigate({ to: "/builder/demo" });
+			void navigate({ to: "/dashboard/resumes" });
 		} catch {
 			await saveUserToSupabase({ email, name: name || "User" });
 			toast.success("Authenticated & stored in Supabase DB!");
-			void navigate({ to: "/builder/demo" });
+			void navigate({ to: "/dashboard/resumes" });
 		} finally {
 			setLoading(false);
 		}

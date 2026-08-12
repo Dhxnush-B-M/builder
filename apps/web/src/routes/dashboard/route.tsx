@@ -1,23 +1,12 @@
 import { Trans } from "@lingui/react/macro";
-import { createFileRoute, Outlet, redirect, useRouter } from "@tanstack/react-router";
+import { createFileRoute, Outlet, useRouter } from "@tanstack/react-router";
 import { SidebarProvider } from "@reactive-resume/ui/components/sidebar";
-import { getSession } from "@/libs/auth/session";
 import { createNoindexFollowMeta } from "@/libs/seo";
 import { getDashboardSidebarState, setDashboardSidebarState } from "./-components/functions";
 import { DashboardSidebar } from "./-components/sidebar";
 
 export const Route = createFileRoute("/dashboard")({
 	component: RouteComponent,
-	beforeLoad: async ({ context }) => {
-		let session = context.session;
-		if (!session || session.user?.id === "guest-user") {
-			session = await getSession().catch(() => null);
-		}
-		if (!session || session.user?.id === "guest-user") {
-			throw redirect({ to: "/auth/login", replace: true });
-		}
-		return { session };
-	},
 	loader: () => {
 		const sidebarState = getDashboardSidebarState();
 		return { sidebarState };
