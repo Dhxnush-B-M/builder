@@ -65,31 +65,6 @@ export function ListView({ resumes, hasResumes }: ListViewProps) {
 						</p>
 					</Button>
 				</m.div>
-
-				<m.div
-					className="will-change-[transform,opacity]"
-					initial={{ opacity: 0, y: -20 }}
-					animate={{ opacity: 1, y: 0 }}
-					exit={{ opacity: 0, y: -20 }}
-					transition={{ duration: 0.2, delay: 0.03, ease: "easeOut" }}
-				>
-					<Button
-						size="lg"
-						variant="ghost"
-						className="h-12 w-full justify-start gap-x-4 text-start"
-						onClick={handleImportResume}
-					>
-						<DownloadSimpleIcon />
-
-						<div className="min-w-0 flex-1 truncate">
-							<Trans>Import an existing resume</Trans>
-						</div>
-
-						<p className="hidden text-xs opacity-60 sm:block">
-							<Trans>Continue where you left off</Trans>
-						</p>
-					</Button>
-				</m.div>
 			</div>
 		);
 	}

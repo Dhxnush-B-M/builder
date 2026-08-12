@@ -33,16 +33,6 @@ export function GridView({ resumes, hasResumes }: Props) {
 				>
 					<CreateResumeCard />
 				</m.div>
-
-				<m.div
-					initial={{ y: -20 }}
-					animate={{ opacity: 1, y: 0 }}
-					exit={{ y: -20 }}
-					transition={{ duration: 0.2, delay: 0.03, ease: "easeOut" }}
-					className="will-change-[transform,opacity]"
-				>
-					<ImportResumeCard />
-				</m.div>
 			</div>
 		);
 	}
