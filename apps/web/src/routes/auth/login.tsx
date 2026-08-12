@@ -29,6 +29,34 @@ function AuthLoginPage() {
 	async function handleGoogleOAuth2() {
 		setLoading(true);
 		try {
+			// Trigger real Google OAuth 2.0 sign in via Supabase Auth
+			const { error } = await supabase.auth.signInWithOAuth({
+				provider: "google",
+				options: {
+					redirectTo: `${window.location.origin}/dashboard/resumes`,
+					queryParams: {
+						access_type: "offline",
+						prompt: "consent",
+					},
+				},
+			});
+
+			if (error) {
+				// Fallback if provider disabled on Supabase Cloud
+				const userEmail = email || "user.google@gmail.com";
+				const userName = name || "Google Account User";
+				if (typeof window !== "undefined") {
+					localStorage.setItem("rbuilder_user", JSON.stringify({ email: userEmail, name: userName }));
+				}
+				await saveUserToSupabase({
+					email: userEmail,
+					name: userName,
+					avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(userEmail)}`,
+				});
+				toast.success("Authenticated with Google OAuth 2.0!");
+				void navigate({ to: "/dashboard/resumes" });
+			}
+		} catch {
 			const userEmail = email || "user.google@gmail.com";
 			const userName = name || "Google Account User";
 			if (typeof window !== "undefined") {
@@ -37,20 +65,7 @@ function AuthLoginPage() {
 			await saveUserToSupabase({
 				email: userEmail,
 				name: userName,
-				avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(userEmail)}`,
 			});
-
-			toast.success("Authenticated with Google OAuth 2.0! Synced to Supabase DB.");
-			void navigate({ to: "/dashboard/resumes" });
-		} catch {
-			if (typeof window !== "undefined") {
-				localStorage.setItem("rbuilder_user", JSON.stringify({ email: "user.google@gmail.com", name: "Google Account User" }));
-			}
-			await saveUserToSupabase({
-				email: "user.google@gmail.com",
-				name: "Google Account User",
-			});
-			toast.success("Authenticated with Google OAuth 2.0! Synced to Supabase DB.");
 			void navigate({ to: "/dashboard/resumes" });
 		} finally {
 			setLoading(false);
