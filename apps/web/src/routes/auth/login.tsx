@@ -86,18 +86,34 @@ function AuthLoginPage() {
 			});
 	}, [navigate]);
 
-	function handleGoogleOAuth2() {
+	async function handleGoogleOAuth2() {
 		setLoading(true);
-		const clientId =
-			import.meta.env.VITE_GOOGLE_CLIENT_ID ||
-			"925681943886-acj4oijhq1cnl3vo7uar3o7v20atuh0h.apps.googleusercontent.com";
-		const redirectUri = `${window.location.origin}/auth/login`;
-		const scope = "openid profile email";
+		try {
+			// 1. Try Supabase Google OAuth redirect first
+			const { error } = await supabase.auth.signInWithOAuth({
+				provider: "google",
+				options: {
+					redirectTo: `${window.location.origin}/dashboard/resumes`,
+				},
+			});
 
-		// Direct redirect to Google's official OAuth 2.0 authorization screen
-		const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?response_type=token&client_id=${encodeURIComponent(clientId)}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${encodeURIComponent(scope)}&prompt=consent`;
-
-		window.location.href = authUrl;
+			if (error) {
+				// 2. Fallback to Direct Google OAuth 2.0 endpoint
+				const clientId =
+					import.meta.env.VITE_GOOGLE_CLIENT_ID ||
+					"925681943886-acj4oijhq1cnl3vo7uar3o7v20atuh0h.apps.googleusercontent.com";
+				const redirectUri = `${window.location.origin}/auth/login`;
+				const scope = "openid profile email";
+				window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?response_type=token&client_id=${encodeURIComponent(clientId)}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${encodeURIComponent(scope)}`;
+			}
+		} catch {
+			const clientId =
+				import.meta.env.VITE_GOOGLE_CLIENT_ID ||
+				"925681943886-acj4oijhq1cnl3vo7uar3o7v20atuh0h.apps.googleusercontent.com";
+			const redirectUri = `${window.location.origin}/auth/login`;
+			const scope = "openid profile email";
+			window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?response_type=token&client_id=${encodeURIComponent(clientId)}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${encodeURIComponent(scope)}`;
+		}
 	}
 
 	async function handleSubmit(e: FormEvent) {
