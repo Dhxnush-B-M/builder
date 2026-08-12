@@ -9,8 +9,11 @@ import { createResumePdfBlob } from "@/features/resume/export/pdf-document";
 import { createPdfFirstPageImageUrl } from "@/features/resume/preview/pdf-thumbnail";
 import { getResumeThumbnailCacheKey } from "@/features/resume/preview/resume-thumbnail.shared";
 import { orpc } from "@/libs/orpc/client";
+import { defaultResumeData } from "@reactive-resume/schema/resume/default";
 
-type ResumeListItem = RouterOutput["resume"]["list"][number];
+type ResumeListItem = RouterOutput["resume"]["list"][number] & {
+	data?: ResumeData;
+};
 
 type ThumbnailState = { status: "error" | "idle" | "loading" } | { status: "ready"; url: string };
 
@@ -75,13 +78,16 @@ function useResumeThumbnail(data: ResumeData | undefined, cacheKey: string | und
 export function ResumeThumbnail({ isLocked, resume }: ResumeThumbnailProps) {
 	const containerRef = useRef<HTMLDivElement>(null);
 	const isInView = useInView(containerRef, { amount: 0.1, margin: "240px", once: true });
-	const { data: resumeData } = useQuery({
+	const { data: fetchResumeData } = useQuery({
 		...orpc.resume.getById.queryOptions({ input: { id: resume.id } }),
-		enabled: isInView,
+		enabled: isInView && !resume.data,
 		retry: false,
 	});
+
+	const activeData = resume.data || fetchResumeData?.data || defaultResumeData;
+
 	const thumbnail = useResumeThumbnail(
-		resumeData?.data,
+		activeData,
 		isInView ? getResumeThumbnailCacheKey(resume.id, resume.updatedAt) : undefined,
 	);
 
@@ -89,7 +95,7 @@ export function ResumeThumbnail({ isLocked, resume }: ResumeThumbnailProps) {
 		<div
 			ref={containerRef}
 			className={cn(
-				"relative size-full overflow-hidden bg-background/60 p-4 transition-all",
+				"relative size-full overflow-hidden bg-background/60 transition-all",
 				isLocked && "blur-xs",
 			)}
 		>
@@ -101,7 +107,7 @@ export function ResumeThumbnail({ isLocked, resume }: ResumeThumbnailProps) {
 				/>
 			) : (
 				/* Beautiful Resume Document Mini Preview Cover Layout */
-				<div className="relative flex size-full flex-col justify-between rounded-lg border border-white/10 bg-card/80 p-3 shadow-inner backdrop-blur-md transition-all duration-300 group-hover:border-primary/40">
+				<div className="relative flex size-full flex-col justify-between rounded-lg border border-white/10 bg-card/80 p-4 shadow-inner backdrop-blur-md transition-all duration-300 group-hover:border-primary/40">
 					{/* Document Mini Header */}
 					<div className="space-y-2">
 						<div className="flex items-center gap-2">
@@ -132,7 +138,7 @@ export function ResumeThumbnail({ isLocked, resume }: ResumeThumbnailProps) {
 
 					{/* Bottom Badge */}
 					<div className="flex items-center justify-between pt-1 text-[10px] text-muted-foreground">
-						<span className="font-mono text-[9px] uppercase tracking-wider text-primary/80">Interactive Draft</span>
+						<span className="font-mono text-[9px] uppercase tracking-wider text-primary/80">Live Document</span>
 						<SparkleIcon className="size-3 text-primary animate-pulse" />
 					</div>
 				</div>
