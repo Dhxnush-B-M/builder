@@ -1,17 +1,9 @@
 import { useNavigate } from "@tanstack/react-router";
 import { m } from "motion/react";
 import { useState } from "react";
+import { templates } from "@/dialogs/resume/template/data";
 
-const templatesList = [
-	{ id: "azurill", name: "Azurill", imageUrl: "/templates/jpg/azurill.jpg" },
-	{ id: "bronzer", name: "Bronzer", imageUrl: "/templates/jpg/bronzer.jpg" },
-	{ id: "chapeau", name: "Chapeau", imageUrl: "/templates/jpg/chapeau.jpg" },
-	{ id: "ditgar", name: "Ditgar", imageUrl: "/templates/jpg/ditgar.jpg" },
-	{ id: "gengar", name: "Gengar", imageUrl: "/templates/jpg/gengar.jpg" },
-	{ id: "kakuna", name: "Kakuna", imageUrl: "/templates/jpg/kakuna.jpg" },
-	{ id: "leafish", name: "Leafish", imageUrl: "/templates/jpg/leafish.jpg" },
-	{ id: "onyx", name: "Onyx", imageUrl: "/templates/jpg/onyx.jpg" },
-];
+const templateEntries = Object.entries(templates);
 
 export function Templates() {
 	const navigate = useNavigate();
@@ -48,27 +40,27 @@ export function Templates() {
 						animate={{ rotateY: isPaused ? undefined : [0, 360] }}
 						transition={{
 							rotateY: {
-								duration: 32,
+								duration: 35,
 								repeat: Number.POSITIVE_INFINITY,
 								ease: "linear",
 							},
 						}}
 					>
-						{templatesList.map((metadata, index) => {
-							const total = templatesList.length;
+						{templateEntries.map(([key, metadata], index) => {
+							const total = templateEntries.length;
 							const angle = (360 / total) * index;
 
 							return (
 								<div
-									key={metadata.id}
+									key={key}
 									onClick={() => void navigate({ to: "/builder/demo" })}
 									className="absolute flex cursor-pointer items-center justify-center transition-transform duration-300"
 									style={{
-										transform: `rotateY(${angle}deg) translateZ(420px)`,
+										transform: `rotateY(${angle}deg) translateZ(480px)`,
 									}}
 								>
 									<m.div
-										className="group relative w-48 rounded-xl border border-border/80 bg-card p-2 shadow-2xl transition-all duration-300 hover:scale-110 hover:border-primary/80 sm:w-56 md:w-60"
+										className="group relative w-44 rounded-xl border border-border/80 bg-card p-2 shadow-2xl transition-all duration-300 hover:scale-110 hover:border-primary/80 sm:w-52 md:w-56"
 										whileHover={{ y: -8 }}
 									>
 										<div className="relative aspect-[3/4] w-full overflow-hidden rounded-lg border bg-background">
@@ -80,8 +72,8 @@ export function Templates() {
 
 											<div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
 
-											<div className="absolute inset-x-0 bottom-0 translate-y-3 p-4 opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
-												<span className="inline-block font-extrabold text-base text-white tracking-wide drop-shadow-md">
+											<div className="absolute inset-x-0 bottom-0 translate-y-3 p-3 opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
+												<span className="inline-block font-extrabold text-sm sm:text-base text-white tracking-wide drop-shadow-md">
 													{metadata.name}
 												</span>
 											</div>
