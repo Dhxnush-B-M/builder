@@ -1,6 +1,7 @@
 import type { Icon } from "@phosphor-icons/react";
 import { FileTextIcon, UsersIcon } from "@phosphor-icons/react";
 import { m } from "motion/react";
+import { useEffect, useState } from "react";
 
 type Statistic = {
 	id: string;
@@ -8,21 +9,6 @@ type Statistic = {
 	value: number;
 	icon: Icon;
 };
-
-const statistics: Statistic[] = [
-	{
-		id: "users",
-		label: "Users",
-		value: 1184459,
-		icon: UsersIcon,
-	},
-	{
-		id: "resumes",
-		label: "Resumes Created",
-		value: 1616312,
-		icon: FileTextIcon,
-	},
-];
 
 type StatisticCardProps = {
 	statistic: Statistic;
@@ -71,6 +57,54 @@ function StatisticCard({ statistic, index }: StatisticCardProps) {
 }
 
 export function Statistics() {
+	const [userCount, setUserCount] = useState(1);
+	const [resumeCount, setResumeCount] = useState(1);
+
+	useEffect(() => {
+		if (typeof window === "undefined") return;
+
+		try {
+			// Calculate real resume count from localStorage
+			const keys = Object.keys(localStorage);
+			const savedResumes = keys.filter(
+				(k) => k.includes("resume") || k.includes("builder") || k.startsWith("rbuilder_"),
+			);
+			
+			if (savedResumes.length > 0) {
+				setResumeCount(savedResumes.length);
+			} else {
+				setResumeCount(1);
+			}
+
+			// User session count
+			const userSessions = localStorage.getItem("rbuilder_user_session");
+			if (userSessions) {
+				setUserCount(Math.max(1, parseInt(userSessions, 10) || 1));
+			} else {
+				localStorage.setItem("rbuilder_user_session", "1");
+				setUserCount(1);
+			}
+		} catch {
+			setUserCount(1);
+			setResumeCount(1);
+		}
+	}, []);
+
+	const statisticsList: Statistic[] = [
+		{
+			id: "users",
+			label: "Users",
+			value: userCount,
+			icon: UsersIcon,
+		},
+		{
+			id: "resumes",
+			label: "Resumes Created",
+			value: resumeCount,
+			icon: FileTextIcon,
+		},
+	];
+
 	return (
 		<section id="statistics" aria-labelledby="stats-heading">
 			<h2 id="stats-heading" className="sr-only">
@@ -78,7 +112,7 @@ export function Statistics() {
 			</h2>
 
 			<div className="grid grid-cols-1 sm:grid-cols-2">
-				{statistics.map((statistic, index) => (
+				{statisticsList.map((statistic, index) => (
 					<StatisticCard key={statistic.id} statistic={statistic} index={index} />
 				))}
 			</div>
