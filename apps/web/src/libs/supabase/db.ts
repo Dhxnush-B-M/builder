@@ -33,8 +33,10 @@ export async function saveUserToSupabase(user: { email: string; name: string; av
 	};
 
 	// Save to local storage cache as well for instant zero-latency client state
-	localStorage.setItem("rbuilder_supabase_user", JSON.stringify(profileData));
-	localStorage.setItem("rbuilder_user_email", user.email);
+	if (typeof window !== "undefined") {
+		localStorage.setItem("rbuilder_supabase_user", JSON.stringify(profileData));
+		localStorage.setItem("rbuilder_user_email", user.email);
+	}
 
 	try {
 		// Attempt insert/upsert into Supabase database table 'profiles'
@@ -52,8 +54,26 @@ export async function saveUserToSupabase(user: { email: string; name: string; av
 /**
  * Save resume document state directly to Supabase Database ('resumes' table)
  */
-export async function saveResumeToSupabase(resumeId: string, title: string, data: unknown) {
-	const currentUserStr = localStorage.getItem("rbuilder_supabase_user");
+export async function saveResumeToSupabase(
+	paramOrId: string | { id: string; title: string; data: unknown },
+	titleParam?: string,
+	dataParam?: unknown,
+) {
+	let resumeId: string;
+	let title: string;
+	let data: unknown;
+
+	if (typeof paramOrId === "object" && paramOrId !== null) {
+		resumeId = paramOrId.id;
+		title = paramOrId.title;
+		data = paramOrId.data;
+	} else {
+		resumeId = paramOrId;
+		title = titleParam || "My Resume";
+		data = dataParam;
+	}
+
+	const currentUserStr = typeof window !== "undefined" ? localStorage.getItem("rbuilder_supabase_user") : null;
 	const userId = currentUserStr ? JSON.parse(currentUserStr).id : "guest_user";
 
 	const record: SupabaseResumeRecord = {
