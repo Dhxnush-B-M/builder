@@ -3,7 +3,6 @@ import { Link } from "@tanstack/react-router";
 import { m, useMotionValue, useSpring } from "motion/react";
 import { useEffect, useRef } from "react";
 import { BrandIcon } from "@reactive-resume/ui/components/brand-icon";
-import { Button } from "@reactive-resume/ui/components/button";
 import { ThemeToggleButton } from "@/features/theme/toggle-button";
 
 export function Header() {
@@ -38,31 +37,36 @@ export function Header() {
 	return (
 		<m.header
 			style={{ y: springY }}
-			className="fixed inset-x-0 top-0 z-50 border-transparent border-b bg-background/80 backdrop-blur-lg transition-colors"
+			className="fixed inset-x-0 top-0 z-50 px-4 sm:px-6 lg:px-8 pointer-events-none"
 			initial={{ y: -100, opacity: 0 }}
 			animate={{ y: 0, opacity: 1 }}
 			transition={{ duration: 0.35, ease: "easeOut" }}
 		>
-			<nav aria-label="Main navigation" className="container mx-auto flex items-center gap-x-4 p-3 lg:px-12">
-				<Link to="/" className="transition-opacity hover:opacity-80" aria-label="rbuilder - Go to homepage">
-					<BrandIcon className="size-10" />
+			<nav
+				aria-label="Main navigation"
+				className="pointer-events-auto max-w-6xl mx-auto mt-3 sm:mt-4 flex items-center justify-between px-4 py-2.5 rounded-full border border-white/20 dark:border-white/10 bg-background/60 backdrop-blur-2xl shadow-2xl shadow-black/10 transition-all duration-300"
+			>
+				{/* Brand Logo */}
+				<Link
+					to="/"
+					className="flex items-center gap-x-2 transition-transform duration-300 hover:scale-105"
+					aria-label="rbuilder - Go to homepage"
+				>
+					<BrandIcon className="size-9" />
 				</Link>
 
-				<div className="ml-auto flex items-center gap-x-2">
+				{/* Controls */}
+				<div className="flex items-center gap-x-3">
 					<ThemeToggleButton />
 
-					<div className="flex items-center gap-x-4">
-						<Button
-							size="icon"
-							nativeButton={false}
-							aria-label="Go to builder"
-							render={
-								<Link to="/builder/demo">
-									<ArrowRightIcon aria-hidden="true" />
-								</Link>
-							}
-						/>
-					</div>
+					<Link
+						to="/builder/demo"
+						aria-label="Go to builder"
+						title="Go to builder"
+						className="relative flex size-10 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg shadow-primary/25 transition-all duration-300 hover:scale-105 active:scale-95 group"
+					>
+						<ArrowRightIcon className="size-5 transition-transform duration-300 group-hover:translate-x-0.5" />
+					</Link>
 				</div>
 			</nav>
 		</m.header>

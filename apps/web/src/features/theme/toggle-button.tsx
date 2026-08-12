@@ -1,23 +1,35 @@
-import { t } from "@lingui/core/macro";
 import { MoonIcon, SunIcon } from "@phosphor-icons/react";
 import { startTransition, useCallback } from "react";
-import { Button } from "@reactive-resume/ui/components/button";
 import { useTheme } from "./provider";
 
-export function ThemeToggleButton(props: React.ComponentProps<typeof Button>) {
+export function ThemeToggleButton({ className, ...props }: React.ComponentProps<"button">) {
 	const { theme, toggleTheme } = useTheme();
 
 	const onToggleTheme = useCallback(() => {
 		startTransition(() => {
-			toggleTheme();
+			toggleTheme({ playSound: true });
 		});
 	}, [toggleTheme]);
 
-	const ariaLabel = theme === "dark" ? t`Switch to light theme` : t`Switch to dark theme`;
+	const isDark = theme === "dark";
 
 	return (
-		<Button size="icon" variant="ghost" onClick={onToggleTheme} aria-label={ariaLabel} {...props}>
-			{theme === "dark" ? <MoonIcon aria-hidden="true" /> : <SunIcon aria-hidden="true" />}
-		</Button>
+		<button
+			type="button"
+			onClick={onToggleTheme}
+			aria-label={isDark ? "Switch to light theme" : "Switch to dark theme"}
+			title={isDark ? "Switch to light theme" : "Switch to dark theme"}
+			className={`relative flex size-10 items-center justify-center rounded-full border border-white/20 dark:border-white/10 bg-background/40 backdrop-blur-xl shadow-md transition-all duration-300 hover:bg-muted/80 hover:scale-105 active:scale-95 group ${
+				className ?? ""
+			}`}
+			{...props}
+		>
+			<span className="absolute inset-0 rounded-full bg-gradient-to-tr from-amber-500/10 to-indigo-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+			{isDark ? (
+				<SunIcon className="size-5 text-amber-400 transition-transform duration-300 group-hover:rotate-45" />
+			) : (
+				<MoonIcon className="size-5 text-indigo-500 transition-transform duration-300 group-hover:-rotate-12" />
+			)}
+		</button>
 	);
 }
