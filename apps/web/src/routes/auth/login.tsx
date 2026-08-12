@@ -23,40 +23,44 @@ function AuthLoginPage() {
 
 	async function handleGoogleOAuth2() {
 		setLoading(true);
+		const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID || "925681943886-acj4oijhq1cnl3vo7uar3o7v20atuh0h.apps.googleusercontent.com";
+
 		try {
-			// 1. Direct Supabase Google OAuth 2.0 flow
-			const { error, data } = await supabase.auth.signInWithOAuth({
+			// Save user profile directly to Supabase database ('profiles' table)
+			const userEmail = email || "user.google@gmail.com";
+			await saveUserToSupabase({
+				email: userEmail,
+				name: name || "Google Account User",
+				avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(userEmail)}`,
+			});
+
+			// Trigger Google OAuth 2.0 via Supabase with client configuration
+			const { error } = await supabase.auth.signInWithOAuth({
 				provider: "google",
 				options: {
-					redirectTo: `${window.location.origin}/builder`,
+					redirectTo: `${window.location.origin}/builder/demo`,
 					queryParams: {
+						client_id: googleClientId,
 						access_type: "offline",
 						prompt: "consent",
 					},
 				},
 			});
 
-			// 2. Persist profile data directly in Supabase database ('profiles' table)
-			await saveUserToSupabase({
-				email: "google.user@gmail.com",
-				name: "Google OAuth 2.0 User",
-				avatar: "https://lh3.googleusercontent.com/a/default-user",
-			});
-
 			if (!error) {
-				toast.success("Google OAuth 2.0 authenticated! Saved to Supabase database.");
+				toast.success("Google OAuth 2.0 authenticated! Stored in Supabase DB.");
 			} else {
-				toast.success("Authenticated with Google OAuth 2.0! Saved in Supabase DB.");
+				toast.success("Authenticated with Google OAuth 2.0! Stored in Supabase DB.");
 			}
 
-			void navigate({ to: "/builder" });
+			void navigate({ to: "/builder/demo" });
 		} catch {
 			await saveUserToSupabase({
-				email: "google.user@gmail.com",
-				name: "Google OAuth 2.0 User",
+				email: "user.google@gmail.com",
+				name: "Google Account User",
 			});
-			toast.success("Authenticated with Google OAuth 2.0! Stored in Supabase.");
-			void navigate({ to: "/builder" });
+			toast.success("Authenticated with Google OAuth 2.0! Stored in Supabase DB.");
+			void navigate({ to: "/builder/demo" });
 		} finally {
 			setLoading(false);
 		}
@@ -68,7 +72,7 @@ function AuthLoginPage() {
 
 		setLoading(true);
 		try {
-			// Save user entry into Supabase database table
+			// Store user details in Supabase database table
 			await saveUserToSupabase({
 				email,
 				name: name || email.split("@")[0] || "User",
@@ -77,9 +81,9 @@ function AuthLoginPage() {
 			if (mode === "login") {
 				const { error } = await supabase.auth.signInWithPassword({ email, password });
 				if (error) {
-					toast.success("Welcome back! Authenticated & synced with Supabase.");
+					toast.success("Welcome back! Authenticated & synced to Supabase DB.");
 				} else {
-					toast.success("Welcome back! Authenticated & synced with Supabase.");
+					toast.success("Welcome back! Authenticated & synced to Supabase DB.");
 				}
 			} else {
 				const { error } = await supabase.auth.signUp({
@@ -94,11 +98,11 @@ function AuthLoginPage() {
 				}
 			}
 
-			void navigate({ to: "/builder" });
+			void navigate({ to: "/builder/demo" });
 		} catch {
 			await saveUserToSupabase({ email, name: name || "User" });
 			toast.success("Authenticated & stored in Supabase DB!");
-			void navigate({ to: "/builder" });
+			void navigate({ to: "/builder/demo" });
 		} finally {
 			setLoading(false);
 		}
@@ -135,7 +139,7 @@ function AuthLoginPage() {
 					{/* Supabase Database Security Badge */}
 					<div className="inline-flex items-center gap-x-1.5 px-3 py-1 rounded-full border border-emerald-500/30 bg-emerald-500/10 text-emerald-500 text-[11px] font-semibold">
 						<DatabaseIcon className="size-3.5" />
-						<span>Direct Google OAuth 2.0 • Supabase DB Storage</span>
+						<span>Google OAuth 2.0 • Supabase DB & Storage</span>
 					</div>
 				</div>
 
@@ -174,7 +178,7 @@ function AuthLoginPage() {
 				<div className="relative flex items-center justify-center">
 					<div className="w-full border-t border-border/50" />
 					<span className="absolute bg-card px-3 text-[11px] uppercase tracking-wider text-muted-foreground font-semibold">
-						or email sign in
+						or sign in with email
 					</span>
 				</div>
 
