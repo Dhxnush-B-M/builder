@@ -221,7 +221,7 @@ function AuthLoginPage() {
 					</span>
 				</div>
 
-				{/* Social Sign-In Buttons (Google, GitHub) */}
+				{/* Social Sign-In Buttons */}
 				<div className="space-y-2.5">
 					<button
 						type="button"
@@ -248,16 +248,6 @@ function AuthLoginPage() {
 							/>
 						</svg>
 						<span>Continue with Google</span>
-					</button>
-
-					<button
-						type="button"
-						onClick={handleGoogleOAuth2}
-						disabled={loading}
-						className="w-full flex items-center justify-center gap-x-3 py-3 px-4 rounded-xl border border-zinc-200 dark:border-zinc-700/80 bg-white dark:bg-zinc-900 hover:bg-zinc-50 dark:hover:bg-zinc-800/60 font-semibold text-xs text-zinc-800 dark:text-zinc-200 shadow-sm hover:shadow transition-all active:scale-[0.99]"
-					>
-						<GithubLogoIcon className="size-4 text-zinc-900 dark:text-white" />
-						<span>Continue with GitHub</span>
 					</button>
 				</div>
 
