@@ -1,6 +1,5 @@
 import type { FormEvent } from "react";
 import {
-	ChatTeardropDotsIcon,
 	PaperPlaneIcon,
 	StarIcon,
 	UserCheckIcon,
@@ -93,6 +92,27 @@ function getInitials(name: string) {
 		.slice(0, 2);
 }
 
+function playCenterClickSound() {
+	try {
+		const AudioCtx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+		if (!AudioCtx) return;
+		const ctx = new AudioCtx();
+		const osc = ctx.createOscillator();
+		const gain = ctx.createGain();
+		osc.type = "sine";
+		osc.frequency.setValueAtTime(520, ctx.currentTime);
+		osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.1);
+		gain.gain.setValueAtTime(0.3, ctx.currentTime);
+		gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.1);
+		osc.connect(gain);
+		gain.connect(ctx.destination);
+		osc.start();
+		osc.stop(ctx.currentTime + 0.1);
+	} catch {
+		// ignore
+	}
+}
+
 export function Testimonials() {
 	const [testimonialsList, setTestimonialsList] = useState<Testimonial[]>(initialTestimonials);
 	const [isModalOpen, setIsModalOpen] = useState(false);
@@ -102,6 +122,11 @@ export function Testimonials() {
 	const [rating, setRating] = useState(5);
 	const [hoverRating, setHoverRating] = useState(0);
 	const [description, setDescription] = useState("");
+
+	function handleCenterCircleClick() {
+		playCenterClickSound();
+		setIsModalOpen(true);
+	}
 
 	function handleSubmit(e: FormEvent) {
 		e.preventDefault();
@@ -157,15 +182,22 @@ export function Testimonials() {
 					</h2>
 
 					<p className="max-w-2xl text-base text-muted-foreground leading-relaxed md:text-lg">
-						Hover over any circle in the 360° rotating showcase to view real reviews or submit your own feedback below.
+						Click the center <span className="font-semibold text-primary">rbuilder</span> circle to submit your feedback or hover over any circle to view reviews.
 					</p>
 				</div>
 
 				{/* 360 DEGREE ROTATING CIRCLE STAGE */}
 				<div className="relative mt-16 flex h-[480px] w-full items-center justify-center overflow-hidden sm:h-[540px]">
-					<div className="absolute flex size-20 sm:size-24 items-center justify-center rounded-full bg-primary/10 border border-primary/30 p-4 shadow-2xl backdrop-blur-xl z-10">
+					{/* CLICKABLE CENTER RBUILDER CIRCLE */}
+					<button
+						type="button"
+						onClick={handleCenterCircleClick}
+						title="Click to give feedback!"
+						aria-label="Click to give feedback and play sound"
+						className="absolute flex size-20 sm:size-24 items-center justify-center rounded-full bg-primary/10 border-2 border-primary/40 p-4 shadow-2xl backdrop-blur-xl z-20 cursor-pointer hover:scale-110 active:scale-95 transition-all duration-300 hover:border-primary hover:shadow-primary/30"
+					>
 						<span className="font-extrabold text-sm sm:text-base text-primary text-center">rbuilder</span>
-					</div>
+					</button>
 
 					{/* Orbit Ring Container */}
 					<div className="animate-orbit relative flex size-[360px] sm:size-[450px] items-center justify-center rounded-full border border-dashed border-primary/30">
@@ -217,28 +249,6 @@ export function Testimonials() {
 							);
 						})}
 					</div>
-				</div>
-
-				{/* GIVE FEEDBACK CTA BUTTON */}
-				<div className="mt-12 flex flex-col items-center justify-between gap-6 rounded-3xl border border-primary/20 bg-gradient-to-r from-primary/10 via-purple-600/10 to-indigo-600/10 p-8 text-center sm:flex-row sm:text-left shadow-xl">
-					<div className="flex items-center gap-4">
-						<div className="flex size-14 items-center justify-center rounded-2xl bg-primary/20 text-primary shadow-inner shrink-0">
-							<ChatTeardropDotsIcon weight="fill" className="size-7" />
-						</div>
-						<div>
-							<h3 className="font-bold text-foreground text-lg">We Value Your Feedback!</h3>
-							<p className="text-muted-foreground text-sm">Click below to submit your review and join the rotating circle showcase.</p>
-						</div>
-					</div>
-
-					<button
-						type="button"
-						onClick={() => setIsModalOpen(true)}
-						className="inline-flex h-12 items-center gap-2.5 justify-center rounded-2xl bg-gradient-to-r from-primary via-indigo-600 to-purple-600 px-7 font-bold text-white text-sm shadow-xl shadow-primary/25 transition-transform hover:scale-105 active:scale-95 shrink-0"
-					>
-						<PaperPlaneIcon weight="fill" className="size-4" />
-						<span>Give Feedback</span>
-					</button>
 				</div>
 			</div>
 
