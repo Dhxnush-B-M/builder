@@ -6,7 +6,6 @@ import { Footer } from "./-sections/footer";
 import { Header } from "./-sections/header";
 import { Hero } from "./-sections/hero";
 import { Prefooter } from "./-sections/prefooter";
-import { Sponsors } from "./-sections/sponsors";
 import { Statistics } from "./-sections/statistics";
 import { Support } from "./-sections/support";
 import { Templates } from "./-sections/templates";
@@ -28,7 +27,6 @@ function RouteComponent() {
 			<div className="container mx-auto px-4 sm:px-6 lg:px-12">
 				<div className="border-border border-x [&>section:first-child]:border-t-0 [&>section]:border-border [&>section]:border-t">
 					<Statistics />
-					<Sponsors />
 					<Features />
 					<Templates />
 					<Testimonials />
