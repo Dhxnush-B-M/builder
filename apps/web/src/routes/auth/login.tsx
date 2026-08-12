@@ -30,9 +30,13 @@ function AuthLoginPage() {
 		setLoading(true);
 		try {
 			const userEmail = email || "user.google@gmail.com";
+			const userName = name || "Google Account User";
+			if (typeof window !== "undefined") {
+				localStorage.setItem("rbuilder_user", JSON.stringify({ email: userEmail, name: userName }));
+			}
 			await saveUserToSupabase({
 				email: userEmail,
-				name: name || "Google Account User",
+				name: userName,
 				avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(userEmail)}`,
 			});
 
@@ -51,6 +55,9 @@ function AuthLoginPage() {
 
 			void navigate({ to: "/dashboard/resumes" });
 		} catch {
+			if (typeof window !== "undefined") {
+				localStorage.setItem("rbuilder_user", JSON.stringify({ email: "user.google@gmail.com", name: "Google Account User" }));
+			}
 			await saveUserToSupabase({
 				email: "user.google@gmail.com",
 				name: "Google Account User",
@@ -68,9 +75,13 @@ function AuthLoginPage() {
 
 		setLoading(true);
 		try {
+			const userName = name || email.split("@")[0] || "User";
+			if (typeof window !== "undefined") {
+				localStorage.setItem("rbuilder_user", JSON.stringify({ email, name: userName }));
+			}
 			await saveUserToSupabase({
 				email,
-				name: name || email.split("@")[0] || "User",
+				name: userName,
 			});
 
 			if (mode === "login") {
@@ -84,7 +95,7 @@ function AuthLoginPage() {
 				const { error } = await supabase.auth.signUp({
 					email,
 					password,
-					options: { data: { name } },
+					options: { data: { name: userName } },
 				});
 				if (!error) {
 					toast.success("Account created & stored in Supabase!");
@@ -95,6 +106,9 @@ function AuthLoginPage() {
 
 			void navigate({ to: "/dashboard/resumes" });
 		} catch {
+			if (typeof window !== "undefined") {
+				localStorage.setItem("rbuilder_user", JSON.stringify({ email, name: name || "User" }));
+			}
 			await saveUserToSupabase({ email, name: name || "User" });
 			toast.success("Authenticated & stored in Supabase!");
 			void navigate({ to: "/dashboard/resumes" });

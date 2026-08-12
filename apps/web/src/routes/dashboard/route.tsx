@@ -1,12 +1,35 @@
 import { Trans } from "@lingui/react/macro";
-import { createFileRoute, Outlet, useRouter } from "@tanstack/react-router";
+import { createFileRoute, Outlet, redirect, useRouter } from "@tanstack/react-router";
 import { SidebarProvider } from "@reactive-resume/ui/components/sidebar";
 import { createNoindexFollowMeta } from "@/libs/seo";
+import { supabase } from "@/libs/supabase/client";
+import { getSession } from "@/libs/auth/session";
 import { getDashboardSidebarState, setDashboardSidebarState } from "./-components/functions";
 import { DashboardSidebar } from "./-components/sidebar";
 
 export const Route = createFileRoute("/dashboard")({
 	component: RouteComponent,
+	beforeLoad: async ({ context }) => {
+		let isAuth = false;
+		if (typeof window !== "undefined") {
+			const localUser = localStorage.getItem("rbuilder_user");
+			if (localUser) isAuth = true;
+		}
+		if (!isAuth) {
+			const { data } = await supabase.auth.getSession().catch(() => ({ data: { session: null } }));
+			if (data?.session?.user) isAuth = true;
+		}
+		if (!isAuth) {
+			let session = context.session;
+			if (!session || session.user?.id === "guest-user") {
+				session = await getSession().catch(() => null);
+			}
+			if (session?.user && session.user.id !== "guest-user") isAuth = true;
+		}
+		if (!isAuth) {
+			throw redirect({ to: "/auth/login", replace: true });
+		}
+	},
 	loader: () => {
 		const sidebarState = getDashboardSidebarState();
 		return { sidebarState };
