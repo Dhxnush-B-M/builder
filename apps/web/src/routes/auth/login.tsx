@@ -90,7 +90,7 @@ function AuthLoginPage() {
 		setLoading(true);
 		const googleClientId =
 			import.meta.env.VITE_GOOGLE_CLIENT_ID ||
-			"925681943886-acj4oijhq1cnl3vo7uar3o7v20atuh0h.apps.googleusercontent.com";
+			"925681943886-vr4mi6ebqvi2o9bioivpvtv9ugthd2ct.apps.googleusercontent.com";
 		const redirectUri = `${window.location.origin}/auth/login`;
 		const scope = "openid profile email";
 
