@@ -1,11 +1,10 @@
 import type { FormEvent } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import {
 	EyeIcon,
 	EyeSlashIcon,
-	GithubLogoIcon,
 	SignInIcon,
 	UserPlusIcon,
 } from "@phosphor-icons/react";
@@ -26,45 +25,79 @@ function AuthLoginPage() {
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 
-	async function handleGoogleOAuth2() {
+	// Listen for Google OAuth 2.0 access token redirect callback from accounts.google.com
+	useEffect(() => {
+		if (typeof window === "undefined") return;
+		const hash = window.location.hash;
+		if (!hash || !hash.includes("access_token")) return;
+
+		const params = new URLSearchParams(hash.replace("#", "?"));
+		const accessToken = params.get("access_token");
+		if (!accessToken) return;
+
 		setLoading(true);
-		const googleClientId =
+		const toastId = toast.loading("Authenticating with Google...");
+
+		// Fetch REAL Google profile details using Google's userinfo API
+		fetch("https://www.googleapis.com/oauth2/v3/userinfo", {
+			headers: { Authorization: `Bearer ${accessToken}` },
+		})
+			.then((res) => res.json())
+			.then(async (googleUser) => {
+				if (googleUser && googleUser.email) {
+					const realEmail = googleUser.email;
+					const realName = googleUser.name || googleUser.given_name || realEmail.split("@")[0];
+					const realAvatar = googleUser.picture || `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(realEmail)}`;
+
+					// Store REAL Google user profile in Supabase Database ('profiles' table)
+					await saveUserToSupabase({
+						email: realEmail,
+						name: realName,
+						avatar: realAvatar,
+					});
+
+					localStorage.setItem(
+						"rbuilder_user",
+						JSON.stringify({
+							email: realEmail,
+							name: realName,
+							avatar_url: realAvatar,
+						}),
+					);
+
+					// Clear hash from URL cleanly
+					window.history.replaceState(null, "", window.location.pathname);
+
+					toast.dismiss(toastId);
+					toast.success(`Welcome ${realName}! Google OAuth 2.0 authenticated & saved to Supabase.`);
+					void navigate({ to: "/dashboard/resumes" });
+				} else {
+					toast.dismiss(toastId);
+					toast.error("Failed to retrieve Google profile.");
+				}
+			})
+			.catch((err) => {
+				console.error("Google userinfo fetch error:", err);
+				toast.dismiss(toastId);
+				toast.error("Google OAuth authentication error.");
+			})
+			.finally(() => {
+				setLoading(false);
+			});
+	}, [navigate]);
+
+	function handleGoogleOAuth2() {
+		setLoading(true);
+		const clientId =
 			import.meta.env.VITE_GOOGLE_CLIENT_ID ||
 			"925681943886-acj4oijhq1cnl3vo7uar3o7v20atuh0h.apps.googleusercontent.com";
+		const redirectUri = `${window.location.origin}/auth/login`;
+		const scope = "openid profile email";
 
-		try {
-			const userEmail = email || "user.google@gmail.com";
-			const userName = name || "Google Account User";
+		// Direct redirect to Google's official OAuth 2.0 authorization screen
+		const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?response_type=token&client_id=${encodeURIComponent(clientId)}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${encodeURIComponent(scope)}&prompt=consent`;
 
-			// 1. Save user profile directly to Supabase database ('profiles' table)
-			await saveUserToSupabase({
-				email: userEmail,
-				name: userName,
-				avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(userEmail)}`,
-			});
-
-			// 2. Save session credentials locally for dashboard authentication guard
-			if (typeof window !== "undefined") {
-				localStorage.setItem("rbuilder_user", JSON.stringify({ email: userEmail, name: userName }));
-			}
-
-			toast.success(`Google OAuth 2.0 (${googleClientId.slice(0, 12)}...) connected & profile saved to Supabase DB!`);
-			void navigate({ to: "/dashboard/resumes" });
-		} catch (err) {
-			const userEmail = email || "user.google@gmail.com";
-			const userName = name || "Google Account User";
-			if (typeof window !== "undefined") {
-				localStorage.setItem("rbuilder_user", JSON.stringify({ email: userEmail, name: userName }));
-			}
-			await saveUserToSupabase({
-				email: userEmail,
-				name: userName,
-			});
-			toast.success("Google OAuth 2.0 authenticated & synced to Supabase DB!");
-			void navigate({ to: "/dashboard/resumes" });
-		} finally {
-			setLoading(false);
-		}
+		window.location.href = authUrl;
 	}
 
 	async function handleSubmit(e: FormEvent) {
@@ -74,12 +107,20 @@ function AuthLoginPage() {
 		setLoading(true);
 		try {
 			const userName = name || email.split("@")[0] || "User";
+			const userAvatar = `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(email)}`;
+
 			if (typeof window !== "undefined") {
-				localStorage.setItem("rbuilder_user", JSON.stringify({ email, name: userName }));
+				localStorage.setItem(
+					"rbuilder_user",
+					JSON.stringify({ email, name: userName, avatar_url: userAvatar }),
+				);
 			}
+
+			// Save real email user to Supabase Database ('profiles' table)
 			await saveUserToSupabase({
 				email,
 				name: userName,
+				avatar: userAvatar,
 			});
 
 			if (mode === "login") {
@@ -123,7 +164,7 @@ function AuthLoginPage() {
 				className="pointer-events-none absolute inset-0 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] dark:bg-[radial-gradient(#27272a_1px,transparent_1px)] [background-size:16px_16px] opacity-70"
 			/>
 
-			{/* Main Clean Floating Card Frame (Matching Reference Screenshot UI/UX) */}
+			{/* Main Clean Floating Card Frame */}
 			<div className="relative z-10 w-full max-w-[420px] rounded-[28px] border border-zinc-200/80 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-8 shadow-2xl shadow-zinc-900/10 space-y-6">
 				{/* Top Pill Segmented Switcher */}
 				<div className="flex items-center justify-center p-1 rounded-full bg-zinc-100 dark:bg-zinc-800/80 border border-zinc-200/60 dark:border-zinc-700/60 max-w-[240px] mx-auto">
@@ -233,7 +274,7 @@ function AuthLoginPage() {
 					</span>
 				</div>
 
-				{/* Social Sign-In Buttons */}
+				{/* Google OAuth 2.0 Button */}
 				<div className="space-y-2.5">
 					<button
 						type="button"
