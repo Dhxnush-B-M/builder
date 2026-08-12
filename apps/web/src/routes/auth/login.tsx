@@ -86,49 +86,18 @@ function AuthLoginPage() {
 			});
 	}, [navigate]);
 
-	async function handleGoogleOAuth2() {
+	function handleGoogleOAuth2() {
 		setLoading(true);
-		try {
-			const userEmail = email || "karthikdhanush686@gmail.com";
-			const userName = name || "Karthik Dhanush";
-			const userAvatar = `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(userEmail)}`;
+		const googleClientId =
+			import.meta.env.VITE_GOOGLE_CLIENT_ID ||
+			"925681943886-acj4oijhq1cnl3vo7uar3o7v20atuh0h.apps.googleusercontent.com";
+		const redirectUri = `${window.location.origin}/auth/login`;
+		const scope = "openid profile email";
 
-			// 1. Save user profile directly to Supabase Database ('profiles' table)
-			await saveUserToSupabase({
-				email: userEmail,
-				name: userName,
-				avatar: userAvatar,
-			});
+		// Official Google OAuth 2.0 direct authorization request URL
+		const googleAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?response_type=token&client_id=${encodeURIComponent(googleClientId)}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${encodeURIComponent(scope)}&prompt=select_account`;
 
-			// 2. Set authenticated user session for dashboard route guard
-			if (typeof window !== "undefined") {
-				localStorage.setItem(
-					"rbuilder_user",
-					JSON.stringify({
-						email: userEmail,
-						name: userName,
-						avatar_url: userAvatar,
-					}),
-				);
-			}
-
-			toast.success(`Signed in as ${userName}! Saved to Supabase DB.`);
-			void navigate({ to: "/dashboard/resumes" });
-		} catch (err) {
-			console.error("Google auth error:", err);
-			const userEmail = "karthikdhanush686@gmail.com";
-			const userName = "Karthik Dhanush";
-			if (typeof window !== "undefined") {
-				localStorage.setItem(
-					"rbuilder_user",
-					JSON.stringify({ email: userEmail, name: userName }),
-				);
-			}
-			await saveUserToSupabase({ email: userEmail, name: userName });
-			void navigate({ to: "/dashboard/resumes" });
-		} finally {
-			setLoading(false);
-		}
+		window.location.href = googleAuthUrl;
 	}
 
 	async function handleSubmit(e: FormEvent) {
