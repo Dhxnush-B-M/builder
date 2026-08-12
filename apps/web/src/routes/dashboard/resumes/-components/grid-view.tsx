@@ -2,7 +2,6 @@ import type { RouterOutput } from "@/libs/orpc/client";
 import { Trans } from "@lingui/react/macro";
 import { AnimatePresence, m } from "motion/react";
 import { CreateResumeCard } from "./cards/create-card";
-import { ImportResumeCard } from "./cards/import-card";
 import { ResumeCard } from "./cards/resume-card";
 
 type Resume = RouterOutput["resume"]["list"][number];
@@ -21,24 +20,20 @@ export function GridView({ resumes, hasResumes }: Props) {
 		);
 	}
 
-	if (resumes.length === 0) {
-		return (
-			<div className="grid 3xl:grid-cols-6 grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
-				<m.div
-					initial={{ y: -20 }}
-					animate={{ opacity: 1, y: 0 }}
-					exit={{ y: -20 }}
-					transition={{ duration: 0.2, ease: "easeOut" }}
-					className="will-change-[transform,opacity]"
-				>
-					<CreateResumeCard />
-				</m.div>
-			</div>
-		);
-	}
-
 	return (
-		<div className="grid 3xl:grid-cols-6 grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
+		<div className="grid 3xl:grid-cols-6 grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
+			{/* Always display Create Resume Card as the first item */}
+			<m.div
+				initial={{ y: -20 }}
+				animate={{ opacity: 1, y: 0 }}
+				exit={{ y: -20 }}
+				transition={{ duration: 0.2, ease: "easeOut" }}
+				className="will-change-[transform,opacity]"
+			>
+				<CreateResumeCard />
+			</m.div>
+
+			{/* Render created resume cards */}
 			<AnimatePresence initial={false} mode="popLayout">
 				{resumes.map((resume, index) => (
 					<m.div
@@ -51,7 +46,7 @@ export function GridView({ resumes, hasResumes }: Props) {
 							y: -20,
 							filter: "blur(8px)",
 						}}
-						transition={{ duration: 0.2, delay: Math.min(0.12, index * 0.02), ease: "easeOut" }}
+						transition={{ duration: 0.2, delay: Math.min(0.12, (index + 1) * 0.02), ease: "easeOut" }}
 						className="will-change-[transform,opacity]"
 					>
 						<ResumeCard resume={resume} />

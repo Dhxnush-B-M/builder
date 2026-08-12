@@ -1,10 +1,9 @@
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import type { RouterOutput } from "@/libs/orpc/client";
-import { FileTextIcon } from "@phosphor-icons/react";
+import { FileTextIcon, SparkleIcon } from "@phosphor-icons/react";
 import { useQuery } from "@tanstack/react-query";
 import { useInView } from "motion/react";
 import { useEffect, useRef } from "react";
-import { Spinner } from "@reactive-resume/ui/components/spinner";
 import { cn } from "@reactive-resume/utils/style";
 import { createResumePdfBlob } from "@/features/resume/export/pdf-document";
 import { createPdfFirstPageImageUrl } from "@/features/resume/preview/pdf-thumbnail";
@@ -51,6 +50,7 @@ function useResumeThumbnail(data: ResumeData | undefined, cacheKey: string | und
 		},
 		enabled: Boolean(data && cacheKey),
 		gcTime: 0,
+		retry: false,
 	});
 
 	useEffect(() => {
@@ -75,34 +75,66 @@ function useResumeThumbnail(data: ResumeData | undefined, cacheKey: string | und
 export function ResumeThumbnail({ isLocked, resume }: ResumeThumbnailProps) {
 	const containerRef = useRef<HTMLDivElement>(null);
 	const isInView = useInView(containerRef, { amount: 0.1, margin: "240px", once: true });
-	const { data: resumeData, isError: resumeIsError } = useQuery({
+	const { data: resumeData } = useQuery({
 		...orpc.resume.getById.queryOptions({ input: { id: resume.id } }),
 		enabled: isInView,
+		retry: false,
 	});
 	const thumbnail = useResumeThumbnail(
 		resumeData?.data,
 		isInView ? getResumeThumbnailCacheKey(resume.id, resume.updatedAt) : undefined,
 	);
-	const hasFailed = resumeIsError || thumbnail.status === "error";
 
 	return (
 		<div
 			ref={containerRef}
-			className={cn("relative size-full overflow-hidden bg-muted/40 transition-all", isLocked && "blur-xs")}
+			className={cn(
+				"relative size-full overflow-hidden bg-background/60 p-4 transition-all",
+				isLocked && "blur-xs",
+			)}
 		>
 			{thumbnail.status === "ready" ? (
 				<div
 					aria-hidden
-					className="absolute inset-0 bg-center bg-contain bg-white bg-no-repeat"
+					className="absolute inset-0 bg-center bg-contain bg-white bg-no-repeat transition-opacity duration-500"
 					style={{ backgroundImage: `url(${thumbnail.url})` }}
 				/>
-			) : hasFailed ? (
-				<div className="absolute inset-0 flex items-center justify-center">
-					<FileTextIcon weight="thin" className="size-12 opacity-40" />
-				</div>
 			) : (
-				<div className="absolute inset-0 flex items-center justify-center">
-					<Spinner className="size-8 text-muted-foreground" />
+				/* Beautiful Resume Document Mini Preview Cover Layout */
+				<div className="relative flex size-full flex-col justify-between rounded-lg border border-white/10 bg-card/80 p-3 shadow-inner backdrop-blur-md transition-all duration-300 group-hover:border-primary/40">
+					{/* Document Mini Header */}
+					<div className="space-y-2">
+						<div className="flex items-center gap-2">
+							<div className="flex size-7 items-center justify-center rounded-full bg-primary/20 text-primary">
+								<FileTextIcon weight="bold" className="size-4" />
+							</div>
+							<div className="flex-1 space-y-1">
+								<div className="h-2 w-3/4 rounded-full bg-foreground/30" />
+								<div className="h-1.5 w-1/2 rounded-full bg-primary/40" />
+							</div>
+						</div>
+						<div className="h-px w-full bg-border/60" />
+					</div>
+
+					{/* Document Content Skeleton Lines */}
+					<div className="space-y-2 py-1">
+						<div className="space-y-1">
+							<div className="h-1.5 w-2/5 rounded-full bg-primary/50 font-semibold text-[9px]" />
+							<div className="h-1 w-full rounded-full bg-muted-foreground/20" />
+							<div className="h-1 w-5/6 rounded-full bg-muted-foreground/20" />
+						</div>
+						<div className="space-y-1 pt-1">
+							<div className="h-1.5 w-1/3 rounded-full bg-indigo-500/50" />
+							<div className="h-1 w-full rounded-full bg-muted-foreground/20" />
+							<div className="h-1 w-4/5 rounded-full bg-muted-foreground/20" />
+						</div>
+					</div>
+
+					{/* Bottom Badge */}
+					<div className="flex items-center justify-between pt-1 text-[10px] text-muted-foreground">
+						<span className="font-mono text-[9px] uppercase tracking-wider text-primary/80">Interactive Draft</span>
+						<SparkleIcon className="size-3 text-primary animate-pulse" />
+					</div>
 				</div>
 			)}
 		</div>
