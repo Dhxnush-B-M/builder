@@ -2,35 +2,34 @@ import type { IconProps } from "@phosphor-icons/react";
 import type { SectionType } from "@rbuilder/schema/resume/data";
 import { t } from "@lingui/core/macro";
 import {
-	ArticleIcon,
-	BooksIcon,
-	BrainIcon,
+	AddressBookIcon,
+	BookOpenIcon,
 	BriefcaseIcon,
-	CertificateIcon,
-	ChartLineIcon,
+	CameraIcon,
 	CodeSimpleIcon,
-	CompassToolIcon,
-	DiamondsFourIcon,
-	DownloadIcon,
-	EnvelopeSimpleIcon,
-	FootballIcon,
+	DownloadSimpleIcon,
+	FileCodeIcon,
+	FileTextIcon,
+	GlobeHemisphereWestIcon,
 	GraduationCapIcon,
 	HandHeartIcon,
-	ImageIcon,
+	HeartbeatIcon,
+	IdentificationCardIcon,
 	InfoIcon,
 	LayoutIcon,
-	MessengerLogoIcon,
-	NotepadIcon,
-	PaintBrushBroadIcon,
+	LightningIcon,
+	MedalIcon,
+	NotePencilIcon,
 	PaletteIcon,
-	PhoneIcon,
-	ReadCvLogoIcon,
-	ShareFatIcon,
-	StarIcon,
+	PuzzlePieceIcon,
+	RowsIcon,
+	ScrollIcon,
+	ShareIcon,
+	ShareNetworkIcon,
+	SparkleIcon,
+	StampIcon,
 	TextTIcon,
-	TranslateIcon,
-	TrophyIcon,
-	UserIcon,
+	TrendUpIcon,
 } from "@phosphor-icons/react";
 import { match } from "ts-pattern";
 import { cn } from "@rbuilder/utils/style";
@@ -138,38 +137,38 @@ export const getSectionIcon = (type: SidebarSection | CustomOnlyType, props?: Ic
 	return (
 		match(type)
 			// Left Sidebar Sections
-			.with("picture", () => <ImageIcon {...iconProps} />)
-			.with("basics", () => <UserIcon {...iconProps} />)
-			.with("summary", () => <ArticleIcon {...iconProps} />)
-			.with("profiles", () => <MessengerLogoIcon {...iconProps} />)
+			.with("picture", () => <CameraIcon {...iconProps} />)
+			.with("basics", () => <IdentificationCardIcon {...iconProps} />)
+			.with("summary", () => <ScrollIcon {...iconProps} />)
+			.with("profiles", () => <ShareNetworkIcon {...iconProps} />)
 			.with("experience", () => <BriefcaseIcon {...iconProps} />)
 			.with("education", () => <GraduationCapIcon {...iconProps} />)
 			.with("projects", () => <CodeSimpleIcon {...iconProps} />)
-			.with("skills", () => <CompassToolIcon {...iconProps} />)
-			.with("languages", () => <TranslateIcon {...iconProps} />)
-			.with("interests", () => <FootballIcon {...iconProps} />)
-			.with("awards", () => <TrophyIcon {...iconProps} />)
-			.with("certifications", () => <CertificateIcon {...iconProps} />)
-			.with("publications", () => <BooksIcon {...iconProps} />)
+			.with("skills", () => <LightningIcon {...iconProps} />)
+			.with("languages", () => <GlobeHemisphereWestIcon {...iconProps} />)
+			.with("interests", () => <HeartbeatIcon {...iconProps} />)
+			.with("awards", () => <MedalIcon {...iconProps} />)
+			.with("certifications", () => <StampIcon {...iconProps} />)
+			.with("publications", () => <BookOpenIcon {...iconProps} />)
 			.with("volunteer", () => <HandHeartIcon {...iconProps} />)
-			.with("references", () => <PhoneIcon {...iconProps} />)
-			.with("custom", () => <StarIcon {...iconProps} />)
+			.with("references", () => <AddressBookIcon {...iconProps} />)
+			.with("custom", () => <PuzzlePieceIcon {...iconProps} />)
 
 			// Custom Section Types (not in main sidebar)
-			.with("cover-letter", () => <EnvelopeSimpleIcon {...iconProps} />)
+			.with("cover-letter", () => <FileTextIcon {...iconProps} />)
 
 			// Right Sidebar Sections
-			.with("template", () => <DiamondsFourIcon {...iconProps} />)
-			.with("layout", () => <LayoutIcon {...iconProps} />)
+			.with("template", () => <LayoutIcon {...iconProps} />)
+			.with("layout", () => <RowsIcon {...iconProps} />)
 			.with("typography", () => <TextTIcon {...iconProps} />)
 			.with("design", () => <PaletteIcon {...iconProps} />)
-			.with("styles", () => <PaintBrushBroadIcon {...iconProps} />)
-			.with("page", () => <ReadCvLogoIcon {...iconProps} />)
-			.with("notes", () => <NotepadIcon {...iconProps} />)
-			.with("sharing", () => <ShareFatIcon {...iconProps} />)
-			.with("statistics", () => <ChartLineIcon {...iconProps} />)
-			.with("analysis", () => <BrainIcon {...iconProps} />)
-			.with("export", () => <DownloadIcon {...iconProps} />)
+			.with("styles", () => <FileCodeIcon {...iconProps} />)
+			.with("page", () => <FileTextIcon {...iconProps} />)
+			.with("notes", () => <NotePencilIcon {...iconProps} />)
+			.with("sharing", () => <ShareIcon {...iconProps} />)
+			.with("statistics", () => <TrendUpIcon {...iconProps} />)
+			.with("analysis", () => <SparkleIcon {...iconProps} />)
+			.with("export", () => <DownloadSimpleIcon {...iconProps} />)
 			.with("information", () => <InfoIcon {...iconProps} />)
 
 			.exhaustive()

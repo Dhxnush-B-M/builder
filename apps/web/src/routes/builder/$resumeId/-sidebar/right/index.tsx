@@ -44,7 +44,7 @@ export function BuilderSidebarRight() {
 
 			<ScrollArea
 				ref={scrollAreaRef}
-				className="@container h-[calc(100svh-3.5rem)] overflow-hidden bg-background sm:me-12"
+				className="@container h-[calc(100svh-3.5rem)] overflow-hidden bg-background/85 backdrop-blur-md sm:me-12"
 			>
 				<div className="space-y-4 p-4">
 					{rightSidebarSections.map((section) => (
