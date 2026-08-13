@@ -19,7 +19,7 @@
 		"docx": "^9.7.1"
 	},
 	"devDependencies": {
-		"@reactive-resume/config": "workspace:*",
+		"@rbuilder/config": "workspace:*",
 		"@typescript/native-preview": "7.0.0-dev.20260707.2",
 		"typescript": "^7.0.2"
 	}

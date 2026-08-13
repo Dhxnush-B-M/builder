@@ -15,7 +15,7 @@
 		"@reactive-resume/schema": "workspace:*"
 	},
 	"devDependencies": {
-		"@reactive-resume/config": "workspace:*",
+		"@rbuilder/config": "workspace:*",
 		"@reactive-resume/env": "workspace:*",
 		"@reactive-resume/resume": "workspace:*",
 		"@types/pg": "^8.20.0",
