@@ -91,7 +91,7 @@ export function BuilderHeader() {
 					variant="ghost"
 					className="ms-1 hidden md:flex text-primary hover:bg-primary/10"
 					aria-label={t`Design & Templates`}
-					onClick={() => toggleSidebar("right", true)}
+					onClick={() => toggleSidebar("right")}
 				>
 					<PaletteIcon className="size-4" />
 				</Button>

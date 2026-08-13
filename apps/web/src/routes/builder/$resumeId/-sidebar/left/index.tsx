@@ -141,7 +141,7 @@ function SidebarEdge() {
 										variant="ghost"
 										className="text-primary hover:bg-primary/10"
 										aria-label={t`Design & Templates`}
-										onClick={() => toggleSidebar("right", true)}
+										onClick={() => toggleSidebar("right")}
 									>
 										<PaletteIcon className="size-5" />
 									</Button>

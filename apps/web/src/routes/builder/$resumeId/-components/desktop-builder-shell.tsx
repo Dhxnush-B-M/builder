@@ -97,7 +97,7 @@ export function DesktopBuilderShell({ initialLayout }: BuilderLayoutShellProps) 
 					groupResizeBehavior={groupResizeBehavior}
 					maxSize={maxSidebarSize}
 					minSize={sidebarMinSize}
-					collapsedSize={sidebarCollapsedSize}
+					collapsedSize="0px"
 					defaultSize={rightSidebarSize}
 					className="z-20 h-[calc(100svh-3.5rem)]"
 				>

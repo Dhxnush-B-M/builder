@@ -39,25 +39,21 @@ export function BuilderSidebarRight() {
 	const scrollAreaRef = useRef<HTMLDivElement | null>(null);
 
 	return (
-		<>
-			<SidebarEdge />
+		<ScrollArea
+			ref={scrollAreaRef}
+			className="@container h-[calc(100svh-3.5rem)] overflow-hidden bg-background/60 backdrop-blur-2xl border-l border-white/20 dark:border-white/10 shadow-lg w-full"
+		>
+			<div className="space-y-4 p-4">
+				{rightSidebarSections.map((section) => (
+					<Fragment key={section}>
+						{getSectionComponent(section)}
+						<Separator />
+					</Fragment>
+				))}
 
-			<ScrollArea
-				ref={scrollAreaRef}
-				className="@container h-[calc(100svh-3.5rem)] overflow-hidden bg-background/60 backdrop-blur-2xl border-l border-white/20 dark:border-white/10 shadow-lg sm:me-12"
-			>
-				<div className="space-y-4 p-4">
-					{rightSidebarSections.map((section) => (
-						<Fragment key={section}>
-							{getSectionComponent(section)}
-							<Separator />
-						</Fragment>
-					))}
-
-					<Copyright className="mx-auto py-2 text-center" />
-				</div>
-			</ScrollArea>
-		</>
+				<Copyright className="mx-auto py-2 text-center" />
+			</div>
+		</ScrollArea>
 	);
 }
 
