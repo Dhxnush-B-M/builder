@@ -25,7 +25,7 @@ import { orpc } from "@/libs/orpc/client";
 import { DashboardHeader } from "../-components/header";
 import { GridView } from "./-components/grid-view";
 import { ListView } from "./-components/list-view";
-import { getLocalResumes } from "@/libs/resume/local-storage";
+import { getLocalResumes, useLocalResumes } from "@/libs/resume/local-storage";
 
 type SortOption = "lastUpdatedAt" | "createdAt" | "name";
 
@@ -59,7 +59,7 @@ function RouteComponent() {
 	const { data: allTags } = useQuery({ ...orpc.resume.tags.list.queryOptions(), retry: false });
 	const { data: resumes } = useQuery({ ...orpc.resume.list.queryOptions({ input: { tags, sort } }), retry: false });
 
-	const localResumes = useMemo(() => getLocalResumes(), []);
+	const localResumes = useLocalResumes();
 
 	const filteredResumes = useMemo(() => {
 		const currentUserStr = typeof window !== "undefined" ? localStorage.getItem("rbuilder_user") : null;

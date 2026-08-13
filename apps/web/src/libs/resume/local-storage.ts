@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { defaultResumeData } from "@rbuilder/schema/resume/default";
 import { saveResumeToSupabase } from "@/libs/supabase/db";
 
@@ -16,6 +17,7 @@ export type SavedResume = {
 };
 
 const STORAGE_KEY = "rbuilder_saved_resumes";
+const RESUMES_UPDATED_EVENT = "rbuilder_resumes_updated";
 
 export function getActiveUserEmail(): string | null {
 	if (typeof window === "undefined") return null;
@@ -54,6 +56,25 @@ export function getLocalResumes(): SavedResume[] {
 	}
 }
 
+export function useLocalResumes(): SavedResume[] {
+	const [resumes, setResumes] = useState<SavedResume[]>(() => getLocalResumes());
+
+	useEffect(() => {
+		const refresh = () => setResumes(getLocalResumes());
+		refresh();
+
+		window.addEventListener(RESUMES_UPDATED_EVENT, refresh);
+		window.addEventListener("storage", refresh);
+
+		return () => {
+			window.removeEventListener(RESUMES_UPDATED_EVENT, refresh);
+			window.removeEventListener("storage", refresh);
+		};
+	}, []);
+
+	return resumes;
+}
+
 export function saveLocalResume(resume: Partial<SavedResume> & { id: string; name: string }): SavedResume {
 	const current = getLocalResumes();
 	const existingIndex = current.findIndex((r) => r.id === resume.id);
@@ -82,6 +103,7 @@ export function saveLocalResume(resume: Partial<SavedResume> & { id: string; nam
 
 	if (typeof window !== "undefined") {
 		localStorage.setItem(STORAGE_KEY, JSON.stringify(current));
+		window.dispatchEvent(new Event(RESUMES_UPDATED_EVENT));
 	}
 
 	// Also sync to Supabase DB asynchronously
@@ -102,6 +124,7 @@ export function deleteLocalResume(id: string): void {
 		const parsed = JSON.parse(raw);
 		const filtered = parsed.filter((r: any) => r.id !== id);
 		localStorage.setItem(STORAGE_KEY, JSON.stringify(filtered));
+		window.dispatchEvent(new Event(RESUMES_UPDATED_EVENT));
 	} catch {
 		// ignore storage errors
 	}
