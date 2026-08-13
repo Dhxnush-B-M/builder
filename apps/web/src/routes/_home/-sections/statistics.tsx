@@ -20,38 +20,34 @@ function StatisticCard({ statistic, index }: StatisticCardProps) {
 
 	return (
 		<m.div
-			className="group relative flex flex-col items-center justify-center gap-y-4 border-r border-b p-8 transition-colors last:border-e-0 hover:bg-secondary/30 sm:border-b-0 xl:py-12"
+			className="group relative overflow-hidden rounded-3xl border border-white/20 bg-card/40 p-8 shadow-xl backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:bg-card/70 hover:shadow-2xl dark:border-white/10 dark:bg-slate-900/40"
 			initial={{ opacity: 0, y: 20 }}
 			whileInView={{ opacity: 1, y: 0 }}
 			viewport={{ once: true, margin: "-50px" }}
 			transition={{ duration: 0.5, delay: index * 0.1, ease: "easeOut" }}
 		>
-			<div aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden">
+			{/* Glowing Background Radial Light */}
+			<div aria-hidden="true" className="pointer-events-none absolute -right-10 -top-10 size-44 rounded-full bg-gradient-to-br from-primary/20 via-indigo-500/10 to-transparent blur-2xl opacity-60 transition-opacity duration-300 group-hover:opacity-100" />
+
+			<div className="relative z-10 flex flex-col items-center justify-center text-center gap-y-4">
+				{/* Icon Badge */}
 				<m.div
-					className="absolute inset-s-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-primary/10"
-					initial={{ scale: 0.8, opacity: 0 }}
-					whileInView={{ scale: 1, opacity: 1 }}
-					viewport={{ once: true }}
-					transition={{ duration: 0.8, delay: index * 0.1 + 0.2 }}
+					aria-hidden="true"
+					className="relative flex items-center justify-center rounded-2xl border border-primary/20 bg-primary/10 p-4 text-primary shadow-inner backdrop-blur-md"
+					whileHover={{ scale: 1.1, rotate: 5 }}
+					transition={{ type: "spring", stiffness: 400, damping: 15 }}
 				>
-					<Icon size={180} weight="thin" />
+					<Icon size={28} weight="duotone" />
 				</m.div>
+
+				{/* Metric Counter */}
+				<span className="bg-gradient-to-r from-foreground via-foreground/90 to-primary bg-clip-text font-extrabold text-5xl text-transparent tracking-tight md:text-6xl">
+					{statistic.value.toLocaleString()}
+				</span>
+
+				{/* Label */}
+				<p className="font-semibold text-sm text-muted-foreground uppercase tracking-wider">{statistic.label}</p>
 			</div>
-
-			<m.div
-				aria-hidden="true"
-				className="relative rounded-full bg-primary/10 p-3 text-primary"
-				whileHover={{ scale: 1.05 }}
-				transition={{ type: "spring", stiffness: 400, damping: 20 }}
-			>
-				<Icon size={24} weight="thin" />
-			</m.div>
-
-			<span className="font-bold text-5xl tracking-tight md:text-6xl text-foreground">
-				{statistic.value.toLocaleString()}
-			</span>
-
-			<p className="relative font-medium text-base text-muted-foreground tracking-tight">{statistic.label}</p>
 		</m.div>
 	);
 }
@@ -93,7 +89,7 @@ export function Statistics() {
 	const statisticsList: Statistic[] = [
 		{
 			id: "users",
-			label: "Users",
+			label: "Active Users",
 			value: userCount,
 			icon: UsersIcon,
 		},
@@ -106,15 +102,17 @@ export function Statistics() {
 	];
 
 	return (
-		<section id="statistics" aria-labelledby="stats-heading">
+		<section id="statistics" aria-labelledby="stats-heading" className="py-12 md:py-16">
 			<h2 id="stats-heading" className="sr-only">
 				Application Statistics
 			</h2>
 
-			<div className="grid grid-cols-1 sm:grid-cols-2">
-				{statisticsList.map((statistic, index) => (
-					<StatisticCard key={statistic.id} statistic={statistic} index={index} />
-				))}
+			<div className="mx-auto max-w-5xl px-4">
+				<div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+					{statisticsList.map((statistic, index) => (
+						<StatisticCard key={statistic.id} statistic={statistic} index={index} />
+					))}
+				</div>
 			</div>
 		</section>
 	);
