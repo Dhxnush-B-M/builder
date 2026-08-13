@@ -392,10 +392,6 @@ function StylesheetEditorShell({ readOnly = false }: StylesheetEditorShellProps)
 	);
 	const editorChrome = (
 		<div className="space-y-3">
-			{mode === "legacy" && (
-				<LegacyStylesheetBanner disabled={restoreLocked || hasErrors || isChecking} onActivate={activate} />
-			)}
-
 			<StylesheetToolbar
 				source={source}
 				canUndo={canUndo}
@@ -412,28 +408,7 @@ function StylesheetEditorShell({ readOnly = false }: StylesheetEditorShellProps)
 				onFocusToggle={toggleFocus}
 			/>
 
-			<p className="flex items-center gap-1.5 text-muted-foreground text-xs">
-				<BookOpenIcon aria-hidden="true" className="shrink-0" />
-				<span>
-					<Trans>Not sure what to write?</Trans>{" "}
-					<a
-						className="text-primary underline underline-offset-4"
-						href="https://docs.rxresu.me/applying-custom-styles"
-						target="_blank"
-						rel="noopener noreferrer"
-					>
-						<Trans>Read the Applying Custom Styles guide.</Trans>
-						<span className="sr-only">
-							{" "}
-							(<Trans>opens in new tab</Trans>)
-						</span>
-					</a>
-				</span>
-			</p>
-
 			<div className={focusOpen ? (isMobile ? "h-[55svh]" : "h-[calc(100svh-14rem)]") : "h-72"}>{editor}</div>
-
-			<StylesheetStatus mode={mode} status={status} diagnostics={diagnostics} />
 		</div>
 	);
 
