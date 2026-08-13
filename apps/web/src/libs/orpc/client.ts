@@ -1,5 +1,5 @@
 import type { InferRouterInputs, InferRouterOutputs, RouterClient } from "@orpc/server";
-import type router from "@reactive-resume/api/routers";
+import type router from "@rbuilder/api/routers";
 import { createORPCClient, onError } from "@orpc/client";
 import { RPCLink } from "@orpc/client/fetch";
 import { BatchLinkPlugin } from "@orpc/client/plugins";

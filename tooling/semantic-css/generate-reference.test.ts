@@ -4,8 +4,8 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { afterEach, expect, it } from "vitest";
-import { compileStylesheet } from "@reactive-resume/resume/stylesheet";
-import { createResumeDataJsonSchema } from "@reactive-resume/schema/resume/json-schema";
+import { compileStylesheet } from "@rbuilder/resume/stylesheet";
+import { createResumeDataJsonSchema } from "@rbuilder/schema/resume/json-schema";
 import {
 	buildGeneratedDocumentation,
 	renderSchemaReference,

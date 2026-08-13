@@ -1,10 +1,10 @@
 import type { RightSidebarSection } from "@/libs/resume/section";
 import { Fragment, useCallback, useRef } from "react";
 import { match } from "ts-pattern";
-import { Button } from "@reactive-resume/ui/components/button";
-import { ScrollArea } from "@reactive-resume/ui/components/scroll-area";
-import { Separator } from "@reactive-resume/ui/components/separator";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@reactive-resume/ui/components/tooltip";
+import { Button } from "@rbuilder/ui/components/button";
+import { ScrollArea } from "@rbuilder/ui/components/scroll-area";
+import { Separator } from "@rbuilder/ui/components/separator";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@rbuilder/ui/components/tooltip";
 import { Copyright } from "@/components/ui/copyright";
 import { getSectionIcon, getSectionTitle, rightSidebarSections } from "@/libs/resume/section";
 import { BuilderSidebarEdge } from "../../-components/edge";

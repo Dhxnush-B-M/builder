@@ -1,4 +1,4 @@
-import type { ResumeExportTarget } from "@reactive-resume/resume/export-sections";
+import type { ResumeExportTarget } from "@rbuilder/resume/export-sections";
 import type { ReactElement, ReactNode } from "react";
 import { Trans } from "@lingui/react/macro";
 import {
@@ -12,7 +12,7 @@ import {
 	MarkdownLogoIcon,
 } from "@phosphor-icons/react";
 import { useId, useState } from "react";
-import { Button } from "@reactive-resume/ui/components/button";
+import { Button } from "@rbuilder/ui/components/button";
 import {
 	Dialog,
 	DialogContent,
@@ -20,10 +20,10 @@ import {
 	DialogHeader,
 	DialogTitle,
 	DialogTrigger,
-} from "@reactive-resume/ui/components/dialog";
-import { Switch } from "@reactive-resume/ui/components/switch";
-import { Tabs, TabsList, TabsTrigger } from "@reactive-resume/ui/components/tabs";
-import { cn } from "@reactive-resume/utils/style";
+} from "@rbuilder/ui/components/dialog";
+import { Switch } from "@rbuilder/ui/components/switch";
+import { Tabs, TabsList, TabsTrigger } from "@rbuilder/ui/components/tabs";
+import { cn } from "@rbuilder/utils/style";
 import { useResumeExport } from "./use-resume-export";
 
 type DownloadableResume = Parameters<typeof useResumeExport>[0];

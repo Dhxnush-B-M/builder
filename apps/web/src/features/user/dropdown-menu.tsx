@@ -1,4 +1,4 @@
-import type { AuthSession } from "@reactive-resume/auth/types";
+import type { AuthSession } from "@rbuilder/auth/types";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { PaletteIcon, SignOutIcon } from "@phosphor-icons/react";
@@ -17,7 +17,7 @@ import {
 	DropdownMenuSubContent,
 	DropdownMenuSubTrigger,
 	DropdownMenuTrigger,
-} from "@reactive-resume/ui/components/dropdown-menu";
+} from "@rbuilder/ui/components/dropdown-menu";
 import { useTheme } from "@/features/theme/provider";
 import { authClient } from "@/libs/auth/client";
 import { getReadableErrorMessage } from "@/libs/error-message";

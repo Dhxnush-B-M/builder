@@ -1,4 +1,4 @@
-import type { ResumeData } from "@reactive-resume/schema/resume/data";
+import type { ResumeData } from "@rbuilder/schema/resume/data";
 import type { DialogProps } from "../store";
 import type { ImportType } from "./import.utils";
 import { t } from "@lingui/core/macro";
@@ -10,18 +10,18 @@ import { useNavigate } from "@tanstack/react-router";
 import { useRef, useState } from "react";
 import { toast } from "sonner";
 import z from "zod";
-import { defaultResumeData } from "@reactive-resume/schema/resume/default";
-import { Button } from "@reactive-resume/ui/components/button";
+import { defaultResumeData } from "@rbuilder/schema/resume/default";
+import { Button } from "@rbuilder/ui/components/button";
 import {
 	DialogContent,
 	DialogDescription,
 	DialogFooter,
 	DialogHeader,
 	DialogTitle,
-} from "@reactive-resume/ui/components/dialog";
-import { FormControl, FormItem, FormLabel, FormMessage } from "@reactive-resume/ui/components/form";
-import { Input } from "@reactive-resume/ui/components/input";
-import { Spinner } from "@reactive-resume/ui/components/spinner";
+} from "@rbuilder/ui/components/dialog";
+import { FormControl, FormItem, FormLabel, FormMessage } from "@rbuilder/ui/components/form";
+import { Input } from "@rbuilder/ui/components/input";
+import { Spinner } from "@rbuilder/ui/components/spinner";
 import { Combobox } from "@/components/ui/combobox";
 import { useFormBlocker } from "@/hooks/use-form-blocker";
 import { getOrpcErrorMessage } from "@/libs/error-message";

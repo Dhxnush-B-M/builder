@@ -1,8 +1,8 @@
 import { Trans } from "@lingui/react/macro";
 import { ArrowRightIcon } from "@phosphor-icons/react";
 import { m } from "motion/react";
-import { Button } from "@reactive-resume/ui/components/button";
-import { Label } from "@reactive-resume/ui/components/label";
+import { Button } from "@rbuilder/ui/components/button";
+import { Label } from "@rbuilder/ui/components/label";
 import { LocaleCombobox } from "@/features/locale/combobox";
 import { ThemeCombobox } from "@/features/theme/combobox";
 

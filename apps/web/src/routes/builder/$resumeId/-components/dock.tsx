@@ -16,15 +16,15 @@ import { m } from "motion/react";
 import { useControls, useTransformComponent } from "react-zoom-pan-pinch";
 import { toast } from "sonner";
 import { useCopyToClipboard } from "usehooks-ts";
-import { Button } from "@reactive-resume/ui/components/button";
+import { Button } from "@rbuilder/ui/components/button";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuItem,
 	DropdownMenuTrigger,
-} from "@reactive-resume/ui/components/dropdown-menu";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@reactive-resume/ui/components/tooltip";
-import { cn } from "@reactive-resume/utils/style";
+} from "@rbuilder/ui/components/dropdown-menu";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@rbuilder/ui/components/tooltip";
+import { cn } from "@rbuilder/utils/style";
 import {
 	isEditableElementFocused,
 	useCurrentBuilderResumeSelector,

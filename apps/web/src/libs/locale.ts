@@ -1,9 +1,9 @@
 import type { MessageDescriptor, Messages } from "@lingui/core";
-import type { Locale } from "@reactive-resume/utils/locale";
+import type { Locale } from "@rbuilder/utils/locale";
 import { i18n } from "@lingui/core";
 import { msg } from "@lingui/core/macro";
 import Cookies from "js-cookie";
-import { isRTL, localeSchema } from "@reactive-resume/utils/locale";
+import { isRTL, localeSchema } from "@rbuilder/utils/locale";
 import enUSCatalog from "../../locales/en-US.js";
 
 export { isRTL };

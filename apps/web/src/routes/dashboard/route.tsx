@@ -1,6 +1,6 @@
 import { Trans } from "@lingui/react/macro";
 import { createFileRoute, Outlet, redirect, useRouter } from "@tanstack/react-router";
-import { SidebarProvider } from "@reactive-resume/ui/components/sidebar";
+import { SidebarProvider } from "@rbuilder/ui/components/sidebar";
 import { createNoindexFollowMeta } from "@/libs/seo";
 import { supabase } from "@/libs/supabase/client";
 import { getSession } from "@/libs/auth/session";

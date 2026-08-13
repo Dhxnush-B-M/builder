@@ -3,7 +3,7 @@ import { useEffect, useMemo } from "react";
 import { useMediaQuery } from "usehooks-ts";
 import { useResumeCleanup, useResumeStore } from "@/features/resume/builder/draft";
 import { initializeStylesheetStore, useStylesheetStore } from "@/features/resume/stylesheet/store";
-import { defaultResumeData } from "@reactive-resume/schema/resume/default";
+import { defaultResumeData } from "@rbuilder/schema/resume/default";
 import { createNoindexFollowMeta } from "@/libs/seo";
 import { getLocalResumes } from "@/libs/resume/local-storage";
 import { DesktopBuilderShell } from "./-components/desktop-builder-shell";

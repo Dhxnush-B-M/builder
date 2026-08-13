@@ -1,4 +1,4 @@
-import { defaultResumeData } from "@reactive-resume/schema/resume/default";
+import { defaultResumeData } from "@rbuilder/schema/resume/default";
 import { saveResumeToSupabase } from "@/libs/supabase/db";
 
 export type SavedResume = {

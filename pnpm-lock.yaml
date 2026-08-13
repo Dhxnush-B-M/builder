@@ -150,30 +150,30 @@ importers:
       '@phosphor-icons/react':
         specifier: ^2.1.10
         version: 2.1.10(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      '@rbuilder/docx':
+        specifier: workspace:*
+        version: link:../../packages/docx
+      '@rbuilder/fonts':
+        specifier: workspace:*
+        version: link:../../packages/fonts
+      '@rbuilder/pdf':
+        specifier: workspace:*
+        version: link:../../packages/pdf
+      '@rbuilder/resume':
+        specifier: workspace:*
+        version: link:../../packages/resume
+      '@rbuilder/schema':
+        specifier: workspace:*
+        version: link:../../packages/schema
+      '@rbuilder/ui':
+        specifier: workspace:*
+        version: link:../../packages/ui
+      '@rbuilder/utils':
+        specifier: workspace:*
+        version: link:../../packages/utils
       '@react-pdf/renderer':
         specifier: ^4.5.1
         version: 4.5.1(react@19.2.8)
-      '@reactive-resume/docx':
-        specifier: workspace:*
-        version: link:../../packages/docx
-      '@reactive-resume/fonts':
-        specifier: workspace:*
-        version: link:../../packages/fonts
-      '@reactive-resume/pdf':
-        specifier: workspace:*
-        version: link:../../packages/pdf
-      '@reactive-resume/resume':
-        specifier: workspace:*
-        version: link:../../packages/resume
-      '@reactive-resume/schema':
-        specifier: workspace:*
-        version: link:../../packages/schema
-      '@reactive-resume/ui':
-        specifier: workspace:*
-        version: link:../../packages/ui
-      '@reactive-resume/utils':
-        specifier: workspace:*
-        version: link:../../packages/utils
       '@supabase/supabase-js':
         specifier: ^2.112.2
         version: 2.112.2(@opentelemetry/api@1.9.1)
@@ -378,10 +378,10 @@ importers:
 
   packages/docx:
     dependencies:
-      '@reactive-resume/schema':
+      '@rbuilder/schema':
         specifier: workspace:*
         version: link:../schema
-      '@reactive-resume/utils':
+      '@rbuilder/utils':
         specifier: workspace:*
         version: link:../utils
       docx:
@@ -400,7 +400,7 @@ importers:
 
   packages/env:
     dependencies:
-      '@reactive-resume/utils':
+      '@rbuilder/utils':
         specifier: workspace:*
         version: link:../utils
       '@t3-oss/env-core':
@@ -425,7 +425,7 @@ importers:
 
   packages/fonts:
     dependencies:
-      '@reactive-resume/utils':
+      '@rbuilder/utils':
         specifier: workspace:*
         version: link:../utils
     devDependencies:
@@ -441,21 +441,21 @@ importers:
 
   packages/pdf:
     dependencies:
+      '@rbuilder/fonts':
+        specifier: workspace:*
+        version: link:../fonts
+      '@rbuilder/resume':
+        specifier: workspace:*
+        version: link:../resume
+      '@rbuilder/schema':
+        specifier: workspace:*
+        version: link:../schema
+      '@rbuilder/utils':
+        specifier: workspace:*
+        version: link:../utils
       '@react-pdf/renderer':
         specifier: ^4.5.1
         version: 4.5.1(react@19.2.8)
-      '@reactive-resume/fonts':
-        specifier: workspace:*
-        version: link:../fonts
-      '@reactive-resume/resume':
-        specifier: workspace:*
-        version: link:../resume
-      '@reactive-resume/schema':
-        specifier: workspace:*
-        version: link:../schema
-      '@reactive-resume/utils':
-        specifier: workspace:*
-        version: link:../utils
       cjk-regex:
         specifier: ^3.4.0
         version: 3.4.0
@@ -502,7 +502,7 @@ importers:
       '@bramus/specificity':
         specifier: ^2.4.2
         version: 2.4.2
-      '@reactive-resume/schema':
+      '@rbuilder/schema':
         specifier: workspace:*
         version: link:../schema
       canonicalize:
@@ -564,7 +564,7 @@ importers:
       '@phosphor-icons/web':
         specifier: ^2.1.2
         version: 2.1.2
-      '@reactive-resume/utils':
+      '@rbuilder/utils':
         specifier: workspace:*
         version: link:../utils
       '@shadcn/react':
@@ -665,17 +665,17 @@ importers:
 
   tooling:
     dependencies:
-      '@reactive-resume/schema':
+      '@rbuilder/schema':
         specifier: workspace:*
         version: link:../packages/schema
     devDependencies:
       '@rbuilder/config':
         specifier: workspace:*
         version: link:../packages/config
-      '@reactive-resume/env':
+      '@rbuilder/env':
         specifier: workspace:*
         version: link:../packages/env
-      '@reactive-resume/resume':
+      '@rbuilder/resume':
         specifier: workspace:*
         version: link:../packages/resume
       '@types/pg':

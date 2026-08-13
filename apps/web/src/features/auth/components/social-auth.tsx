@@ -1,9 +1,9 @@
 import { t } from "@lingui/core/macro";
 import { useRouter } from "@tanstack/react-router";
 import { toast } from "sonner";
-import { Button } from "@reactive-resume/ui/components/button";
-import { Skeleton } from "@reactive-resume/ui/components/skeleton";
-import { cn } from "@reactive-resume/utils/style";
+import { Button } from "@rbuilder/ui/components/button";
+import { Skeleton } from "@rbuilder/ui/components/skeleton";
+import { cn } from "@rbuilder/utils/style";
 import { authClient } from "@/libs/auth/client";
 
 type SocialAuthProps = {

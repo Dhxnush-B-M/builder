@@ -3,7 +3,7 @@ import { fileURLToPath } from "node:url";
 import {
 	createCustomSectionItemJsonSchemas,
 	createResumeDataJsonSchema,
-} from "@reactive-resume/schema/resume/json-schema";
+} from "@rbuilder/schema/resume/json-schema";
 
 export type DocumentationPaths = {
 	jsonSchemaGuide: string;

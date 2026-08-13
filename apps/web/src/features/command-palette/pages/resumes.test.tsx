@@ -6,7 +6,7 @@ import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 import { i18n } from "@lingui/core";
 import { I18nProvider } from "@lingui/react";
 import { useQuery } from "@tanstack/react-query";
-import { Command, CommandList } from "@reactive-resume/ui/components/command";
+import { Command, CommandList } from "@rbuilder/ui/components/command";
 import { useCommandPaletteStore } from "../store";
 
 const mocks = vi.hoisted(() => ({

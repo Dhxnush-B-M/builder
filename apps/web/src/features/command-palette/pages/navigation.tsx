@@ -12,7 +12,7 @@ import {
 	WarningIcon,
 } from "@phosphor-icons/react";
 import { useNavigate, useRouteContext } from "@tanstack/react-router";
-import { CommandItem } from "@reactive-resume/ui/components/command";
+import { CommandItem } from "@rbuilder/ui/components/command";
 import { useCommandPaletteStore } from "../store";
 import { BaseCommandGroup } from "./base";
 

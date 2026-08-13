@@ -1,9 +1,10 @@
 {
-	"name": "@reactive-resume/pdf",
+	"name": "@rbuilder/pdf",
 	"version": "0.0.0",
 	"type": "module",
 	"private": true,
 	"exports": {
+		".": "./src/index.ts",
 		"./browser": "./src/browser.tsx",
 		"./document": "./src/document.tsx",
 		"./preflight": "./src/semantic/preflight-core.tsx",
@@ -13,7 +14,9 @@
 		"./semantic-manifest": "./src/semantic/template-manifest.ts",
 		"./semantic-tree": "./src/semantic/tree.ts",
 		"./section-title": "./src/section-title.ts",
-		"./server": "./src/server.tsx"
+		"./server": "./src/server.tsx",
+		"./templates": "./src/templates/index.ts",
+		"./templates/*": "./src/templates/*"
 	},
 	"imports": {
 		"#react-pdf-renderer": "@react-pdf/renderer"
@@ -27,10 +30,10 @@
 	},
 	"dependencies": {
 		"@react-pdf/renderer": "^4.5.1",
-		"@reactive-resume/fonts": "workspace:*",
-		"@reactive-resume/resume": "workspace:*",
-		"@reactive-resume/schema": "workspace:*",
-		"@reactive-resume/utils": "workspace:*",
+		"@rbuilder/fonts": "workspace:*",
+		"@rbuilder/resume": "workspace:*",
+		"@rbuilder/schema": "workspace:*",
+		"@rbuilder/utils": "workspace:*",
 		"cjk-regex": "^3.4.0",
 		"node-html-parser": "^9.0.1",
 		"phosphor-icons-react-pdf": "^0.1.3",

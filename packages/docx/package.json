@@ -1,10 +1,11 @@
 {
-	"name": "@reactive-resume/docx",
+	"name": "@rbuilder/docx",
 	"version": "0.0.0",
 	"type": "module",
 	"private": true,
 	"exports": {
-		".": "./src/index.ts"
+		".": "./src/index.ts",
+		"./builder": "./src/builder.ts"
 	},
 	"scripts": {
 		"typecheck": "tsgo --noEmit",
@@ -14,8 +15,8 @@
 		"test:agent": "vitest run --reporter=agent --reporter=json --outputFile.json=reports/vitest-results.json --passWithNoTests"
 	},
 	"dependencies": {
-		"@reactive-resume/schema": "workspace:*",
-		"@reactive-resume/utils": "workspace:*",
+		"@rbuilder/schema": "workspace:*",
+		"@rbuilder/utils": "workspace:*",
 		"docx": "^9.7.1"
 	},
 	"devDependencies": {

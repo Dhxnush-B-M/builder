@@ -4,9 +4,9 @@ import { useLingui } from "@lingui/react";
 import { Trans } from "@lingui/react/macro";
 import { GearSixIcon, MagnifyingGlassIcon, ReadCvLogoIcon, UserCircleIcon } from "@phosphor-icons/react";
 import { Link } from "@tanstack/react-router";
-import { Avatar, AvatarFallback, AvatarImage } from "@reactive-resume/ui/components/avatar";
-import { BrandIcon } from "@reactive-resume/ui/components/brand-icon";
-import { Kbd } from "@reactive-resume/ui/components/kbd";
+import { Avatar, AvatarFallback, AvatarImage } from "@rbuilder/ui/components/avatar";
+import { BrandIcon } from "@rbuilder/ui/components/brand-icon";
+import { Kbd } from "@rbuilder/ui/components/kbd";
 import {
 	Sidebar,
 	SidebarContent,
@@ -20,8 +20,8 @@ import {
 	SidebarMenuItem,
 	SidebarRail,
 	SidebarSeparator,
-} from "@reactive-resume/ui/components/sidebar";
-import { getInitials } from "@reactive-resume/utils/string";
+} from "@rbuilder/ui/components/sidebar";
+import { getInitials } from "@rbuilder/utils/string";
 import { useCommandPaletteStore } from "@/features/command-palette/store";
 import { UserDropdownMenu } from "@/features/user/dropdown-menu";
 

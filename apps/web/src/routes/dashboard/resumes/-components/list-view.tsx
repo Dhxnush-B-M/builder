@@ -5,7 +5,7 @@ import { DotsThreeIcon, DownloadSimpleIcon, PlusIcon } from "@phosphor-icons/rea
 import { Link } from "@tanstack/react-router";
 import { AnimatePresence, m } from "motion/react";
 import { useMemo } from "react";
-import { Button } from "@reactive-resume/ui/components/button";
+import { Button } from "@rbuilder/ui/components/button";
 import { useDialogStore } from "@/dialogs/store";
 import { ResumeDropdownMenu } from "./menus/dropdown-menu";
 
