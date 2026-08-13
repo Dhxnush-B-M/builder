@@ -1,13 +1,6 @@
 import type { RouterOutput } from "@/libs/orpc/client";
 import { Trans } from "@lingui/react/macro";
-import {
-	CopySimpleIcon,
-	FolderOpenIcon,
-	LockSimpleIcon,
-	LockSimpleOpenIcon,
-	PencilSimpleLineIcon,
-	TrashSimpleIcon,
-} from "@phosphor-icons/react";
+import { FolderOpenIcon, TrashSimpleIcon } from "@phosphor-icons/react";
 import { Link } from "@tanstack/react-router";
 import {
 	ContextMenu,
@@ -24,7 +17,7 @@ type Props = {
 };
 
 export function ResumeContextMenu({ resume, children }: Props) {
-	const { handleDelete, handleDuplicate, handleToggleLock, handleUpdate } = useResumeMenuActions(resume);
+	const { handleDelete } = useResumeMenuActions(resume);
 
 	return (
 		<ContextMenu>
@@ -42,28 +35,7 @@ export function ResumeContextMenu({ resume, children }: Props) {
 
 				<ContextMenuSeparator />
 
-				<ContextMenuItem disabled={resume.isLocked} onClick={handleUpdate}>
-					<PencilSimpleLineIcon />
-					<Trans comment="Resume card context menu action to edit resume metadata">Edit details</Trans>
-				</ContextMenuItem>
-
-				<ContextMenuItem onClick={handleDuplicate}>
-					<CopySimpleIcon />
-					<Trans comment="Resume card context menu action to create a copy">Duplicate</Trans>
-				</ContextMenuItem>
-
-				<ContextMenuItem onClick={handleToggleLock}>
-					{resume.isLocked ? <LockSimpleOpenIcon /> : <LockSimpleIcon />}
-					{resume.isLocked ? (
-						<Trans comment="Resume card context menu action to remove edit lock">Unlock</Trans>
-					) : (
-						<Trans comment="Resume card context menu action to prevent edits">Lock</Trans>
-					)}
-				</ContextMenuItem>
-
-				<ContextMenuSeparator />
-
-				<ContextMenuItem variant="destructive" disabled={resume.isLocked} onClick={handleDelete}>
+				<ContextMenuItem variant="destructive" onClick={handleDelete}>
 					<TrashSimpleIcon />
 					<Trans comment="Resume card context menu destructive action to remove a resume">Delete</Trans>
 				</ContextMenuItem>

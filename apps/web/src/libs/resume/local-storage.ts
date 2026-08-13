@@ -95,9 +95,14 @@ export function saveLocalResume(resume: Partial<SavedResume> & { id: string; nam
 }
 
 export function deleteLocalResume(id: string): void {
-	const current = getLocalResumes();
-	const filtered = current.filter((r) => r.id !== id);
-	if (typeof window !== "undefined") {
+	if (typeof window === "undefined") return;
+	try {
+		const raw = localStorage.getItem(STORAGE_KEY);
+		if (!raw) return;
+		const parsed = JSON.parse(raw);
+		const filtered = parsed.filter((r: any) => r.id !== id);
 		localStorage.setItem(STORAGE_KEY, JSON.stringify(filtered));
+	} catch {
+		// ignore storage errors
 	}
 }

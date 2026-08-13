@@ -1,13 +1,6 @@
 import type { RouterOutput } from "@/libs/orpc/client";
 import { Trans } from "@lingui/react/macro";
-import {
-	CopySimpleIcon,
-	FolderOpenIcon,
-	LockSimpleIcon,
-	LockSimpleOpenIcon,
-	PencilSimpleLineIcon,
-	TrashSimpleIcon,
-} from "@phosphor-icons/react";
+import { FolderOpenIcon, TrashSimpleIcon } from "@phosphor-icons/react";
 import { Link } from "@tanstack/react-router";
 import {
 	DropdownMenu,
@@ -24,7 +17,7 @@ type Props = Omit<React.ComponentProps<typeof DropdownMenuContent>, "children"> 
 };
 
 export function ResumeDropdownMenu({ resume, children, ...props }: Props) {
-	const { handleDelete, handleDuplicate, handleToggleLock, handleUpdate } = useResumeMenuActions(resume);
+	const { handleDelete } = useResumeMenuActions(resume);
 
 	return (
 		<DropdownMenu>
@@ -42,28 +35,7 @@ export function ResumeDropdownMenu({ resume, children, ...props }: Props) {
 
 				<DropdownMenuSeparator />
 
-				<DropdownMenuItem disabled={resume.isLocked} onClick={handleUpdate}>
-					<PencilSimpleLineIcon />
-					<Trans comment="Resume card dropdown action to edit resume metadata">Edit details</Trans>
-				</DropdownMenuItem>
-
-				<DropdownMenuItem onClick={handleDuplicate}>
-					<CopySimpleIcon />
-					<Trans comment="Resume card dropdown action to create a copy">Duplicate</Trans>
-				</DropdownMenuItem>
-
-				<DropdownMenuItem onClick={handleToggleLock}>
-					{resume.isLocked ? <LockSimpleOpenIcon /> : <LockSimpleIcon />}
-					{resume.isLocked ? (
-						<Trans comment="Resume card dropdown action to remove edit lock">Unlock</Trans>
-					) : (
-						<Trans comment="Resume card dropdown action to prevent edits">Lock</Trans>
-					)}
-				</DropdownMenuItem>
-
-				<DropdownMenuSeparator />
-
-				<DropdownMenuItem variant="destructive" disabled={resume.isLocked} onClick={handleDelete}>
+				<DropdownMenuItem variant="destructive" onClick={handleDelete}>
 					<TrashSimpleIcon />
 					<Trans comment="Resume card dropdown destructive action to remove a resume">Delete</Trans>
 				</DropdownMenuItem>
