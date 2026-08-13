@@ -84,7 +84,6 @@ export function BuilderHeader() {
 				<h2 className="min-w-0 truncate font-medium">{name}</h2>
 				{isLocked && <LockSimpleIcon className="ms-2 text-muted-foreground" />}
 				<SaveStatusIndicator />
-				<BuilderVersionHistory resumeId={resumeId} />
 				<BuilderHeaderDropdown />
 				<Button
 					size="icon"
