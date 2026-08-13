@@ -81,7 +81,6 @@ export const rightSidebarSections: RightSidebarSection[] = [
 	"layout",
 	"typography",
 	"design",
-	"styles",
 	"page",
 	"export",
 ] as const;
