@@ -392,22 +392,6 @@ function StylesheetEditorShell({ readOnly = false }: StylesheetEditorShellProps)
 	);
 	const editorChrome = (
 		<div className="space-y-3">
-			<StylesheetToolbar
-				source={source}
-				canUndo={canUndo}
-				canRedo={canRedo}
-				focused={focusOpen}
-				disabled={restoreLocked}
-				onUndo={undo}
-				onRedo={redo}
-				onFormat={() => {
-					const view = editorViewRef.current;
-					if (view) void formatEditorDocument(view).catch(() => undefined);
-				}}
-				onReset={() => setSourceText(applied)}
-				onFocusToggle={toggleFocus}
-			/>
-
 			<div className={focusOpen ? (isMobile ? "h-[55svh]" : "h-[calc(100svh-14rem)]") : "h-72"}>{editor}</div>
 		</div>
 	);

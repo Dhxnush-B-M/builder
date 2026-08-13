@@ -79,13 +79,10 @@ export const leftSidebarSections: LeftSidebarSection[] = [
 export const rightSidebarSections: RightSidebarSection[] = [
 	"template",
 	"layout",
-	"sharing",
-	"statistics",
 	"typography",
 	"design",
 	"styles",
 	"page",
-	"notes",
 	"export",
 ] as const;
 
