@@ -73,22 +73,46 @@ export function Hero() {
 				animate={{ opacity: 1, y: 0 }}
 				transition={{ duration: 0.8, delay: 0.8, ease: "easeOut" }}
 			>
-				<CometCard glareOpacity={0} className="relative mx-auto 3xl:max-w-7xl max-w-5xl px-4 md:px-12 lg:px-0">
-					<div className="relative overflow-hidden rounded-2xl border border-border/80 bg-card/50 p-2 shadow-2xl backdrop-blur-sm">
-						<video
-							loop
-							muted
-							autoPlay
-							controls
-							playsInline
-							preload="metadata"
-							width={1146}
-							height={720}
-							poster="/videos/timelapse-v1.webp"
-							src="/videos/timelapse-v1.mp4"
-							aria-label="Timelapse demonstration of building a resume with rbuilder"
-							className="aspect-[1146/720] w-full rounded-xl object-cover"
-						/>
+				<CometCard glareOpacity={0.15} className="relative mx-auto max-w-5xl px-4 md:px-12 lg:px-0 3xl:max-w-7xl">
+					{/* Glowing Backdrop Gradient */}
+					<div className="absolute -inset-1 rounded-3xl bg-gradient-to-r from-primary/30 via-indigo-500/20 to-purple-500/30 opacity-75 blur-xl transition-all duration-500 group-hover:opacity-100" />
+
+					<div className="relative overflow-hidden rounded-2xl border border-border/80 bg-background/90 shadow-2xl backdrop-blur-md">
+						{/* Browser Header Bar */}
+						<div className="flex items-center justify-between border-b border-border/60 bg-muted/40 px-4 py-3">
+							<div className="flex items-center gap-2">
+								<div className="size-3 rounded-full bg-red-500/80" />
+								<div className="size-3 rounded-full bg-amber-500/80" />
+								<div className="size-3 rounded-full bg-emerald-500/80" />
+							</div>
+
+							<div className="flex items-center gap-2 rounded-full border border-border/50 bg-background/60 px-4 py-1 font-mono text-xs text-muted-foreground shadow-inner">
+								<span className="inline-block size-2 rounded-full bg-emerald-500 animate-pulse" />
+								<span>rbuilder.app/builder/preview</span>
+							</div>
+
+							<div className="flex items-center gap-1.5 text-xs text-muted-foreground font-medium">
+								<span className="rounded bg-primary/10 px-2 py-0.5 text-primary text-[10px] uppercase font-bold tracking-wider">Live Preview</span>
+							</div>
+						</div>
+
+						{/* Video Player */}
+						<div className="relative aspect-[1146/720] w-full overflow-hidden bg-black/80">
+							<video
+								loop
+								muted
+								autoPlay
+								controls
+								playsInline
+								preload="metadata"
+								width={1146}
+								height={720}
+								poster="/videos/timelapse-v1.webp"
+								src="/videos/timelapse-v1.mp4"
+								aria-label="Timelapse demonstration of building a resume with rbuilder"
+								className="size-full object-cover"
+							/>
+						</div>
 					</div>
 				</CometCard>
 			</m.div>
