@@ -1,7 +1,7 @@
 import type { LeftSidebarSection } from "@/libs/resume/section";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
-import { LockSimpleIcon, PaletteIcon } from "@phosphor-icons/react";
+import { LockSimpleIcon } from "@phosphor-icons/react";
 import { useMutation } from "@tanstack/react-query";
 import { Fragment, useCallback, useRef } from "react";
 import { toast } from "sonner";
@@ -133,26 +133,6 @@ function SidebarEdge() {
 			<div className="flex min-h-0 w-full flex-1 flex-col items-center gap-y-2 overflow-hidden">
 				<div className="no-scrollbar min-h-0 w-full flex-1 overflow-y-auto overflow-x-hidden">
 					<div className="flex min-h-full flex-col items-center justify-center gap-y-2">
-						<Tooltip>
-							<TooltipTrigger
-								render={
-									<Button
-										size="icon"
-										variant="ghost"
-										className="text-primary hover:bg-primary/10"
-										aria-label={t`Design & Templates`}
-										onClick={() => toggleSidebar("right")}
-									>
-										<PaletteIcon className="size-5" />
-									</Button>
-								}
-							/>
-							<TooltipContent side="right" className="font-medium">
-								{t`Design & Templates`}
-							</TooltipContent>
-						</Tooltip>
-
-						<Separator className="my-1 w-6" />
 
 						{leftSidebarSections.map((section) => (
 							<Tooltip key={section}>
