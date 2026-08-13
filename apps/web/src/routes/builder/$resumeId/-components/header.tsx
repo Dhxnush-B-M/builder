@@ -9,6 +9,7 @@ import {
 	HouseSimpleIcon,
 	LockSimpleIcon,
 	LockSimpleOpenIcon,
+	PaletteIcon,
 	PencilSimpleLineIcon,
 	SidebarSimpleIcon,
 	TrashSimpleIcon,
@@ -85,6 +86,15 @@ export function BuilderHeader() {
 				<SaveStatusIndicator />
 				<BuilderVersionHistory resumeId={resumeId} />
 				<BuilderHeaderDropdown />
+				<Button
+					size="icon"
+					variant="ghost"
+					className="ms-1 hidden md:flex text-primary hover:bg-primary/10"
+					aria-label={t`Design & Templates`}
+					onClick={() => toggleSidebar("right", true)}
+				>
+					<PaletteIcon className="size-4" />
+				</Button>
 			</div>
 
 			<div className="flex min-w-0 flex-1 items-center justify-end gap-x-1">
