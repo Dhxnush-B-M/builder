@@ -49,6 +49,7 @@ export function DesktopBuilderShell({ initialLayout }: BuilderLayoutShellProps) 
 
 		setLeftSidebar(leftSidebarRef);
 		setRightSidebar(rightSidebarRef);
+		rightSidebarRef.current?.collapse();
 	}, [leftSidebarRef, rightSidebarRef, setLeftSidebar, setRightSidebar]);
 
 	const sidebarMinSize = `${minSidebarSize}px`;
