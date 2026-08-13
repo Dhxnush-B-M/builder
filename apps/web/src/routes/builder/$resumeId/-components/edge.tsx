@@ -10,7 +10,7 @@ export function BuilderSidebarEdge({ side, children }: Props) {
 		<div
 			className={cn(
 				// `md:` (not `sm:`) so the strip only shows on real desktop; the mobile shell takes over below 768px.
-				"absolute inset-y-0 hidden min-h-0 w-12 flex-col items-center overflow-hidden bg-popover/85 backdrop-blur-md py-2.5 md:flex border-white/20 dark:border-white/10 shadow-sm",
+				"absolute inset-y-0 hidden min-h-0 w-12 flex-col items-center overflow-hidden bg-background/50 backdrop-blur-2xl py-2.5 md:flex border-white/20 dark:border-white/10 shadow-md z-30",
 				side === "left" ? "inset-s-0 border-r" : "inset-e-0 border-l",
 			)}
 		>

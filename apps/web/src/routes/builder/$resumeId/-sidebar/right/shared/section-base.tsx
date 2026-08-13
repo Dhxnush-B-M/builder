@@ -18,7 +18,7 @@ export function SectionBase({ type, className, ...props }: Props) {
 
 	return (
 		<Accordion
-			className="space-y-4"
+			className="space-y-4 rounded-2xl border border-white/20 dark:border-white/10 bg-card/40 backdrop-blur-md p-3.5 shadow-sm transition-all duration-300 hover:border-primary/40"
 			id={`sidebar-${type}`}
 			value={collapsed ? [] : [type]}
 			onValueChange={() => toggleCollapsed(type)}
