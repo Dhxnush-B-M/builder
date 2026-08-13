@@ -117,8 +117,6 @@ export function DashboardSidebar() {
 							}
 						/>
 					</SidebarMenuItem>
-
-					<SidebarSearchButton />
 				</SidebarMenu>
 			</SidebarHeader>
 
