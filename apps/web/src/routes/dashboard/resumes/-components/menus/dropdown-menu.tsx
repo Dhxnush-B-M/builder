@@ -31,12 +31,14 @@ export function ResumeDropdownMenu({ resume, children, ...props }: Props) {
 			<DropdownMenuTrigger render={children} />
 
 			<DropdownMenuContent {...props}>
-				<Link to="/builder/$resumeId" params={{ resumeId: resume.id }}>
-					<DropdownMenuItem>
-						<FolderOpenIcon />
-						<Trans comment="Resume card dropdown action to open the resume editor">Open</Trans>
-					</DropdownMenuItem>
-				</Link>
+				<DropdownMenuItem
+					render={
+						<Link to="/builder/$resumeId" params={{ resumeId: resume.id }}>
+							<FolderOpenIcon />
+							<Trans comment="Resume card dropdown action to open the resume editor">Open</Trans>
+						</Link>
+					}
+				/>
 
 				<DropdownMenuSeparator />
 

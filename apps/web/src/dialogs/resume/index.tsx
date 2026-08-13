@@ -136,34 +136,9 @@ export function CreateResumeDialog(_: DialogProps<"resume.create">) {
 				<ResumeForm form={form} />
 
 				<DialogFooter>
-					<ButtonGroup
-						aria-label={t({
-							comment: "Accessible label for create-resume split button group",
-							message: "Create resume with options",
-						})}
-						className="gap-x-px rtl:flex-row-reverse"
-					>
-						<Button type="submit">
-							<Trans>Create</Trans>
-						</Button>
-
-						<DropdownMenu>
-							<DropdownMenuTrigger
-								render={
-									<Button size="icon">
-										<CaretDownIcon />
-									</Button>
-								}
-							/>
-
-							<DropdownMenuContent align="end" className="w-fit">
-								<DropdownMenuItem onClick={onCreateSampleResume}>
-									<TestTubeIcon />
-									<Trans>Create a Sample Resume</Trans>
-								</DropdownMenuItem>
-							</DropdownMenuContent>
-						</DropdownMenu>
-					</ButtonGroup>
+					<Button type="submit">
+						<Trans>Create</Trans>
+					</Button>
 				</DialogFooter>
 			</form>
 		</DialogContent>
@@ -335,62 +310,6 @@ const ResumeForm = withForm({
 							<FormMessage errors={field.state.meta.errors} />
 							<FormDescription>
 								<Trans>Tip: You can name the resume referring to the position you are applying for.</Trans>
-							</FormDescription>
-						</FormItem>
-					)}
-				</form.Field>
-
-				<form.Field name="slug">
-					{(field) => (
-						<FormItem hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}>
-							<FormLabel>
-								<Trans>Slug</Trans>
-							</FormLabel>
-							<FormControl
-								render={
-									<InputGroup>
-										<InputGroupAddon align="inline-start" className="hidden sm:flex">
-											<InputGroupText>{slugPrefix}</InputGroupText>
-										</InputGroupAddon>
-										<InputGroupInput
-											min={1}
-											max={64}
-											className="ps-0!"
-											name={field.name}
-											value={field.state.value}
-											onBlur={field.handleBlur}
-											onChange={(event) => field.handleChange(event.target.value)}
-										/>
-									</InputGroup>
-								}
-							/>
-							<FormMessage errors={field.state.meta.errors} />
-							<FormDescription>
-								<Trans>This is a URL-friendly name for your resume.</Trans>
-							</FormDescription>
-						</FormItem>
-					)}
-				</form.Field>
-
-				<form.Field name="tags">
-					{(field) => (
-						<FormItem hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}>
-							<FormLabel>
-								<Trans>Tags</Trans>
-							</FormLabel>
-							<FormControl
-								render={
-									<ChipInput
-										value={field.state.value}
-										onChange={(value) => {
-											field.handleChange(value);
-										}}
-									/>
-								}
-							/>
-							<FormMessage errors={field.state.meta.errors} />
-							<FormDescription>
-								<Trans>Tags can be used to categorize your resume by keywords.</Trans>
 							</FormDescription>
 						</FormItem>
 					)}
