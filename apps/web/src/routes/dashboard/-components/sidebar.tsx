@@ -2,7 +2,7 @@ import type { MessageDescriptor } from "@lingui/core";
 import { msg } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react";
 import { Trans } from "@lingui/react/macro";
-import { GearSixIcon, MagnifyingGlassIcon, ReadCvLogoIcon, UserCircleIcon } from "@phosphor-icons/react";
+import { MagnifyingGlassIcon, ReadCvLogoIcon, SlidersHorizontalIcon, UserCircleIcon } from "@phosphor-icons/react";
 import { Link } from "@tanstack/react-router";
 import { Avatar, AvatarFallback, AvatarImage } from "@rbuilder/ui/components/avatar";
 import { BrandIcon } from "@rbuilder/ui/components/brand-icon";
@@ -46,8 +46,8 @@ const settingsSidebarItems = [
 		href: "/dashboard/settings/profile",
 	},
 	{
-		icon: <GearSixIcon />,
-		label: msg`Preferences`,
+		icon: <SlidersHorizontalIcon />,
+		label: msg`Predilection`,
 		href: "/dashboard/settings/preferences",
 	},
 ] as const satisfies SidebarItem[];
