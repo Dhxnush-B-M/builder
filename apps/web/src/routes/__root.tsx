@@ -89,7 +89,7 @@ export const Route = createRootRouteWithContext<RouterContext>()({
 		const theme = getTheme();
 		const locale = getLocale();
 
-		const defaultFlags = {
+		const defaultFlags: FeatureFlags = {
 			disableEmailAuth: false,
 			disableSignups: false,
 			disableImageProcessing: false,
@@ -99,12 +99,17 @@ export const Route = createRootRouteWithContext<RouterContext>()({
 			allowUnsafeAiBaseUrl: false,
 		};
 
+		const withTimeout = <T,>(promise: Promise<T>, ms: number, fallback: T): Promise<T> => {
+			const timer = new Promise<T>((resolve) => setTimeout(() => resolve(fallback), ms));
+			return Promise.race([promise.catch(() => fallback), timer]);
+		};
+
 		const [session, flags] = await Promise.all([
-			getSession().catch(() => null),
-			client.flags.get().catch(() => defaultFlags),
+			withTimeout(getSession(), 200, null),
+			withTimeout(client.flags.get(), 200, defaultFlags),
 		]);
 
-		await loadLocale(locale);
+		await loadLocale(locale).catch(() => null);
 
 		return { theme, locale, session, flags };
 	},
