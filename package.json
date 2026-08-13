@@ -1,17 +1,17 @@
 {
-	"name": "reactive-resume",
-	"description": "Reactive Resume is a free and open-source resume builder that simplifies the process of creating, updating, and sharing your resume.",
+	"name": "builder",
+	"description": "Builder is a modern professional resume builder that simplifies the process of creating, updating, and sharing your resume.",
 	"version": "5.2.5",
 	"private": true,
 	"license": "MIT",
 	"author": {
-		"name": "Amruth Pillai",
-		"email": "hello@amruthpillai.com",
-		"url": "https://amruthpillai.com"
+		"name": "Dhxnush B M",
+		"email": "karthikdhanush686@gmail.com",
+		"url": "https://github.com/Dhxnush-B-M"
 	},
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/amruthpillai/reactive-resume.git"
+		"url": "https://github.com/Dhxnush-B-M/builder.git"
 	},
 	"packageManager": "pnpm@11.18.0",
 	"workspaces": [

@@ -4,65 +4,27 @@
 	"entity": {
 		"type": "individual",
 		"role": "maintainer",
-		"name": "Amruth Pillai",
-		"email": "hello@amruthpillai.com",
+		"name": "Dhxnush B M",
+		"email": "karthikdhanush686@gmail.com",
 		"description": "Software Engineer",
 		"webpageUrl": {
-			"url": "https://rxresu.me/funding.json"
+			"url": "https://builder-az7.pages.dev"
 		}
 	},
 	"projects": [
 		{
-			"guid": "rbuilder",
-			"name": "rbuilder",
-			"description": "rbuilder is a free and modern resume builder that simplifies creating, updating, and sharing your resume.",
+			"guid": "builder",
+			"name": "builder",
+			"description": "Builder is a free and modern resume builder that simplifies creating, updating, and sharing your resume.",
 			"webpageUrl": {
-				"url": "https://rxresu.me"
+				"url": "https://builder-az7.pages.dev"
 			},
 			"repositoryUrl": {
-				"url": "https://github.com/amruthpillai/reactive-resume",
-				"wellKnown": "https://github.com/amruthpillai/reactive-resume/blob/main/.github/.well-known/funding-manifest-urls"
+				"url": "https://github.com/Dhxnush-B-M/builder",
+				"wellKnown": "https://github.com/Dhxnush-B-M/builder"
 			},
 			"licenses": ["spdx:MIT"],
 			"tags": ["data", "design", "productivity", "resume-builder"]
 		}
-	],
-	"funding": {
-		"plans": [
-			{
-				"guid": "sponsor",
-				"status": "active",
-				"name": "Sponsor",
-				"description": "Support the project on a recurring basis by becoming a sponsor.",
-				"amount": 10,
-				"currency": "EUR",
-				"frequency": "monthly",
-				"channels": ["github", "open-collective"]
-			},
-			{
-				"guid": "donation",
-				"status": "active",
-				"name": "Donation",
-				"description": "Show your support for the project by making a one-time donation.",
-				"amount": 0,
-				"currency": "EUR",
-				"frequency": "one-time",
-				"channels": ["github", "open-collective"]
-			}
-		],
-		"channels": [
-			{
-				"guid": "github",
-				"type": "payment-provider",
-				"description": "GitHub Sponsors",
-				"address": "https://github.com/sponsors/AmruthPillai"
-			},
-			{
-				"guid": "open-collective",
-				"type": "payment-provider",
-				"description": "Open Collective",
-				"address": "https://opencollective.com/reactive-resume/donate"
-			}
-		]
-	}
+	]
 }

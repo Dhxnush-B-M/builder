@@ -19,7 +19,7 @@ type Testimonial = {
 const initialTestimonials: Testimonial[] = [
 	{
 		id: "1",
-		name: "Amruth Pillai",
+		name: "Dhxnush B M",
 		description: "Building rbuilder has been an extraordinary journey empowering millions worldwide.",
 		date: "Founder",
 		gradient: "from-blue-500 via-indigo-500 to-purple-500",

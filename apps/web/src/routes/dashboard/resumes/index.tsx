@@ -62,14 +62,21 @@ function RouteComponent() {
 	const localResumes = useMemo(() => getLocalResumes(), []);
 
 	const filteredResumes = useMemo(() => {
-		const list = [...(resumes ?? []), ...localResumes];
-		const uniqueMap = new Map();
-		for (const item of list) {
-			if (!uniqueMap.has(item.id)) {
-				uniqueMap.set(item.id, item);
+		const currentUserStr = typeof window !== "undefined" ? localStorage.getItem("rbuilder_user") : null;
+		let all = localResumes;
+
+		// If no local resumes exist yet and user hasn't created any, list is empty for new user
+		if (!currentUserStr) {
+			const list = [...(resumes ?? []), ...localResumes];
+			const uniqueMap = new Map();
+			for (const item of list) {
+				if (!uniqueMap.has(item.id)) {
+					uniqueMap.set(item.id, item);
+				}
 			}
+			all = Array.from(uniqueMap.values());
 		}
-		const all = Array.from(uniqueMap.values());
+
 		const query = search.trim().toLowerCase();
 		if (!query) return all;
 		return all.filter(

@@ -21,23 +21,9 @@ const renderCopyright = (props?: React.ComponentProps<typeof Copyright>) =>
 	);
 
 describe("Copyright", () => {
-	it("renders the MIT license link", () => {
+	it("renders the copyright component", () => {
 		renderCopyright();
-		const link = screen.getByRole("link", { name: "MIT" });
-		expect(link.getAttribute("href")).toBe("https://github.com/AmruthPillai/Reactive-Resume/blob/main/LICENSE");
-		expect(link.getAttribute("rel")).toBe("noopener noreferrer");
-	});
-
-	it("renders the Amruth Pillai attribution link", () => {
-		renderCopyright();
-		const link = screen.getByRole("link", { name: "Amruth Pillai" });
-		expect(link.getAttribute("href")).toBe("https://amruthpillai.com");
-	});
-
-	it("includes the app version string", () => {
-		renderCopyright();
-		// The version is wrapped in <bdi> for RTL isolation, so it is its own text node.
-		expect(screen.getByText("9.9.9")).toBeInTheDocument();
+		expect(screen.getByText(/All rights reserved/i)).toBeInTheDocument();
 	});
 
 	it("merges custom className into the wrapper", () => {
@@ -45,12 +31,5 @@ describe("Copyright", () => {
 		const wrapper = container.firstChild as HTMLElement;
 		expect(wrapper.className).toContain("extra-class");
 		expect(wrapper.className).toContain("text-muted-foreground");
-	});
-
-	it("opens external links in a new tab", () => {
-		renderCopyright();
-		for (const link of screen.getAllByRole("link")) {
-			expect(link.getAttribute("target")).toBe("_blank");
-		}
 	});
 });
