@@ -1,1 +1,10 @@
-@import "@reactive-resume/ui/globals.css";
+@import "@rbuilder/ui/globals.css";
+
+@keyframes marquee {
+	0% {
+		transform: translateX(0%);
+	}
+	100% {
+		transform: translateX(-50%);
+	}
+}
