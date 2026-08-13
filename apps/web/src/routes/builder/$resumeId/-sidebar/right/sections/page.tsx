@@ -191,9 +191,10 @@ function PageSectionForm() {
 				<form.Field key={name} name={name}>
 					{(field) => (
 						<FormItem
-							className="col-span-full flex items-center gap-x-3 py-1"
+							className="col-span-full flex items-center justify-between py-1"
 							hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}
 						>
+							<FormLabel className="cursor-pointer font-medium">{label}</FormLabel>
 							<FormControl
 								render={
 									<Switch
@@ -205,7 +206,6 @@ function PageSectionForm() {
 									/>
 								}
 							/>
-							<FormLabel>{label}</FormLabel>
 						</FormItem>
 					)}
 				</form.Field>
