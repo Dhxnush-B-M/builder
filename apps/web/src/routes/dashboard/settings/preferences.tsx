@@ -12,7 +12,7 @@ export const Route = createFileRoute("/dashboard/settings/preferences")({
 function RouteComponent() {
 	return (
 		<div className="space-y-4">
-			<DashboardHeader icon={SlidersHorizontalIcon} title={t`Predilection`} />
+			<DashboardHeader icon={SlidersHorizontalIcon} title="Predilection" />
 
 			<Separator />
 

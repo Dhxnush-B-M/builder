@@ -27,19 +27,19 @@ import { UserDropdownMenu } from "@/features/user/dropdown-menu";
 
 type SidebarItem = {
 	icon: React.ReactNode;
-	label: MessageDescriptor;
+	label: MessageDescriptor | string;
 	href: React.ComponentProps<typeof Link>["to"];
 };
 
-const appSidebarItems = [
+const appSidebarItems: SidebarItem[] = [
 	{
 		icon: <ReadCvLogoIcon />,
 		label: msg`Resumes`,
 		href: "/dashboard/resumes",
 	},
-] as const satisfies SidebarItem[];
+];
 
-const settingsSidebarItems = [
+const settingsSidebarItems: SidebarItem[] = [
 	{
 		icon: <UserCircleIcon />,
 		label: msg`Profile`,
@@ -47,10 +47,10 @@ const settingsSidebarItems = [
 	},
 	{
 		icon: <SlidersHorizontalIcon />,
-		label: msg`Predilection`,
+		label: "Predilection",
 		href: "/dashboard/settings/preferences",
 	},
-] as const satisfies SidebarItem[];
+];
 
 type SidebarItemListProps = {
 	items: readonly SidebarItem[];
@@ -61,21 +61,24 @@ function SidebarItemList({ items }: SidebarItemListProps) {
 
 	return (
 		<SidebarMenu>
-			{items.map((item) => (
-				<SidebarMenuItem key={item.href}>
-					<SidebarMenuButton
-						title={i18n.t(item.label)}
-						render={
-							<Link to={item.href} activeProps={{ className: "bg-sidebar-accent" }}>
-								{item.icon}
-								<span className="shrink-0 transition-[margin,opacity] duration-200 ease-in-out group-data-[collapsible=icon]:-ms-8 group-data-[collapsible=icon]:opacity-0">
-									{i18n.t(item.label)}
-								</span>
-							</Link>
-						}
-					/>
-				</SidebarMenuItem>
-			))}
+			{items.map((item) => {
+				const text = typeof item.label === "string" ? item.label : i18n.t(item.label);
+				return (
+					<SidebarMenuItem key={item.href}>
+						<SidebarMenuButton
+							title={text}
+							render={
+								<Link to={item.href} activeProps={{ className: "bg-sidebar-accent" }}>
+									{item.icon}
+									<span className="shrink-0 transition-[margin,opacity] duration-200 ease-in-out group-data-[collapsible=icon]:-ms-8 group-data-[collapsible=icon]:opacity-0">
+										{text}
+									</span>
+								</Link>
+							}
+						/>
+					</SidebarMenuItem>
+				);
+			})}
 		</SidebarMenu>
 	);
 }
