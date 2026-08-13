@@ -191,10 +191,10 @@ function PageSectionForm() {
 				<form.Field key={name} name={name}>
 					{(field) => (
 						<FormItem
-							className="col-span-full flex items-center justify-between py-1"
+							className="col-span-full flex flex-col items-start gap-y-1.5 py-1"
 							hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}
 						>
-							<FormLabel className="cursor-pointer font-medium">{label}</FormLabel>
+							<FormLabel className="cursor-pointer font-medium text-sm">{label}</FormLabel>
 							<FormControl
 								render={
 									<Switch
