@@ -74,7 +74,7 @@ function PicturePreviewControls({
 	onUploadPicture,
 }: PicturePreviewControlsProps) {
 	return (
-		<div className="flex items-center gap-x-4">
+		<div className="flex items-center justify-between gap-x-4">
 			<input
 				ref={fileInputRef}
 				type="file"
@@ -103,42 +103,18 @@ function PicturePreviewControls({
 				</div>
 			</button>
 
-			<form.Field name="url">
-				{(field) => (
-					<FormItem className="flex-1" hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}>
-						<FormLabel>
-							<Trans>URL</Trans>
-						</FormLabel>
-						<div className="flex items-center gap-x-2">
-							<FormControl
-								render={
-									<Input
-										name={field.name}
-										value={field.state.value}
-										onBlur={field.handleBlur}
-										onChange={(event) => {
-											field.handleChange(event.target.value);
-											onAutoSave();
-										}}
-									/>
-								}
-							/>
-
-							<Button
-								size="icon"
-								variant="ghost"
-								aria-label={picture.hidden ? t`Show picture` : t`Hide picture`}
-								onClick={() => {
-									form.setFieldValue("hidden", !picture.hidden);
-									onAutoSave();
-								}}
-							>
-								{picture.hidden ? <EyeSlashIcon /> : <EyeIcon />}
-							</Button>
-						</div>
-					</FormItem>
-				)}
-			</form.Field>
+			<Button
+				size="icon"
+				variant="outline"
+				className="size-10"
+				aria-label={picture.hidden ? t`Show picture` : t`Hide picture`}
+				onClick={() => {
+					form.setFieldValue("hidden", !picture.hidden);
+					onAutoSave();
+				}}
+			>
+				{picture.hidden ? <EyeSlashIcon className="size-5" /> : <EyeIcon className="size-5" />}
+			</Button>
 		</div>
 	);
 }

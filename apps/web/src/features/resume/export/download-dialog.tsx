@@ -4,14 +4,10 @@ import { Trans } from "@lingui/react/macro";
 import {
 	CircleNotchIcon,
 	DownloadSimpleIcon,
-	EnvelopeSimpleIcon,
 	FileDocIcon,
-	FileJsIcon,
 	FilePdfIcon,
-	FileTextIcon,
-	MarkdownLogoIcon,
 } from "@phosphor-icons/react";
-import { useId, useState } from "react";
+import { useState } from "react";
 import { Button } from "@rbuilder/ui/components/button";
 import {
 	Dialog,
@@ -21,8 +17,6 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from "@rbuilder/ui/components/dialog";
-import { Switch } from "@rbuilder/ui/components/switch";
-import { Tabs, TabsList, TabsTrigger } from "@rbuilder/ui/components/tabs";
 import { cn } from "@rbuilder/utils/style";
 import { useResumeExport } from "./use-resume-export";
 
@@ -63,16 +57,8 @@ function FormatRow({ action, description, disabled, icon, title }: FormatRowProp
 
 export function ResumeDownloadDialog({ resume, trigger }: ResumeDownloadDialogProps) {
 	const [open, setOpen] = useState(false);
-	const [scope, setScope] = useState<ResumeExportTarget>("resume");
-	const [includeCoverLetterHeader, setIncludeCoverLetterHeader] = useState(false);
-	const includeHeaderSwitchId = useId();
-	const { hasCoverLetter, isExporting, onDownloadDOCX, onDownloadJSON, onDownloadMarkdown, onDownloadPDF } =
-		useResumeExport(resume);
+	const { isExporting, onDownloadDOCX, onDownloadPDF } = useResumeExport(resume);
 	const disabled = !resume || isExporting;
-
-	// Cover letter can't be the active scope when the resume has none (also guards a stale toggle).
-	const activeScope: ResumeExportTarget = scope === "cover-letter" && !hasCoverLetter ? "resume" : scope;
-	const jsonDisabled = activeScope === "cover-letter";
 
 	const run = (action: () => void | Promise<void>) => {
 		setOpen(false);
@@ -92,41 +78,6 @@ export function ResumeDownloadDialog({ resume, trigger }: ResumeDownloadDialogPr
 					</DialogDescription>
 				</DialogHeader>
 
-				<Tabs value={activeScope} onValueChange={(value) => setScope(value as ResumeExportTarget)}>
-					<TabsList className="h-11! w-full">
-						<TabsTrigger value="resume">
-							<FileTextIcon />
-							<Trans>Resume</Trans>
-						</TabsTrigger>
-						<TabsTrigger value="cover-letter" disabled={!hasCoverLetter}>
-							<EnvelopeSimpleIcon />
-							<Trans>Cover letter</Trans>
-						</TabsTrigger>
-					</TabsList>
-				</Tabs>
-
-				{activeScope === "cover-letter" && (
-					<label
-						htmlFor={includeHeaderSwitchId}
-						className="flex cursor-pointer items-center gap-3 rounded-lg border bg-background p-3"
-					>
-						<Switch
-							id={includeHeaderSwitchId}
-							checked={includeCoverLetterHeader}
-							onCheckedChange={setIncludeCoverLetterHeader}
-						/>
-
-						<span className="flex min-w-0 flex-1 flex-col gap-0.5">
-							<span className="font-medium text-sm">
-								<Trans>Include resume header</Trans>
-							</span>
-							<span className="text-muted-foreground text-xs leading-normal">
-								<Trans>Show the same first-page header on the cover letter.</Trans>
-							</span>
-						</span>
-					</label>
-				)}
-
 				<div className="grid gap-2">
 					<FormatRow
 						icon={
@@ -139,7 +90,7 @@ export function ResumeDownloadDialog({ resume, trigger }: ResumeDownloadDialogPr
 								size="sm"
 								aria-label="Download PDF"
 								disabled={isExporting}
-								onClick={() => run(() => onDownloadPDF(activeScope, { includeCoverLetterHeader }))}
+								onClick={() => run(() => onDownloadPDF("resume"))}
 							>
 								<DownloadSimpleIcon />
 								<Trans>Download</Trans>
@@ -157,44 +108,7 @@ export function ResumeDownloadDialog({ resume, trigger }: ResumeDownloadDialogPr
 								variant="outline"
 								aria-label="Download DOCX"
 								disabled={isExporting}
-								onClick={() => run(() => onDownloadDOCX(activeScope))}
-							>
-								<DownloadSimpleIcon />
-								<Trans>Download</Trans>
-							</Button>
-						}
-					/>
-
-					<FormatRow
-						icon={<MarkdownLogoIcon className="size-5" />}
-						title="Markdown"
-						description={<Trans>Plain text, ideal for AI tools and quick edits.</Trans>}
-						action={
-							<Button
-								size="sm"
-								variant="outline"
-								aria-label="Download Markdown"
-								disabled={isExporting}
-								onClick={() => run(() => onDownloadMarkdown(activeScope))}
-							>
-								<DownloadSimpleIcon />
-								<Trans>Download</Trans>
-							</Button>
-						}
-					/>
-
-					<FormatRow
-						disabled={jsonDisabled}
-						icon={<FileJsIcon className="size-5" />}
-						title="JSON"
-						description={<Trans>Full resume data for backup or import.</Trans>}
-						action={
-							<Button
-								size="sm"
-								variant="outline"
-								aria-label="Download JSON"
-								disabled={jsonDisabled}
-								onClick={() => run(onDownloadJSON)}
+								onClick={() => run(() => onDownloadDOCX("resume"))}
 							>
 								<DownloadSimpleIcon />
 								<Trans>Download</Trans>
