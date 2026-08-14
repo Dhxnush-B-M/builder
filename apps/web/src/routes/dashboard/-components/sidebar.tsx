@@ -1,9 +1,10 @@
 import type { MessageDescriptor } from "@lingui/core";
-import { msg } from "@lingui/core/macro";
+import { msg, t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react";
 import { Trans } from "@lingui/react/macro";
-import { MagnifyingGlassIcon, ReadCvLogoIcon, SlidersHorizontalIcon, UserCircleIcon } from "@phosphor-icons/react";
+import { BriefcaseIcon, LockSimpleIcon, MagnifyingGlassIcon, ReadCvLogoIcon, SlidersHorizontalIcon, UserCircleIcon } from "@phosphor-icons/react";
 import { Link } from "@tanstack/react-router";
+import { toast } from "sonner";
 import { Avatar, AvatarFallback, AvatarImage } from "@rbuilder/ui/components/avatar";
 import { BrandIcon } from "@rbuilder/ui/components/brand-icon";
 import { Kbd } from "@rbuilder/ui/components/kbd";
@@ -28,7 +29,8 @@ import { UserDropdownMenu } from "@/features/user/dropdown-menu";
 type SidebarItem = {
 	icon: React.ReactNode;
 	label: MessageDescriptor | string;
-	href: React.ComponentProps<typeof Link>["to"];
+	href?: React.ComponentProps<typeof Link>["to"];
+	isLocked?: boolean;
 };
 
 const appSidebarItems: SidebarItem[] = [
@@ -36,6 +38,11 @@ const appSidebarItems: SidebarItem[] = [
 		icon: <ReadCvLogoIcon />,
 		label: msg`Resumes`,
 		href: "/dashboard/resumes",
+	},
+	{
+		icon: <BriefcaseIcon />,
+		label: "Portfolio",
+		isLocked: true,
 	},
 ];
 
@@ -61,14 +68,36 @@ function SidebarItemList({ items }: SidebarItemListProps) {
 
 	return (
 		<SidebarMenu>
-			{items.map((item) => {
+			{items.map((item, idx) => {
 				const text = typeof item.label === "string" ? item.label : i18n.t(item.label);
+				if (item.isLocked) {
+					return (
+						<SidebarMenuItem key={text}>
+							<SidebarMenuButton
+								title={text}
+								onClick={() => toast.info(t`Portfolio feature is currently locked.`)}
+								className="cursor-pointer text-muted-foreground transition-colors hover:text-foreground"
+							>
+								<div className="flex w-full items-center justify-between">
+									<div className="flex items-center gap-x-2">
+										{item.icon}
+										<span className="shrink-0 transition-[margin,opacity] duration-200 ease-in-out group-data-[collapsible=icon]:-ms-8 group-data-[collapsible=icon]:opacity-0">
+											{text}
+										</span>
+									</div>
+									<LockSimpleIcon className="size-4 shrink-0 opacity-70 group-data-[collapsible=icon]:hidden" />
+								</div>
+							</SidebarMenuButton>
+						</SidebarMenuItem>
+					);
+				}
+
 				return (
-					<SidebarMenuItem key={item.href}>
+					<SidebarMenuItem key={item.href || idx}>
 						<SidebarMenuButton
 							title={text}
 							render={
-								<Link to={item.href} activeProps={{ className: "bg-sidebar-accent" }}>
+								<Link to={item.href!} activeProps={{ className: "bg-sidebar-accent" }}>
 									{item.icon}
 									<span className="shrink-0 transition-[margin,opacity] duration-200 ease-in-out group-data-[collapsible=icon]:-ms-8 group-data-[collapsible=icon]:opacity-0">
 										{text}
