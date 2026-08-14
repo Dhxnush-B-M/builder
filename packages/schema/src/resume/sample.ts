@@ -14,9 +14,9 @@ export const sampleResumeData: ResumeData = {
 		shadowWidth: 0,
 	},
 	basics: {
-		name: "Dhanush B M",
-		headline: "Full Stack Engineer | React & Node.js Specialist",
-		email: "karthikdhanush686@gmail.com",
+		name: "David Kowalski",
+		headline: "Game Developer | Unity & Unreal Engine Specialist",
+		email: "david.kowalski@email.com",
 		phone: "+1 (555) 291-4756",
 		location: "Seattle, WA",
 		website: {
