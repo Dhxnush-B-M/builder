@@ -59,7 +59,12 @@ export function DesktopBuilderShell({ initialLayout }: BuilderLayoutShellProps) 
 	const artboardSize = `${initialLayout.artboard}%`;
 
 	return (
-		<div className="flex h-svh flex-col">
+		<div className="relative flex h-svh flex-col overflow-hidden bg-slate-950/5 dark:bg-zinc-950">
+			{/* Ambient Liquid Glass Mesh Orbs */}
+			<div className="pointer-events-none absolute -top-40 -left-40 size-96 rounded-full bg-blue-500/15 blur-3xl" />
+			<div className="pointer-events-none absolute top-1/3 -right-40 size-96 rounded-full bg-purple-500/15 blur-3xl" />
+			<div className="pointer-events-none absolute -bottom-40 left-1/3 size-96 rounded-full bg-cyan-500/15 blur-3xl" />
+
 			<a
 				href="#main-content"
 				className="sr-only rounded-md bg-popover px-4 py-2 text-sm ring-2 ring-ring focus:not-sr-only focus:absolute focus:inset-s-2 focus:top-2 focus:z-[100]"

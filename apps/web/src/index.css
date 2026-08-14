@@ -8,3 +8,39 @@
 		transform: translateX(-50%);
 	}
 }
+
+/* Fully Glassy Builder UI/UX Styling */
+[data-slot="input"],
+[data-slot="input-group"],
+textarea {
+	background-color: rgba(255, 255, 255, 0.3) !important;
+	backdrop-filter: blur(12px) !important;
+	border: 1px solid rgba(255, 255, 255, 0.4) !important;
+	border-radius: 0.75rem !important;
+	transition: all 0.25s ease-in-out !important;
+}
+
+.dark [data-slot="input"],
+.dark [data-slot="input-group"],
+.dark textarea {
+	background-color: rgba(15, 17, 23, 0.45) !important;
+	backdrop-filter: blur(12px) !important;
+	border: 1px solid rgba(255, 255, 255, 0.15) !important;
+	border-radius: 0.75rem !important;
+}
+
+[data-slot="input"]:focus-within,
+[data-slot="input-group"]:focus-within,
+textarea:focus {
+	background-color: rgba(255, 255, 255, 0.5) !important;
+	border-color: hsl(var(--primary) / 0.7) !important;
+	box-shadow: 0 0 20px rgba(59, 130, 246, 0.2) !important;
+}
+
+.dark [data-slot="input"]:focus-within,
+.dark [data-slot="input-group"]:focus-within,
+.dark textarea:focus {
+	background-color: rgba(24, 28, 40, 0.7) !important;
+	border-color: hsl(var(--primary) / 0.7) !important;
+	box-shadow: 0 0 20px rgba(59, 130, 246, 0.3) !important;
+}
