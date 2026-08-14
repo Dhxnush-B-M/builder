@@ -63,7 +63,10 @@ export function SectionBase({ type, className, ...props }: Props) {
 			id={`sidebar-${type}`}
 			value={collapsed ? [] : [type]}
 			onValueChange={() => toggleCollapsed(type)}
-			className={cn("space-y-4 rounded-2xl border border-white/20 dark:border-white/10 bg-card/40 backdrop-blur-md p-3.5 shadow-sm transition-all duration-300 hover:border-primary/40", isHidden && "opacity-50")}
+			className={cn(
+				"space-y-4 rounded-2xl border border-white/30 dark:border-white/15 bg-white/20 dark:bg-zinc-950/40 backdrop-blur-xl p-4 shadow-[0_8px_32px_0_rgba(0,0,0,0.12)] dark:shadow-[0_8px_32px_0_rgba(0,0,0,0.37)] transition-all duration-300 hover:border-primary/50 hover:shadow-[0_8px_32px_0_rgba(59,130,246,0.2)]",
+				isHidden && "opacity-50",
+			)}
 		>
 			<AccordionItem value={type} className="group/accordion-item space-y-4">
 				<div className="flex items-center">
