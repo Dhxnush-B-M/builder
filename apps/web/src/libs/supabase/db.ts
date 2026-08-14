@@ -123,3 +123,17 @@ export async function getResumesFromSupabase(): Promise<SupabaseResumeRecord[]> 
 		return [];
 	}
 }
+
+/**
+ * Delete resume directly from Supabase Database ('resumes' table)
+ */
+export async function deleteResumeFromSupabase(id: string) {
+	try {
+		const { error } = await supabase.from("resumes").delete().eq("id", id);
+		if (error) {
+			console.warn("Supabase resume delete note:", error.message);
+		}
+	} catch (e) {
+		console.warn("Supabase resume delete exception:", e);
+	}
+}

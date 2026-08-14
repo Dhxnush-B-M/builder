@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { defaultResumeData } from "@rbuilder/schema/resume/default";
-import { saveResumeToSupabase } from "@/libs/supabase/db";
+import { deleteResumeFromSupabase, getResumesFromSupabase, saveResumeToSupabase } from "@/libs/supabase/db";
 
 export type SavedResume = {
 	id: string;
@@ -46,7 +46,6 @@ export function getLocalResumes(): SavedResume[] {
 		}));
 
 		if (currentEmail) {
-			// Filter resumes to return only those belonging to the currently logged in user
 			return list.filter((r: SavedResume) => !r.userEmail || r.userEmail === currentEmail);
 		}
 
@@ -62,6 +61,41 @@ export function useLocalResumes(): SavedResume[] {
 	useEffect(() => {
 		const refresh = () => setResumes(getLocalResumes());
 		refresh();
+
+		// Fetch and merge resumes from Supabase DB
+		getResumesFromSupabase()
+			.then((supabaseRecords) => {
+				if (supabaseRecords && supabaseRecords.length > 0) {
+					const current = getLocalResumes();
+					const currentMap = new Map(current.map((r) => [r.id, r]));
+					let updated = false;
+
+					for (const rec of supabaseRecords) {
+						if (!currentMap.has(rec.id)) {
+							currentMap.set(rec.id, {
+								id: rec.id,
+								name: rec.title || "My Resume",
+								slug: (rec.title || "My Resume").toLowerCase().replace(/\s+/g, "-"),
+								tags: [],
+								data: (rec.content as any) || defaultResumeData,
+								isPublic: true,
+								isLocked: false,
+								hasPassword: false,
+								createdAt: new Date(rec.updated_at || Date.now()),
+								updatedAt: new Date(rec.updated_at || Date.now()),
+							});
+							updated = true;
+						}
+					}
+
+					if (updated && typeof window !== "undefined") {
+						const merged = Array.from(currentMap.values());
+						localStorage.setItem(STORAGE_KEY, JSON.stringify(merged));
+						setResumes(merged);
+					}
+				}
+			})
+			.catch(() => null);
 
 		window.addEventListener(RESUMES_UPDATED_EVENT, refresh);
 		window.addEventListener("storage", refresh);
@@ -79,7 +113,7 @@ export function saveLocalResume(resume: Partial<SavedResume> & { id: string; nam
 	const current = getLocalResumes();
 	const existingIndex = current.findIndex((r) => r.id === resume.id);
 	const currentEmail = getActiveUserEmail() || "guest@example.com";
-	
+
 	const now = new Date();
 	const newResume: SavedResume = {
 		id: resume.id,
@@ -106,7 +140,7 @@ export function saveLocalResume(resume: Partial<SavedResume> & { id: string; nam
 		window.dispatchEvent(new Event(RESUMES_UPDATED_EVENT));
 	}
 
-	// Also sync to Supabase DB asynchronously
+	// Sync resume directly to Supabase DB
 	void saveResumeToSupabase({
 		id: newResume.id,
 		title: newResume.name,
@@ -117,15 +151,20 @@ export function saveLocalResume(resume: Partial<SavedResume> & { id: string; nam
 }
 
 export function deleteLocalResume(id: string): void {
-	if (typeof window === "undefined") return;
-	try {
-		const raw = localStorage.getItem(STORAGE_KEY);
-		if (!raw) return;
-		const parsed = JSON.parse(raw);
-		const filtered = parsed.filter((r: any) => r.id !== id);
-		localStorage.setItem(STORAGE_KEY, JSON.stringify(filtered));
-		window.dispatchEvent(new Event(RESUMES_UPDATED_EVENT));
-	} catch {
-		// ignore storage errors
+	if (typeof window !== "undefined") {
+		try {
+			const raw = localStorage.getItem(STORAGE_KEY);
+			if (raw) {
+				const parsed = JSON.parse(raw);
+				const filtered = parsed.filter((r: any) => r.id !== id);
+				localStorage.setItem(STORAGE_KEY, JSON.stringify(filtered));
+				window.dispatchEvent(new Event(RESUMES_UPDATED_EVENT));
+			}
+		} catch {
+			// ignore storage errors
+		}
 	}
+
+	// Delete from Supabase DB as well
+	void deleteResumeFromSupabase(id);
 }
