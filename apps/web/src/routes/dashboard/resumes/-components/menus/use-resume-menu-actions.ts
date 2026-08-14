@@ -23,20 +23,24 @@ export function useResumeMenuActions(resume: Resume) {
 
 		const toastId = toast.loading(t`Deleting your resume...`);
 
-		// Always delete from local storage immediately
-		deleteLocalResume(resume.id);
-
-		// Attempt backend deletion if online
-		deleteResume(
-			{ id: resume.id },
-			{
-				onSettled: () => {
-					toast.success(t`Your resume has been deleted successfully.`, { id: toastId });
-					void queryClient.invalidateQueries();
-					void router.invalidate();
+		try {
+			deleteLocalResume(resume.id);
+			deleteResume(
+				{ id: resume.id },
+				{
+					onSettled: () => {
+						void queryClient.invalidateQueries();
+						void router.invalidate();
+					},
 				},
-			},
-		);
+			);
+		} catch {
+			// ignore backend RPC errors
+		} finally {
+			toast.success(t`Your resume has been deleted successfully.`, { id: toastId });
+			void queryClient.invalidateQueries();
+			void router.invalidate();
+		}
 	};
 
 	return {
