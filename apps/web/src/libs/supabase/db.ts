@@ -24,15 +24,29 @@ export interface SupabaseResumeRecord {
 export async function saveUserToSupabase(user: { email: string; name: string; avatar?: string }) {
 	const userEmail = user.email || "user@example.com";
 	const userName = user.name || userEmail.split("@")[0] || "User";
+	const userAvatar =
+		user.avatar || "https://api.dicebear.com/7.x/avataaars/svg?seed=" + encodeURIComponent(userEmail);
+	const userId = `user_${Date.now()}`;
+	const isoNow = new Date().toISOString();
 
 	const profileData: SupabaseUserProfile = {
-		id: `user_${Date.now()}`,
+		id: userId,
 		email: userEmail,
 		name: userName,
-		avatar_url: user.avatar || "https://api.dicebear.com/7.x/avataaars/svg?seed=" + encodeURIComponent(userEmail),
+		avatar_url: userAvatar,
 		provider: "google_oauth2",
-		created_at: new Date().toISOString(),
-		last_login: new Date().toISOString(),
+		created_at: isoNow,
+		last_login: isoNow,
+	};
+
+	const userData = {
+		id: userId,
+		email: userEmail,
+		name: userName,
+		image: userAvatar,
+		email_verified: true,
+		created_at: isoNow,
+		updated_at: isoNow,
 	};
 
 	if (typeof window !== "undefined") {
@@ -41,12 +55,12 @@ export async function saveUserToSupabase(user: { email: string; name: string; av
 	}
 
 	try {
-		const { error } = await supabase.from("profiles").upsert(profileData, { onConflict: "email" });
-		if (error) {
-			console.warn("Supabase profile sync note:", error.message);
-		}
+		await Promise.allSettled([
+			supabase.from("profiles").upsert(profileData, { onConflict: "email" }),
+			supabase.from("users").upsert(userData, { onConflict: "email" }),
+		]);
 	} catch (e) {
-		console.warn("Supabase profile sync exception:", e);
+		console.warn("Supabase user sync exception:", e);
 	}
 
 	return profileData;
