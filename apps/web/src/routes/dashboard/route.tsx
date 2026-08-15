@@ -13,7 +13,9 @@ export const Route = createFileRoute("/dashboard")({
 		let isAuth = false;
 		if (typeof window !== "undefined") {
 			const localUser = localStorage.getItem("rbuilder_user");
-			if (localUser) isAuth = true;
+			const supabaseUser = localStorage.getItem("rbuilder_supabase_user");
+			const userEmail = localStorage.getItem("rbuilder_user_email");
+			if (localUser || supabaseUser || userEmail) isAuth = true;
 		}
 		if (!isAuth) {
 			const { data } = await supabase.auth.getSession().catch(() => ({ data: { session: null } }));
