@@ -10,11 +10,13 @@ export function BrandIcon({ variant = "logo", className }: Props) {
 		<div
 			className={cn("inline-flex select-none items-center gap-2.5 font-bold text-primary tracking-wider", className)}
 		>
-			<span className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-tr from-primary via-indigo-600 to-purple-600 font-black text-lg text-white shadow-md transition-transform hover:scale-105">
-				rB
-			</span>
+			<img
+				src="/opengraph/logo.png"
+				alt="rbuilder logo"
+				className="size-9 shrink-0 rounded-xl object-contain shadow-md transition-transform hover:scale-105"
+			/>
 			{variant === "logo" && (
-				<span className="bg-gradient-to-r from-foreground via-primary to-indigo-500 bg-clip-text font-extrabold text-2xl text-transparent tracking-tight">
+				<span className="bg-gradient-to-r from-emerald-400 via-green-500 to-emerald-600 bg-clip-text font-extrabold text-2xl text-transparent tracking-tight">
 					rbuilder
 				</span>
 			)}
