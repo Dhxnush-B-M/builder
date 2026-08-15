@@ -30,6 +30,8 @@ export const getRouter = async () => {
 		scrollRestoration: true,
 		defaultViewTransition: true,
 		defaultStructuralSharing: true,
+		defaultPendingMs: 150,
+		defaultPendingMinMs: 0,
 		defaultErrorComponent: ErrorScreen,
 		defaultPendingComponent: LoadingScreen,
 		defaultNotFoundComponent: NotFoundScreen,
