@@ -154,11 +154,13 @@ export function saveLocalResume(resume: Partial<SavedResume> & { id: string; nam
 	notifyResumesUpdated();
 
 	// Exclusively save directly to Supabase DB
-	void saveResumeToSupabase({
+	saveResumeToSupabase({
 		id: newResume.id,
 		title: newResume.name,
 		data: newResume.data,
-	});
+	}).then(() => {
+		notifyResumesUpdated();
+	}).catch(() => null);
 
 	return newResume;
 }

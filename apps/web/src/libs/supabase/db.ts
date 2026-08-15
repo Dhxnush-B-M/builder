@@ -103,20 +103,31 @@ export async function saveResumeToSupabase(
 		data = dataParam;
 	}
 
-	const activeEmail = getActiveUserEmailFromStorage() || "guest@example.com";
+	const activeEmail = (getActiveUserEmailFromStorage() || "guest@example.com").trim().toLowerCase();
 
 	const record: SupabaseResumeRecord = {
 		id: resumeId,
 		user_id: activeEmail,
-		title,
-		content: data,
+		title: title || "My Resume",
+		content: data || {},
 		updated_at: new Date().toISOString(),
 	};
 
 	try {
-		const { error } = await supabase.from("resumes").upsert(record, { onConflict: "id" });
-		if (error) {
-			console.warn("Supabase resume save note:", error.message);
+		const { error: upsertErr } = await supabase.from("resumes").upsert(record);
+		if (upsertErr) {
+			console.warn("Supabase upsert note, executing fallback insert/update:", upsertErr.message);
+			const { data: existing } = await supabase.from("resumes").select("id").eq("id", record.id).maybeSingle();
+			if (existing) {
+				await supabase.from("resumes").update({
+					user_id: record.user_id,
+					title: record.title,
+					content: record.content,
+					updated_at: record.updated_at,
+				}).eq("id", record.id);
+			} else {
+				await supabase.from("resumes").insert(record);
+			}
 		}
 	} catch (e) {
 		console.warn("Supabase resume save exception:", e);
