@@ -53,27 +53,23 @@ function StatisticCard({ statistic, index }: StatisticCardProps) {
 }
 
 export function Statistics() {
-	const [userCount, setUserCount] = useState(1);
-	const [resumeCount, setResumeCount] = useState(1);
+	const [userCount, setUserCount] = useState(0);
+	const [resumeCount, setResumeCount] = useState(0);
 
 	useEffect(() => {
 		let isMounted = true;
-		import("@/libs/supabase/db").then(({ getResumesFromSupabase, getUsersCountFromSupabase }) => {
-			getResumesFromSupabase()
-				.then((records) => {
+		import("@/libs/supabase/db").then(({ getAllResumesCountFromSupabase, getUsersCountFromSupabase }) => {
+			getAllResumesCountFromSupabase()
+				.then((count) => {
 					if (!isMounted) return;
-					if (records && records.length > 0) {
-						setResumeCount(records.length);
-					} else {
-						setResumeCount(1);
-					}
+					setResumeCount(count);
 				})
 				.catch(() => null);
 
 			getUsersCountFromSupabase()
 				.then((count) => {
 					if (!isMounted) return;
-					setUserCount(Math.max(1, count));
+					setUserCount(count);
 				})
 				.catch(() => null);
 		});

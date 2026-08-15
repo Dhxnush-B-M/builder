@@ -123,6 +123,30 @@ export function Testimonials() {
 	const [hoverRating, setHoverRating] = useState(0);
 	const [description, setDescription] = useState("");
 
+	useEffect(() => {
+		let isMounted = true;
+		import("@/libs/supabase/db").then(({ getRegisteredProfilesFromSupabase }) => {
+			getRegisteredProfilesFromSupabase()
+				.then((profiles) => {
+					if (!isMounted || !profiles || profiles.length === 0) return;
+					const mapped: Testimonial[] = profiles.map((p, idx) => ({
+						id: p.id || String(idx),
+						name: p.name || (p.email ? p.email.split("@")[0] : "User"),
+						description: "Active user on rbuilder crafting professional ATS resumes.",
+						date: "Registered User",
+						gradient: initialTestimonials[idx % initialTestimonials.length].gradient,
+						rating: 5,
+					}));
+					setTestimonialsList(mapped);
+				})
+				.catch(() => null);
+		});
+
+		return () => {
+			isMounted = false;
+		};
+	}, []);
+
 	function handleCenterCircleClick() {
 		playCenterClickSound();
 		setIsModalOpen(true);
@@ -182,21 +206,25 @@ export function Testimonials() {
 					</h2>
 
 					<p className="max-w-2xl text-base text-muted-foreground leading-relaxed md:text-lg">
-						Click the center <span className="font-semibold text-primary">rbuilder</span> circle to submit your feedback or hover over any circle to view reviews.
+						Click the center <span className="font-semibold text-primary">rbuilder</span> logo to submit feedback or view active platform users.
 					</p>
 				</div>
 
 				{/* 360 DEGREE ROTATING CIRCLE STAGE */}
 				<div className="relative mt-16 flex h-[480px] w-full items-center justify-center overflow-hidden sm:h-[540px]">
-					{/* CLICKABLE CENTER RBUILDER CIRCLE */}
+					{/* CLICKABLE CENTER RBUILDER LOGO CIRCLE */}
 					<button
 						type="button"
 						onClick={handleCenterCircleClick}
 						title="Click to give feedback!"
 						aria-label="Click to give feedback and play sound"
-						className="absolute flex size-20 sm:size-24 items-center justify-center rounded-full bg-primary/10 border-2 border-primary/40 p-4 shadow-2xl backdrop-blur-xl z-20 cursor-pointer hover:scale-110 active:scale-95 transition-all duration-300 hover:border-primary hover:shadow-primary/30"
+						className="absolute flex size-20 sm:size-24 items-center justify-center rounded-full bg-black border-2 border-emerald-500/50 p-2 shadow-2xl backdrop-blur-xl z-20 cursor-pointer hover:scale-110 active:scale-95 transition-all duration-300 hover:border-emerald-400 hover:shadow-emerald-500/40"
 					>
-						<span className="font-extrabold text-sm sm:text-base text-primary text-center">rbuilder</span>
+						<img
+							src="/opengraph/logo.png"
+							alt="rbuilder logo"
+							className="size-full object-cover rounded-full"
+						/>
 					</button>
 
 					{/* Orbit Ring Container */}

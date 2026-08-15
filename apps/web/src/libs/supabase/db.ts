@@ -160,6 +160,48 @@ export async function getUsersCountFromSupabase(): Promise<number> {
 }
 
 /**
+ * Fetch total resumes count directly from Supabase Database ('resumes' table) across all users
+ */
+export async function getAllResumesCountFromSupabase(): Promise<number> {
+	try {
+		const { count, error } = await supabase
+			.from("resumes")
+			.select("*", { count: "exact", head: true });
+		if (!error && count !== null) return count;
+		return 0;
+	} catch {
+		return 0;
+	}
+}
+
+/**
+ * Fetch registered user profiles from Supabase Database ('profiles' or 'users' table)
+ */
+export async function getRegisteredProfilesFromSupabase(): Promise<SupabaseUserProfile[]> {
+	try {
+		const { data: profiles, error } = await supabase.from("profiles").select("*").limit(10);
+		if (!error && profiles && profiles.length > 0) return profiles as SupabaseUserProfile[];
+
+		const { data: users, error: usersErr } = await supabase.from("users").select("*").limit(10);
+		if (!usersErr && users && users.length > 0) {
+			return users.map((u: any) => ({
+				id: u.id || u.email,
+				email: u.email,
+				name: u.name || (u.email || "").split("@")[0] || "User",
+				avatar_url: u.image,
+				provider: "email",
+				created_at: u.created_at || new Date().toISOString(),
+				last_login: u.updated_at || new Date().toISOString(),
+			}));
+		}
+
+		return [];
+	} catch {
+		return [];
+	}
+}
+
+/**
  * Fetch resumes for a specific user from Supabase Database ('resumes' table)
  */
 export async function getResumesFromSupabase(targetEmail?: string): Promise<SupabaseResumeRecord[]> {
