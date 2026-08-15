@@ -119,11 +119,9 @@ function SidebarEdge() {
 	const scrollToSection = useCallback(
 		(section: LeftSidebarSection) => {
 			toggleSidebar("left", true);
-			// Section ids are globally unique; document.getElementById reliably resolves the scroll target
-			// (querying through the ScrollArea ref did not — its ref does not expose the scroll container).
-			document
-				.getElementById(`sidebar-${section}`)
-				?.scrollIntoView({ block: "start", inline: "nearest", behavior: "smooth" });
+			const el = document.getElementById(`sidebar-${section}`);
+			if (!el) return;
+			el.scrollIntoView({ block: "nearest", inline: "nearest", behavior: "smooth" });
 		},
 		[toggleSidebar],
 	);
