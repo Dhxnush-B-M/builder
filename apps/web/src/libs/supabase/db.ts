@@ -206,16 +206,26 @@ export async function getRegisteredProfilesFromSupabase(): Promise<SupabaseUserP
  */
 export async function getResumesFromSupabase(targetEmail?: string): Promise<SupabaseResumeRecord[]> {
 	try {
-		const email = targetEmail || getActiveUserEmailFromStorage();
+		const email = (targetEmail || getActiveUserEmailFromStorage() || "").trim().toLowerCase();
 		if (!email) return [];
 
+		// Query by case-insensitive email matching in Supabase
 		const { data, error } = await supabase
+			.from("resumes")
+			.select("*")
+			.ilike("user_id", email);
+
+		if (!error && data && data.length > 0) {
+			return data as SupabaseResumeRecord[];
+		}
+
+		// Fallback query by exact eq in case ilike is restricted
+		const { data: fallbackData } = await supabase
 			.from("resumes")
 			.select("*")
 			.eq("user_id", email);
 
-		if (error || !data) return [];
-		return data as SupabaseResumeRecord[];
+		return (fallbackData || []) as SupabaseResumeRecord[];
 	} catch {
 		return [];
 	}

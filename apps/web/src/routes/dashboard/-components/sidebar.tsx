@@ -75,7 +75,7 @@ function SidebarItemList({ items }: SidebarItemListProps) {
 						<SidebarMenuItem key={text}>
 							<SidebarMenuButton
 								title={text}
-								onClick={() => toast.info(t`Portfolio feature is currently locked.`)}
+								onClick={() => toast.info("Portfolio feature is currently locked.")}
 								className="cursor-pointer text-muted-foreground transition-colors hover:text-foreground"
 							>
 								<div className="flex w-full items-center justify-between">

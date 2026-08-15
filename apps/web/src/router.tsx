@@ -30,10 +30,10 @@ export const getRouter = async () => {
 		scrollRestoration: true,
 		defaultViewTransition: true,
 		defaultStructuralSharing: true,
-		defaultPendingMs: 150,
+		defaultPendingMs: 5000,
 		defaultPendingMinMs: 0,
 		defaultErrorComponent: ErrorScreen,
-		defaultPendingComponent: LoadingScreen,
+		defaultPendingComponent: () => null,
 		defaultNotFoundComponent: NotFoundScreen,
 		context: { orpc, queryClient, theme, locale, session: null, flags: defaultFlags },
 	});
