@@ -125,6 +125,27 @@ export async function getResumeByIdFromSupabase(id: string): Promise<SupabaseRes
 }
 
 /**
+ * Fetch total logged-in user count directly from Supabase Database ('profiles' or 'users' table)
+ */
+export async function getUsersCountFromSupabase(): Promise<number> {
+	try {
+		const { count: profileCount, error: profileErr } = await supabase
+			.from("profiles")
+			.select("*", { count: "exact", head: true });
+		if (!profileErr && profileCount !== null && profileCount > 0) return profileCount;
+
+		const { count: usersCount, error: usersErr } = await supabase
+			.from("users")
+			.select("*", { count: "exact", head: true });
+		if (!usersErr && usersCount !== null && usersCount > 0) return usersCount;
+
+		return 1;
+	} catch {
+		return 1;
+	}
+}
+
+/**
  * Fetch resumes from Supabase Database ('resumes' table)
  */
 export async function getResumesFromSupabase(): Promise<SupabaseResumeRecord[]> {

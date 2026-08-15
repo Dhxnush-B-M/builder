@@ -58,7 +58,7 @@ export function Statistics() {
 
 	useEffect(() => {
 		let isMounted = true;
-		import("@/libs/supabase/db").then(({ getResumesFromSupabase }) => {
+		import("@/libs/supabase/db").then(({ getResumesFromSupabase, getUsersCountFromSupabase }) => {
 			getResumesFromSupabase()
 				.then((records) => {
 					if (!isMounted) return;
@@ -67,6 +67,13 @@ export function Statistics() {
 					} else {
 						setResumeCount(1);
 					}
+				})
+				.catch(() => null);
+
+			getUsersCountFromSupabase()
+				.then((count) => {
+					if (!isMounted) return;
+					setUserCount(Math.max(1, count));
 				})
 				.catch(() => null);
 		});
