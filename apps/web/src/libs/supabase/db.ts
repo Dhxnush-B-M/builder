@@ -18,6 +18,21 @@ export interface SupabaseResumeRecord {
 	updated_at: string;
 }
 
+function getActiveUserEmailFromStorage(): string | null {
+	if (typeof window === "undefined") return null;
+	try {
+		const rawEmail = localStorage.getItem("rbuilder_user_email");
+		if (rawEmail) return rawEmail;
+		const rawSupabase = localStorage.getItem("rbuilder_supabase_user");
+		if (rawSupabase) return JSON.parse(rawSupabase).email || null;
+		const rawLocal = localStorage.getItem("rbuilder_user");
+		if (rawLocal) return JSON.parse(rawLocal).email || null;
+		return null;
+	} catch {
+		return null;
+	}
+}
+
 /**
  * Save or update user profile in Supabase Database ('profiles' table)
  */
@@ -26,7 +41,7 @@ export async function saveUserToSupabase(user: { email: string; name: string; av
 	const userName = user.name || userEmail.split("@")[0] || "User";
 	const userAvatar =
 		user.avatar || "https://api.dicebear.com/7.x/avataaars/svg?seed=" + encodeURIComponent(userEmail);
-	const userId = `user_${Date.now()}`;
+	const userId = userEmail;
 	const isoNow = new Date().toISOString();
 
 	const profileData: SupabaseUserProfile = {
@@ -88,12 +103,11 @@ export async function saveResumeToSupabase(
 		data = dataParam;
 	}
 
-	const currentUserStr = typeof window !== "undefined" ? localStorage.getItem("rbuilder_supabase_user") : null;
-	const userId = currentUserStr ? JSON.parse(currentUserStr).id : "user_active";
+	const activeEmail = getActiveUserEmailFromStorage() || "guest@example.com";
 
 	const record: SupabaseResumeRecord = {
 		id: resumeId,
-		user_id: userId,
+		user_id: activeEmail,
 		title,
 		content: data,
 		updated_at: new Date().toISOString(),
@@ -146,11 +160,18 @@ export async function getUsersCountFromSupabase(): Promise<number> {
 }
 
 /**
- * Fetch resumes from Supabase Database ('resumes' table)
+ * Fetch resumes for a specific user from Supabase Database ('resumes' table)
  */
-export async function getResumesFromSupabase(): Promise<SupabaseResumeRecord[]> {
+export async function getResumesFromSupabase(targetEmail?: string): Promise<SupabaseResumeRecord[]> {
 	try {
-		const { data, error } = await supabase.from("resumes").select("*");
+		const email = targetEmail || getActiveUserEmailFromStorage();
+		if (!email) return [];
+
+		const { data, error } = await supabase
+			.from("resumes")
+			.select("*")
+			.eq("user_id", email);
+
 		if (error || !data) return [];
 		return data as SupabaseResumeRecord[];
 	} catch {

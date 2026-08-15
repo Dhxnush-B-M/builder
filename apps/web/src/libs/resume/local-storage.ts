@@ -49,8 +49,13 @@ function mapSupabaseRecordToSavedResume(rec: SupabaseResumeRecord): SavedResume 
 export function getActiveUserEmail(): string | null {
 	if (typeof window === "undefined") return null;
 	try {
-		const raw = localStorage.getItem("rbuilder_user_email");
-		return raw || null;
+		const rawEmail = localStorage.getItem("rbuilder_user_email");
+		if (rawEmail) return rawEmail;
+		const rawSupabase = localStorage.getItem("rbuilder_supabase_user");
+		if (rawSupabase) return JSON.parse(rawSupabase).email || null;
+		const rawLocal = localStorage.getItem("rbuilder_user");
+		if (rawLocal) return JSON.parse(rawLocal).email || null;
+		return null;
 	} catch {
 		return null;
 	}
@@ -61,13 +66,21 @@ export function getLocalResumes(): SavedResume[] {
 }
 
 export function useLocalResumes(): SavedResume[] {
+	const activeEmail = getActiveUserEmail();
 	const [resumes, setResumes] = useState<SavedResume[]>(inMemoryResumesCache);
 
 	useEffect(() => {
 		let isMounted = true;
+		const currentEmail = getActiveUserEmail();
+
+		if (!currentEmail) {
+			inMemoryResumesCache = [];
+			setResumes([]);
+			return;
+		}
 
 		const fetchFromSupabase = () => {
-			getResumesFromSupabase()
+			getResumesFromSupabase(currentEmail)
 				.then((records) => {
 					if (!isMounted) return;
 					const mapped = records.map(mapSupabaseRecordToSavedResume);
@@ -79,14 +92,18 @@ export function useLocalResumes(): SavedResume[] {
 
 		fetchFromSupabase();
 
-		const handleUpdate = () => setResumes([...inMemoryResumesCache]);
+		const handleUpdate = () => {
+			if (isMounted) {
+				fetchFromSupabase();
+			}
+		};
 		window.addEventListener(RESUMES_UPDATED_EVENT, handleUpdate);
 
 		return () => {
 			isMounted = false;
 			window.removeEventListener(RESUMES_UPDATED_EVENT, handleUpdate);
 		};
-	}, []);
+	}, [activeEmail]);
 
 	return resumes;
 }
