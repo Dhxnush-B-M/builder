@@ -25,7 +25,7 @@ function DialogOverlay({ className, ...props }: DialogPrimitive.Backdrop.Props) 
 		<DialogPrimitive.Backdrop
 			data-slot="dialog-overlay"
 			className={cn(
-				"data-open:fade-in-0 data-closed:fade-out-0 fixed inset-0 isolate z-50 bg-black/10 duration-200 ease-(--ease-out-strong) data-closed:animate-out data-open:animate-in data-closed:duration-150 supports-backdrop-filter:backdrop-blur-xs",
+				"data-open:fade-in-0 data-closed:fade-out-0 fixed inset-0 isolate z-50 bg-black/40 backdrop-blur-md transition-all duration-300 ease-out data-closed:animate-out data-open:animate-in data-closed:duration-150",
 				className,
 			)}
 			{...props}
@@ -47,7 +47,7 @@ function DialogContent({
 			<DialogPrimitive.Popup
 				data-slot="dialog-content"
 				className={cn(
-					"data-open:fade-in-0 data-open:zoom-in-95 data-closed:fade-out-0 data-closed:zoom-out-95 fixed inset-s-1/2 top-1/2 z-50 grid max-h-[calc(100svh-2rem)] w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 gap-4 overflow-y-auto overscroll-contain rounded-xl bg-popover p-4 text-popover-foreground text-sm outline-none ring-1 ring-foreground/10 duration-200 ease-(--ease-out-strong) data-closed:animate-out data-open:animate-in data-closed:duration-150 sm:max-w-md md:max-w-lg lg:max-w-xl xl:max-w-2xl rtl:translate-x-1/2",
+					"data-open:fade-in-0 data-open:zoom-in-95 data-open:slide-in-from-bottom-4 data-closed:fade-out-0 data-closed:zoom-out-95 fixed inset-s-1/2 top-1/2 z-50 grid max-h-[calc(100svh-2rem)] w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 gap-5 overflow-y-auto overscroll-contain rounded-3xl border border-emerald-500/30 bg-background/70 p-6 text-popover-foreground text-sm outline-none shadow-2xl shadow-emerald-500/15 backdrop-blur-2xl transition-all duration-300 ease-out sm:max-w-md md:max-w-lg lg:max-w-xl xl:max-w-2xl rtl:translate-x-1/2",
 					className,
 				)}
 				{...props}
@@ -56,7 +56,7 @@ function DialogContent({
 				{showCloseButton && (
 					<DialogPrimitive.Close
 						data-slot="dialog-close"
-						render={<Button variant="ghost" className="absolute inset-e-2 top-2" size="icon-sm" />}
+						render={<Button variant="ghost" className="absolute inset-e-3 top-3 rounded-full hover:bg-emerald-500/20 hover:text-emerald-400" size="icon-sm" />}
 					>
 						<XIcon />
 						<span className="sr-only">Close</span>
@@ -83,7 +83,7 @@ function DialogFooter({
 		<div
 			data-slot="dialog-footer"
 			className={cn(
-				"-mx-4 -mb-4 flex flex-col-reverse gap-2 rounded-b-xl border-t bg-muted/50 p-4 sm:flex-row sm:justify-end",
+				"-mx-6 -mb-6 mt-2 flex flex-col-reverse gap-2 rounded-b-3xl border-t border-white/10 bg-background/40 p-4 backdrop-blur-xl sm:flex-row sm:justify-end",
 				className,
 			)}
 			{...props}
