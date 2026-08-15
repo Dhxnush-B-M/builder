@@ -47,7 +47,7 @@ function DialogContent({
 			<DialogPrimitive.Popup
 				data-slot="dialog-content"
 				className={cn(
-					"data-open:fade-in-0 data-open:zoom-in-95 data-open:slide-in-from-bottom-4 data-closed:fade-out-0 data-closed:zoom-out-95 fixed inset-s-1/2 top-1/2 z-50 grid max-h-[calc(100svh-2rem)] w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 gap-5 overflow-y-auto overscroll-contain rounded-3xl border border-emerald-500/30 bg-background/70 p-6 text-popover-foreground text-sm outline-none shadow-2xl shadow-emerald-500/15 backdrop-blur-2xl transition-all duration-300 ease-out sm:max-w-md md:max-w-lg lg:max-w-xl xl:max-w-2xl rtl:translate-x-1/2",
+					"data-open:fade-in-0 data-open:zoom-in-95 data-open:slide-in-from-bottom-4 data-closed:fade-out-0 data-closed:zoom-out-95 fixed inset-s-1/2 top-1/2 z-50 grid max-h-[calc(100svh-2rem)] w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 gap-5 overflow-hidden rounded-3xl border border-emerald-500/40 bg-background/85 p-6 text-popover-foreground text-sm outline-none shadow-2xl shadow-emerald-500/20 backdrop-blur-2xl transition-all duration-300 ease-out sm:max-w-md md:max-w-lg lg:max-w-xl xl:max-w-2xl rtl:translate-x-1/2",
 					className,
 				)}
 				{...props}
@@ -56,7 +56,7 @@ function DialogContent({
 				{showCloseButton && (
 					<DialogPrimitive.Close
 						data-slot="dialog-close"
-						render={<Button variant="ghost" className="absolute inset-e-3 top-3 rounded-full hover:bg-emerald-500/20 hover:text-emerald-400" size="icon-sm" />}
+						render={<Button variant="ghost" className="absolute inset-e-3 top-3 rounded-full text-muted-foreground hover:bg-emerald-500/20 hover:text-emerald-400" size="icon-sm" />}
 					>
 						<XIcon />
 						<span className="sr-only">Close</span>
@@ -83,7 +83,7 @@ function DialogFooter({
 		<div
 			data-slot="dialog-footer"
 			className={cn(
-				"-mx-6 -mb-6 mt-2 flex flex-col-reverse gap-2 rounded-b-3xl border-t border-white/10 bg-background/40 p-4 backdrop-blur-xl sm:flex-row sm:justify-end",
+				"-mx-6 -mb-6 mt-4 flex flex-col-reverse gap-2.5 border-t border-emerald-500/20 bg-background/50 p-4.5 backdrop-blur-2xl sm:flex-row sm:justify-end",
 				className,
 			)}
 			{...props}
