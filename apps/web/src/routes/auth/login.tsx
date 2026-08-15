@@ -1,5 +1,5 @@
 import type { FormEvent } from "react";
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import {
@@ -13,6 +13,16 @@ import { saveUserToSupabase } from "@/libs/supabase/db";
 
 export const Route = createFileRoute("/auth/login")({
 	component: AuthLoginPage,
+	beforeLoad: async () => {
+		if (typeof window !== "undefined") {
+			const localUser = localStorage.getItem("rbuilder_user");
+			const supabaseUser = localStorage.getItem("rbuilder_supabase_user");
+			const userEmail = localStorage.getItem("rbuilder_user_email");
+			if (localUser || supabaseUser || userEmail) {
+				throw redirect({ to: "/dashboard/resumes", replace: true });
+			}
+		}
+	},
 });
 
 function AuthLoginPage() {
