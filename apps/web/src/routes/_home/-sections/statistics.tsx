@@ -57,33 +57,23 @@ export function Statistics() {
 	const [resumeCount, setResumeCount] = useState(1);
 
 	useEffect(() => {
-		if (typeof window === "undefined") return;
+		let isMounted = true;
+		import("@/libs/supabase/db").then(({ getResumesFromSupabase }) => {
+			getResumesFromSupabase()
+				.then((records) => {
+					if (!isMounted) return;
+					if (records && records.length > 0) {
+						setResumeCount(records.length);
+					} else {
+						setResumeCount(1);
+					}
+				})
+				.catch(() => null);
+		});
 
-		try {
-			// Calculate real resume count from localStorage
-			const keys = Object.keys(localStorage);
-			const savedResumes = keys.filter(
-				(k) => k.includes("resume") || k.includes("builder") || k.startsWith("rbuilder_"),
-			);
-			
-			if (savedResumes.length > 0) {
-				setResumeCount(savedResumes.length);
-			} else {
-				setResumeCount(1);
-			}
-
-			// User session count
-			const userSessions = localStorage.getItem("rbuilder_user_session");
-			if (userSessions) {
-				setUserCount(Math.max(1, parseInt(userSessions, 10) || 1));
-			} else {
-				localStorage.setItem("rbuilder_user_session", "1");
-				setUserCount(1);
-			}
-		} catch {
-			setUserCount(1);
-			setResumeCount(1);
-		}
+		return () => {
+			isMounted = false;
+		};
 	}, []);
 
 	const statisticsList: Statistic[] = [

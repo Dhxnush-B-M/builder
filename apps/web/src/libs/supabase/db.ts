@@ -112,6 +112,19 @@ export async function saveResumeToSupabase(
 }
 
 /**
+ * Fetch a single resume directly from Supabase Database ('resumes' table) by ID
+ */
+export async function getResumeByIdFromSupabase(id: string): Promise<SupabaseResumeRecord | null> {
+	try {
+		const { data, error } = await supabase.from("resumes").select("*").eq("id", id).maybeSingle();
+		if (error || !data) return null;
+		return data as SupabaseResumeRecord;
+	} catch {
+		return null;
+	}
+}
+
+/**
  * Fetch resumes from Supabase Database ('resumes' table)
  */
 export async function getResumesFromSupabase(): Promise<SupabaseResumeRecord[]> {
