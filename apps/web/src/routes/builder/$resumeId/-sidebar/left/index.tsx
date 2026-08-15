@@ -65,7 +65,7 @@ export function BuilderSidebarLeft() {
 		<>
 			<SidebarEdge />
 
-			<ScrollArea ref={scrollAreaRef} className="@container h-[calc(100svh-3.5rem)] bg-background/60 backdrop-blur-2xl border-r border-white/20 dark:border-white/10 shadow-lg sm:ms-12">
+			<ScrollArea ref={scrollAreaRef} className="@container h-[calc(100svh-3.5rem)] bg-background/50 backdrop-blur-2xl border-r border-emerald-500/20 shadow-2xl md:ms-12">
 				<div className="space-y-4 p-4">
 					{isLocked && <LockBanner />}
 

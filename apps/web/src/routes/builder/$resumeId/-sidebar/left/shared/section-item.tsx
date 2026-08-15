@@ -341,10 +341,13 @@ export function SectionAddItemButton({ type, customSectionId, className, childre
 		<Button
 			variant="ghost"
 			onClick={handleAdd}
-			className={cn("h-12 w-full justify-start rounded-t-none", className)}
+			className={cn(
+				"h-12 w-full justify-start rounded-2xl border border-dashed border-emerald-500/30 bg-emerald-500/5 text-emerald-400 font-medium transition-all duration-300 hover:border-emerald-400 hover:bg-emerald-500/15 hover:shadow-lg hover:shadow-emerald-500/10",
+				className,
+			)}
 			{...props}
 		>
-			<PlusIcon />
+			<PlusIcon className="size-4 text-emerald-400" />
 			{children}
 		</Button>
 	);
