@@ -71,13 +71,13 @@ export function BuilderDock({ pageLayout, onTogglePageLayout }: BuilderDockProps
 		session?.user.username && resumeSlug ? `${window.location.origin}/${session.user.username}/${resumeSlug}` : "";
 
 	return (
-		<div className="fixed inset-x-0 bottom-20 flex items-center justify-center md:bottom-4">
+		<div className="fixed inset-x-0 bottom-20 flex items-center justify-center md:bottom-4 z-40">
 			<m.div
-				initial={{ opacity: 0, y: -18 }}
-				animate={{ opacity: 0.6, y: 0 }}
-				whileHover={{ opacity: 1, y: -2, scale: 1.01 }}
-				transition={{ duration: 0.2, ease: "easeOut" }}
-				className="flex items-center rounded-r-full rounded-l-full bg-popover px-2 shadow-xl will-change-[transform,opacity]"
+				initial={{ opacity: 0, y: 18 }}
+				animate={{ opacity: 1, y: 0 }}
+				whileHover={{ scale: 1.02 }}
+				transition={{ duration: 0.25, ease: "easeOut" }}
+				className="flex items-center rounded-full border border-emerald-500/30 bg-background/50 p-2 shadow-2xl shadow-emerald-500/20 backdrop-blur-2xl transition-all duration-300 hover:border-emerald-400/80 hover:bg-background/80"
 			>
 				<DockIcon icon={ArrowUUpLeftIcon} title={t`Undo`} disabled={!canUndo} onClick={() => undo()} />
 				<DockIcon icon={ArrowUUpRightIcon} title={t`Redo`} disabled={!canRedo} onClick={() => redo()} />
