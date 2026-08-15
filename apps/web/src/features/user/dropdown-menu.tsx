@@ -42,9 +42,7 @@ export function UserDropdownMenu({ children }: Props) {
 		const toastId = toast.loading(t`Signing out...`);
 
 		if (typeof window !== "undefined") {
-			localStorage.removeItem("rbuilder_user");
-			localStorage.removeItem("rbuilder_supabase_user");
-			localStorage.removeItem("rbuilder_user_email");
+			localStorage.clear();
 		}
 
 		try {
@@ -53,17 +51,17 @@ export function UserDropdownMenu({ children }: Props) {
 					onSuccess: async () => {
 						toast.dismiss(toastId);
 						await router.invalidate();
-						await router.navigate({ to: "/auth/login" });
+						window.location.href = "/";
 					},
-					onError: ({ error }) => {
+					onError: () => {
 						toast.dismiss(toastId);
-						void router.navigate({ to: "/auth/login" });
+						window.location.href = "/";
 					},
 				},
 			});
 		} catch {
 			toast.dismiss(toastId);
-			void router.navigate({ to: "/auth/login" });
+			window.location.href = "/";
 		}
 	};
 
