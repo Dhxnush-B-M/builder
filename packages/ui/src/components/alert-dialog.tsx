@@ -20,7 +20,7 @@ function AlertDialogOverlay({ className, ...props }: AlertDialogPrimitive.Backdr
 		<AlertDialogPrimitive.Backdrop
 			data-slot="alert-dialog-overlay"
 			className={cn(
-				"data-open:fade-in-0 data-closed:fade-out-0 fixed inset-0 isolate z-50 bg-black/10 duration-200 ease-(--ease-out-strong) data-closed:animate-out data-open:animate-in data-closed:duration-150 supports-backdrop-filter:backdrop-blur-xs",
+				"data-open:fade-in-0 data-closed:fade-out-0 fixed inset-0 isolate z-50 bg-black/40 backdrop-blur-md transition-all duration-300 ease-out data-closed:animate-out data-open:animate-in data-closed:duration-150",
 				className,
 			)}
 			{...props}
@@ -42,7 +42,7 @@ function AlertDialogContent({
 				data-slot="alert-dialog-content"
 				data-size={size}
 				className={cn(
-					"group/alert-dialog-content data-open:fade-in-0 data-open:zoom-in-95 data-closed:fade-out-0 data-closed:zoom-out-95 fixed inset-s-1/2 top-1/2 z-50 grid w-full -translate-x-1/2 -translate-y-1/2 gap-4 rounded-xl bg-popover p-4 text-popover-foreground outline-none ring-1 ring-foreground/10 duration-200 ease-(--ease-out-strong) data-[size=default]:max-w-xs data-[size=sm]:max-w-xs data-closed:animate-out data-open:animate-in data-closed:duration-150 data-[size=default]:sm:max-w-sm rtl:translate-x-1/2",
+					"group/alert-dialog-content data-open:fade-in-0 data-open:zoom-in-95 data-open:slide-in-from-bottom-4 data-closed:fade-out-0 data-closed:zoom-out-95 fixed inset-s-1/2 top-1/2 z-50 grid w-full -translate-x-1/2 -translate-y-1/2 gap-5 overflow-hidden rounded-3xl border border-emerald-500/40 bg-background/85 p-6 text-popover-foreground outline-none shadow-2xl shadow-emerald-500/20 backdrop-blur-2xl transition-all duration-300 ease-out data-[size=default]:max-w-md data-[size=sm]:max-w-sm rtl:translate-x-1/2",
 					className,
 				)}
 				{...props}
@@ -69,7 +69,7 @@ function AlertDialogFooter({ className, ...props }: React.ComponentProps<"div">)
 		<div
 			data-slot="alert-dialog-footer"
 			className={cn(
-				"-mx-4 -mb-4 flex flex-col-reverse gap-2 rounded-b-xl border-t bg-muted/50 p-4 group-data-[size=sm]/alert-dialog-content:grid group-data-[size=sm]/alert-dialog-content:grid-cols-2 sm:flex-row sm:justify-end [form_&]:-mb-6",
+				"-mx-6 -mb-6 mt-4 flex flex-col-reverse gap-2.5 border-t border-emerald-500/20 bg-background/50 p-4.5 backdrop-blur-2xl sm:flex-row sm:justify-end",
 				className,
 			)}
 			{...props}

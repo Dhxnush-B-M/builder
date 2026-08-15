@@ -51,10 +51,10 @@ export function useFormBlocker<TStore extends BlockableFormStore>(
 	const confirmClose = useCallback(() => {
 		if (!shouldBlock()) return true;
 
-		return confirm(t`Are you sure you want to close this dialog?`, {
-			description: t`You have unsaved changes that will be lost.`,
-			confirmText: t`Leave`,
-			cancelText: t`Stay`,
+		return confirm(t`Discard unsaved changes?`, {
+			description: t`You have unsaved changes that will be lost if you leave.`,
+			confirmText: t`Discard & Exit`,
+			cancelText: t`Keep Editing`,
 		});
 	}, [shouldBlock, confirm]);
 
