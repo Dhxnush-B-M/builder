@@ -302,10 +302,6 @@ const ResumeForm = withForm({
 										/>
 									}
 								/>
-
-								<Button size="icon" variant="outline" title={t`Generate a random name`} onClick={onGenerateName}>
-									<MagicWandIcon />
-								</Button>
 							</div>
 							<FormMessage errors={field.state.meta.errors} />
 							<FormDescription>
