@@ -37,6 +37,11 @@ export const Route = createFileRoute("/dashboard")({
 			if (paymentStatus !== "active") {
 				throw redirect({ to: "/payment", replace: true });
 			}
+
+			const onboardingCompleted = localStorage.getItem("rbuilder_onboarding_completed");
+			if (onboardingCompleted !== "true") {
+				throw redirect({ to: "/onboarding", replace: true });
+			}
 		}
 	},
 	loader: () => {

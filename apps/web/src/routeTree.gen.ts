@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from "./routes/__root";
 import { Route as HomeRouteRouteImport } from "./routes/_home/route";
 import { Route as AuthRouteRouteImport } from "./routes/auth/route";
 import { Route as DashboardRouteRouteImport } from "./routes/dashboard/route";
+import { Route as OnboardingRouteImport } from "./routes/onboarding";
 import { Route as PaymentRouteImport } from "./routes/payment";
 import { Route as UsernameSlugRouteImport } from "./routes/$username/$slug";
 import { Route as HomeIndexRouteImport } from "./routes/_home/index";
@@ -45,6 +46,11 @@ const AuthRouteRoute = AuthRouteRouteImport.update({
 const DashboardRouteRoute = DashboardRouteRouteImport.update({
   id: "/dashboard",
   path: "/dashboard",
+  getParentRoute: () => rootRouteImport,
+} as any);
+const OnboardingRoute = OnboardingRouteImport.update({
+  id: "/onboarding",
+  path: "/onboarding",
   getParentRoute: () => rootRouteImport,
 } as any);
 const PaymentRoute = PaymentRouteImport.update({
@@ -155,6 +161,7 @@ export interface FileRoutesByFullPath {
   "/": typeof HomeIndexRoute;
   "/auth": typeof AuthRouteRouteWithChildren;
   "/dashboard": typeof DashboardRouteRouteWithChildren;
+  "/onboarding": typeof OnboardingRoute;
   "/payment": typeof PaymentRoute;
   "/builder/$resumeId": typeof BuilderResumeIdRouteRouteWithChildren;
   "/$username/$slug": typeof UsernameSlugRoute;
@@ -176,6 +183,7 @@ export interface FileRoutesByFullPath {
   "/dashboard/resumes/": typeof DashboardResumesIndexRoute;
 }
 export interface FileRoutesByTo {
+  "/onboarding": typeof OnboardingRoute;
   "/payment": typeof PaymentRoute;
   "/$username/$slug": typeof UsernameSlugRoute;
   "/auth/forgot-password": typeof AuthForgotPasswordRoute;
@@ -201,6 +209,7 @@ export interface FileRoutesById {
   "/_home": typeof HomeRouteRouteWithChildren;
   "/auth": typeof AuthRouteRouteWithChildren;
   "/dashboard": typeof DashboardRouteRouteWithChildren;
+  "/onboarding": typeof OnboardingRoute;
   "/payment": typeof PaymentRoute;
   "/builder/$resumeId": typeof BuilderResumeIdRouteRouteWithChildren;
   "/$username/$slug": typeof UsernameSlugRoute;
@@ -228,6 +237,7 @@ export interface FileRouteTypes {
     | "/"
     | "/auth"
     | "/dashboard"
+    | "/onboarding"
     | "/payment"
     | "/builder/$resumeId"
     | "/$username/$slug"
@@ -249,6 +259,7 @@ export interface FileRouteTypes {
     | "/dashboard/resumes/";
   fileRoutesByTo: FileRoutesByTo;
   to:
+    | "/onboarding"
     | "/payment"
     | "/$username/$slug"
     | "/auth/forgot-password"
@@ -273,6 +284,7 @@ export interface FileRouteTypes {
     | "/_home"
     | "/auth"
     | "/dashboard"
+    | "/onboarding"
     | "/payment"
     | "/builder/$resumeId"
     | "/$username/$slug"
@@ -299,6 +311,7 @@ export interface RootRouteChildren {
   HomeRouteRoute: typeof HomeRouteRouteWithChildren;
   AuthRouteRoute: typeof AuthRouteRouteWithChildren;
   DashboardRouteRoute: typeof DashboardRouteRouteWithChildren;
+  OnboardingRoute: typeof OnboardingRoute;
   PaymentRoute: typeof PaymentRoute;
   BuilderResumeIdRouteRoute: typeof BuilderResumeIdRouteRouteWithChildren;
   UsernameSlugRoute: typeof UsernameSlugRoute;
@@ -327,6 +340,13 @@ declare module "@tanstack/react-router" {
       path: "/dashboard";
       fullPath: "/dashboard";
       preLoaderRoute: typeof DashboardRouteRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    "/onboarding": {
+      id: "/onboarding";
+      path: "/onboarding";
+      fullPath: "/onboarding";
+      preLoaderRoute: typeof OnboardingRouteImport;
       parentRoute: typeof rootRouteImport;
     };
     "/payment": {
@@ -545,6 +565,7 @@ const rootRouteChildren: RootRouteChildren = {
   HomeRouteRoute: HomeRouteRouteWithChildren,
   AuthRouteRoute: AuthRouteRouteWithChildren,
   DashboardRouteRoute: DashboardRouteRouteWithChildren,
+  OnboardingRoute: OnboardingRoute,
   PaymentRoute: PaymentRoute,
   BuilderResumeIdRouteRoute: BuilderResumeIdRouteRouteWithChildren,
   UsernameSlugRoute: UsernameSlugRoute,

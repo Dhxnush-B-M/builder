@@ -107,7 +107,7 @@ function PaymentPage() {
 			setIsProcessing(false);
 			setIsCheckoutOpen(false);
 
-			void navigate({ to: "/dashboard/resumes" });
+			void navigate({ to: "/onboarding" });
 		}, 1200);
 	}
 

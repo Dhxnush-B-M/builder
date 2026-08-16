@@ -333,3 +333,53 @@ export async function getFeedbacksFromSupabase(): Promise<SupabaseFeedbackRecord
 
 	return localItems;
 }
+
+export interface SupabaseUserDetailsRecord {
+	id?: string;
+	email: string;
+	name: string;
+	phone: string;
+	plan?: string;
+	created_at?: string;
+}
+
+/**
+ * Save user name and phone number directly into Supabase Database ('user_details' table) & LocalStorage
+ */
+export async function saveUserDetailsToSupabase(details: { email?: string; name: string; phone: string; plan?: string }) {
+	const activeEmail = (details.email || getActiveUserEmailFromStorage() || "user@example.com").trim().toLowerCase();
+	const record: SupabaseUserDetailsRecord = {
+		id: activeEmail,
+		email: activeEmail,
+		name: details.name || "User",
+		phone: details.phone || "",
+		plan: details.plan || (typeof window !== "undefined" ? localStorage.getItem("rbuilder_subscription_plan") || "monthly" : "monthly"),
+		created_at: new Date().toISOString(),
+	};
+
+	if (typeof window !== "undefined") {
+		localStorage.setItem("rbuilder_user_phone", details.phone);
+		localStorage.setItem("rbuilder_onboarding_completed", "true");
+		try {
+			const existingUser = localStorage.getItem("rbuilder_user");
+			const parsed = existingUser ? JSON.parse(existingUser) : {};
+			localStorage.setItem(
+				"rbuilder_user",
+				JSON.stringify({ ...parsed, name: details.name, phone: details.phone, email: activeEmail }),
+			);
+		} catch {
+			// ignore
+		}
+	}
+
+	try {
+		await Promise.allSettled([
+			supabase.from("user_details").upsert(record, { onConflict: "email" }),
+			supabase.from("profiles").upsert({ id: activeEmail, email: activeEmail, name: details.name, phone: details.phone }, { onConflict: "email" }),
+		]);
+	} catch (e) {
+		console.warn("Supabase user details sync exception:", e);
+	}
+
+	return record;
+}
