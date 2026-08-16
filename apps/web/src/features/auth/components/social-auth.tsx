@@ -18,7 +18,7 @@ type SocialSignInOptions = {
 
 function getSocialSignInOptions(provider: string, requestSignUp: boolean): SocialSignInOptions {
 	const callbackURL =
-		typeof window !== "undefined" ? `${window.location.origin}/dashboard` : "https://builder-az7.pages.dev/dashboard";
+		typeof window !== "undefined" ? `${window.location.origin}/dashboard` : "https://rbuilder.space/dashboard";
 	const options: SocialSignInOptions = { provider, callbackURL };
 	if (requestSignUp) options.requestSignUp = true;
 	return options;
