@@ -6,38 +6,6 @@ import { saveUserDetailsToSupabase, checkUserSubscriptionAndOnboardingFromSupaba
 
 export const Route = createFileRoute("/onboarding")({
 	component: OnboardingPage,
-	beforeLoad: async () => {
-		if (typeof window !== "undefined") {
-			const storedEmail = localStorage.getItem("rbuilder_user_email");
-			const localUser = localStorage.getItem("rbuilder_user");
-			let parsedEmail = "";
-			if (localUser) {
-				try {
-					parsedEmail = JSON.parse(localUser).email || "";
-				} catch {
-					// ignore
-				}
-			}
-			const userEmail = (storedEmail || parsedEmail || "").trim().toLowerCase();
-
-			if (!userEmail || userEmail === "guest@rbuilder.com" || userEmail === "guest") {
-				throw redirect({ to: "/auth/login", replace: true });
-			}
-
-			const paymentStatus = localStorage.getItem("rbuilder_payment_status");
-			const paymentEmail = localStorage.getItem("rbuilder_payment_email");
-			const isPaidLocally =
-				(paymentStatus === "active" && (!paymentEmail || paymentEmail === userEmail)) ||
-				localStorage.getItem(`rbuilder_paid_${userEmail}`) === "true";
-
-			if (!isPaidLocally) {
-				const { paid } = await checkUserSubscriptionAndOnboardingFromSupabase(userEmail);
-				if (!paid) {
-					throw redirect({ to: "/payment", replace: true });
-				}
-			}
-		}
-	},
 });
 
 function OnboardingPage() {

@@ -5,25 +5,6 @@ import { toast } from "sonner";
 
 export const Route = createFileRoute("/payment")({
 	component: PaymentPage,
-	beforeLoad: async () => {
-		if (typeof window !== "undefined") {
-			const storedEmail = localStorage.getItem("rbuilder_user_email");
-			const localUser = localStorage.getItem("rbuilder_user");
-			let parsedEmail = "";
-			if (localUser) {
-				try {
-					parsedEmail = JSON.parse(localUser).email || "";
-				} catch {
-					// ignore
-				}
-			}
-			const userEmail = (storedEmail || parsedEmail || "").trim().toLowerCase();
-
-			if (!userEmail || userEmail === "guest@rbuilder.com" || userEmail === "guest") {
-				throw redirect({ to: "/auth/login", replace: true });
-			}
-		}
-	},
 });
 
 type Plan = {

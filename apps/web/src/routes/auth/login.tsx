@@ -8,27 +8,6 @@ import { checkUserSubscriptionAndOnboardingFromSupabase, saveUserToSupabase } fr
 
 export const Route = createFileRoute("/auth/login")({
 	component: AuthLoginPage,
-	beforeLoad: async () => {
-		if (typeof window !== "undefined") {
-			const localUser = localStorage.getItem("rbuilder_user");
-			const supabaseUser = localStorage.getItem("rbuilder_supabase_user");
-			const userEmail = localStorage.getItem("rbuilder_user_email");
-			if (localUser || supabaseUser || userEmail) {
-				const email =
-					userEmail ||
-					(localUser ? JSON.parse(localUser).email : "") ||
-					(supabaseUser ? JSON.parse(supabaseUser).email : "");
-				const { paid, onboarded } = await checkUserSubscriptionAndOnboardingFromSupabase(email);
-				if (paid && onboarded) {
-					throw redirect({ to: "/dashboard/resumes", replace: true });
-				}
-				if (paid) {
-					throw redirect({ to: "/onboarding", replace: true });
-				}
-				throw redirect({ to: "/payment", replace: true });
-			}
-		}
-	},
 });
 
 function AuthLoginPage() {

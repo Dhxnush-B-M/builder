@@ -10,60 +10,18 @@ import { DashboardSidebar } from "./-components/sidebar";
 
 export const Route = createFileRoute("/dashboard")({
 	component: RouteComponent,
-	beforeLoad: async ({ context }) => {
-		let isAuth = false;
-		let userEmail = "";
+	beforeLoad: () => {
 		if (typeof window !== "undefined") {
 			const localUser = localStorage.getItem("rbuilder_user");
 			const supabaseUser = localStorage.getItem("rbuilder_supabase_user");
 			const storedEmail = localStorage.getItem("rbuilder_user_email");
-			if (localUser || supabaseUser || storedEmail) {
-				isAuth = true;
-				userEmail =
-					storedEmail ||
-					(localUser ? JSON.parse(localUser).email : "") ||
-					(supabaseUser ? JSON.parse(supabaseUser).email : "");
-			}
-		}
-		if (!isAuth) {
-			const { data } = await supabase.auth.getSession().catch(() => ({ data: { session: null } }));
-			if (data?.session?.user) {
-				isAuth = true;
-				userEmail = data.session.user.email || "";
-			}
-		}
-		if (!isAuth) {
-			let session = context.session;
-			if (!session || session.user?.id === "guest-user") {
-				session = await getSession().catch(() => null);
-			}
-			if (session?.user && session.user.id !== "guest-user") {
-				isAuth = true;
-				userEmail = session.user.email || "";
-			}
-		}
-		if (!isAuth) {
-			throw redirect({ to: "/auth/login", replace: true });
-		}
+			const userEmail =
+				storedEmail ||
+				(localUser ? JSON.parse(localUser).email : "") ||
+				(supabaseUser ? JSON.parse(supabaseUser).email : "");
 
-		if (userEmail) {
-			if (typeof window !== "undefined") {
-				const paymentStatus = localStorage.getItem("rbuilder_payment_status");
-				const onboardingCompleted = localStorage.getItem("rbuilder_onboarding_completed");
-				const isPaidLocally = paymentStatus === "active" || localStorage.getItem(`rbuilder_paid_${userEmail}`) === "true";
-				const isOnboardedLocally = onboardingCompleted === "true" || localStorage.getItem(`rbuilder_onboarded_${userEmail}`) === "true";
-
-				if (isPaidLocally && isOnboardedLocally) {
-					return; // Instant access to dashboard
-				}
-			}
-
-			const { paid, onboarded } = await checkUserSubscriptionAndOnboardingFromSupabase(userEmail);
-			if (!paid) {
-				throw redirect({ to: "/payment", replace: true });
-			}
-			if (!onboarded) {
-				throw redirect({ to: "/onboarding", replace: true });
+			if (!userEmail) {
+				throw redirect({ to: "/auth/login", replace: true });
 			}
 		}
 	},
