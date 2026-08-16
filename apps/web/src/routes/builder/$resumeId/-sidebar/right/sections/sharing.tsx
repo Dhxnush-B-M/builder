@@ -29,7 +29,8 @@ export function SharingSectionBuilder() {
 	const { mutateAsync: setPassword } = useMutation(orpc.resume.setPassword.mutationOptions());
 	const { mutateAsync: removePassword } = useMutation(orpc.resume.removePassword.mutationOptions());
 
-	const publicUrl = session ? `${window.location.origin}/${session.user.username}/${resume.slug}` : "";
+	const username = session?.user?.username || (session as unknown as { username?: string })?.username || "user";
+	const publicUrl = session ? `${window.location.origin}/${username}/${resume.slug}` : "";
 
 	const onCopyUrl = useCallback(async () => {
 		await copyToClipboard(publicUrl);

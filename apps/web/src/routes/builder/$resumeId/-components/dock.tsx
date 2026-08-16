@@ -67,8 +67,9 @@ export function BuilderDock({ pageLayout, onTogglePageLayout }: BuilderDockProps
 		redo();
 	});
 
+	const username = session?.user?.username || (session as unknown as { username?: string })?.username || "";
 	const publicUrl =
-		session?.user.username && resumeSlug ? `${window.location.origin}/${session.user.username}/${resumeSlug}` : "";
+		username && resumeSlug ? `${window.location.origin}/${username}/${resumeSlug}` : "";
 
 	return (
 		<div className="fixed inset-x-0 bottom-20 z-40 flex items-center justify-center md:bottom-4">
