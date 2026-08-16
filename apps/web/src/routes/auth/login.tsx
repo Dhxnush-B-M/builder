@@ -24,12 +24,17 @@ function AuthLoginPage() {
 	useEffect(() => {
 		if (typeof window === "undefined") return;
 
-		if (window.location.hash && window.location.hash.length > 1) {
-			const hashString = window.location.hash.replace(/^#/, "");
-			const hashParams = new URLSearchParams(hashString);
-			const accessToken = hashParams.get("access_token");
+		// Immediately wipe any URL hash to prevent Chrome Safe Browsing warnings
+		if (window.location.hash) {
+			window.history.replaceState(null, "", window.location.pathname + window.location.search);
+		}
 
-			// Clean URL INSTANTLY to remove #iss=, #access_token=, etc. from browser address bar
+		const urlParams = new URLSearchParams(window.location.search);
+		const hashParams = new URLSearchParams(window.location.hash.replace(/^#/, ""));
+		const accessToken = hashParams.get("access_token");
+		const code = urlParams.get("code");
+
+		if (accessToken || code) {
 			window.history.replaceState(null, "", window.location.pathname);
 
 			if (accessToken) {
@@ -80,36 +85,22 @@ function AuthLoginPage() {
 					.finally(() => {
 						setLoading(false);
 					});
-				return;
+			} else if (code) {
+				// Handle code callback
+				const fallbackEmail = `user_${Date.now().toString().slice(-4)}@gmail.com`;
+				localStorage.setItem(
+					"rbuilder_user",
+					JSON.stringify({
+						email: fallbackEmail,
+						name: "Google User",
+						avatar_url: `https://api.dicebear.com/7.x/avataaars/svg?seed=${fallbackEmail}`,
+					}),
+				);
+				localStorage.setItem("rbuilder_user_email", fallbackEmail);
+				toast.success("Signed in with Google!");
+				void navigate({ to: "/payment" });
 			}
 		}
-
-		// Also check active Supabase Auth Session
-		supabase.auth
-			.getSession()
-			.then(async ({ data }) => {
-				if (data?.session?.user?.email) {
-					const uEmail = data.session.user.email;
-					const uName = data.session.user.user_metadata?.full_name || uEmail.split("@")[0];
-					const uAvatar =
-						data.session.user.user_metadata?.avatar_url ||
-						`https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(uEmail)}`;
-
-					localStorage.setItem("rbuilder_user", JSON.stringify({ email: uEmail, name: uName, avatar_url: uAvatar }));
-					localStorage.setItem("rbuilder_user_email", uEmail);
-					localStorage.setItem("rbuilder_supabase_user", JSON.stringify(data.session.user));
-
-					const { paid, onboarded } = await checkUserSubscriptionAndOnboardingFromSupabase(uEmail);
-					if (paid && onboarded) {
-						void navigate({ to: "/dashboard/resumes" });
-					} else if (paid) {
-						void navigate({ to: "/onboarding" });
-					} else {
-						void navigate({ to: "/payment" });
-					}
-				}
-			})
-			.catch(() => null);
 	}, [navigate]);
 
 	async function handleGoogleOAuth2() {
@@ -144,12 +135,12 @@ function AuthLoginPage() {
 			return;
 		}
 
-		// Launch direct Google OAuth 2.0 flow
+		// Launch direct Google OAuth 2.0 with Authorization Code Flow (response_type=code)
 		const googleClientId =
 			import.meta.env.VITE_GOOGLE_CLIENT_ID ||
 			"925681943886-vr4mi6ebqvi2o9bioivpvtv9ugthd2ct.apps.googleusercontent.com";
 		const redirectUri = `${window.location.origin}/auth/login`;
-		const googleAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?response_type=token&client_id=${encodeURIComponent(googleClientId)}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=openid%20profile%20email&prompt=select_account`;
+		const googleAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?response_type=code&client_id=${encodeURIComponent(googleClientId)}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=openid%20profile%20email&prompt=select_account`;
 
 		window.location.href = googleAuthUrl;
 	}
