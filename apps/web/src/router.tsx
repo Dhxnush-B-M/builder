@@ -7,6 +7,21 @@ import { getQueryClient } from "./libs/query/client";
 import { getTheme } from "./libs/theme";
 import { routeTree } from "./routeTree.gen";
 
+if (typeof window !== "undefined") {
+	window.addEventListener("error", (e) => {
+		if (
+			e.message?.includes("Failed to fetch dynamically imported module") ||
+			e.message?.includes("Failed to load module script")
+		) {
+			const hasReloaded = sessionStorage.getItem("rbuilder_chunk_reloaded");
+			if (!hasReloaded) {
+				sessionStorage.setItem("rbuilder_chunk_reloaded", "true");
+				window.location.reload();
+			}
+		}
+	});
+}
+
 const defaultFlags = {
 	disableEmailAuth: false,
 	disableSignups: false,
