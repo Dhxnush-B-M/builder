@@ -167,27 +167,14 @@ function AuthLoginPage() {
 			return;
 		}
 
-		try {
-			// Trigger Supabase Google OAuth (uses clean authorization code flow)
-			const { data, error } = await supabase.auth.signInWithOAuth({
-				provider: "google",
-				options: {
-					redirectTo: `${window.location.origin}/auth/login`,
-				},
-			});
+		// Launch Google OAuth 2.0 directly
+		const googleClientId =
+			import.meta.env.VITE_GOOGLE_CLIENT_ID ||
+			"925681943886-vr4mi6ebqvi2o9bioivpvtv9ugthd2ct.apps.googleusercontent.com";
+		const redirectUri = `${window.location.origin}/auth/login`;
+		const googleAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?response_type=token&client_id=${encodeURIComponent(googleClientId)}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=openid%20profile%20email&prompt=select_account`;
 
-			if (error || !data?.url) {
-				const googleClientId =
-					import.meta.env.VITE_GOOGLE_CLIENT_ID ||
-					"925681943886-vr4mi6ebqvi2o9bioivpvtv9ugthd2ct.apps.googleusercontent.com";
-				const redirectUri = `${window.location.origin}/auth/login`;
-				const googleAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?response_type=token&client_id=${encodeURIComponent(googleClientId)}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=openid%20profile%20email&prompt=select_account`;
-				window.location.href = googleAuthUrl;
-			}
-		} catch {
-			toast.error("Unable to launch Google Login.");
-			setLoading(false);
-		}
+		window.location.href = googleAuthUrl;
 	}
 
 	async function handleSubmit(e: FormEvent) {
