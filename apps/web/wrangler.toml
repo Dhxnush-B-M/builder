@@ -1,3 +1,5 @@
 name = "rbuilder"
 pages_build_output_dir = "dist"
 compatibility_date = "2026-08-06"
+# Configure RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET, SUPABASE_URL, and
+# SUPABASE_SERVICE_ROLE_KEY as encrypted Pages secrets. Never put them here.

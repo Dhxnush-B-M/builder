@@ -362,7 +362,6 @@ export async function saveUserDetailsToSupabase(details: {
 		localStorage.setItem("rbuilder_user_phone", details.phone);
 		localStorage.setItem("rbuilder_onboarding_completed", "true");
 		localStorage.setItem(`rbuilder_onboarded_${activeEmail}`, "true");
-		localStorage.setItem(`rbuilder_paid_${activeEmail}`, "true");
 		try {
 			const existingUser = localStorage.getItem("rbuilder_user");
 			const parsed = existingUser ? JSON.parse(existingUser) : {};
@@ -376,15 +375,14 @@ export async function saveUserDetailsToSupabase(details: {
 	}
 
 	try {
-		await Promise.allSettled([
-			supabase.from("user_details").upsert(record, { onConflict: "email" }),
-			supabase
-				.from("profiles")
-				.upsert(
-					{ id: activeEmail, email: activeEmail, name: details.name, phone: details.phone },
-					{ onConflict: "email" },
-				),
-		]);
+		// Subscription state is written only by the verified server-side payment endpoint.
+		// The browser may update profile details, but must never be able to grant a plan.
+		await supabase
+			.from("profiles")
+			.upsert(
+				{ id: activeEmail, email: activeEmail, name: details.name, phone: details.phone },
+				{ onConflict: "email" },
+			);
 	} catch (e) {
 		console.warn("Supabase user details sync exception:", e);
 	}
@@ -401,46 +399,18 @@ export async function checkUserSubscriptionAndOnboardingFromSupabase(
 	const cleanEmail = (email || "").trim().toLowerCase();
 	if (!cleanEmail) return { paid: false, onboarded: false };
 
-	if (typeof window !== "undefined") {
-		const isPerEmailPaid = localStorage.getItem(`rbuilder_paid_${cleanEmail}`) === "true";
-		const isPerEmailOnboarded = localStorage.getItem(`rbuilder_onboarded_${cleanEmail}`) === "true";
-
-		if (isPerEmailPaid && isPerEmailOnboarded) {
-			localStorage.setItem("rbuilder_payment_status", "active");
-			localStorage.setItem("rbuilder_onboarding_completed", "true");
-			return { paid: true, onboarded: true };
-		}
-	}
-
 	try {
 		const { data: detail } = await supabase.from("user_details").select("*").eq("email", cleanEmail).maybeSingle();
-		if (detail) {
+		if (detail?.plan === "monthly" || detail?.plan === "quarterly") {
+			const { data: profile } = await supabase.from("profiles").select("phone").eq("email", cleanEmail).maybeSingle();
 			if (typeof window !== "undefined") {
-				localStorage.setItem(`rbuilder_paid_${cleanEmail}`, "true");
-				localStorage.setItem(`rbuilder_onboarded_${cleanEmail}`, "true");
 				localStorage.setItem("rbuilder_payment_status", "active");
-				localStorage.setItem("rbuilder_onboarding_completed", "true");
 			}
-			return { paid: true, onboarded: true };
-		}
-
-		const { data: profile } = await supabase.from("profiles").select("*").eq("email", cleanEmail).maybeSingle();
-		if (profile?.phone) {
-			if (typeof window !== "undefined") {
-				localStorage.setItem(`rbuilder_paid_${cleanEmail}`, "true");
-				localStorage.setItem(`rbuilder_onboarded_${cleanEmail}`, "true");
-				localStorage.setItem("rbuilder_payment_status", "active");
-				localStorage.setItem("rbuilder_onboarding_completed", "true");
-			}
-			return { paid: true, onboarded: true };
+			return { paid: true, onboarded: Boolean(profile?.phone) };
 		}
 	} catch {
 		// ignore
 	}
 
-	const fallbackPaid = typeof window !== "undefined" && localStorage.getItem("rbuilder_payment_status") === "active";
-	const fallbackOnboarded =
-		typeof window !== "undefined" && localStorage.getItem("rbuilder_onboarding_completed") === "true";
-
-	return { paid: fallbackPaid, onboarded: fallbackOnboarded };
+	return { paid: false, onboarded: false };
 }

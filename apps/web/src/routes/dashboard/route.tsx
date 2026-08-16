@@ -11,14 +11,6 @@ import { DashboardSidebar } from "./-components/sidebar";
 export const Route = createFileRoute("/dashboard")({
 	component: RouteComponent,
 	beforeLoad: async ({ context }) => {
-		if (typeof window !== "undefined") {
-			const paymentStatus = localStorage.getItem("rbuilder_payment_status");
-			const onboardingCompleted = localStorage.getItem("rbuilder_onboarding_completed");
-			if (paymentStatus === "active" && onboardingCompleted === "true") {
-				return; // Instant access, no network delays
-			}
-		}
-
 		let isAuth = false;
 		let userEmail = "";
 		if (typeof window !== "undefined") {

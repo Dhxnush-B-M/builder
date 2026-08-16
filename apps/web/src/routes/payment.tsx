@@ -2,7 +2,6 @@ import { CheckCircleIcon, LockKeyIcon } from "@phosphor-icons/react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { toast } from "sonner";
-import { saveUserToSupabase } from "@/libs/supabase/db";
 
 export const Route = createFileRoute("/payment")({
 	component: PaymentPage,
@@ -20,6 +19,19 @@ type Plan = {
 	buttonText: string;
 	highlighted?: boolean;
 };
+
+type RazorpayCheckoutResponse = {
+	razorpay_payment_id: string;
+	razorpay_order_id: string;
+	razorpay_signature: string;
+};
+
+type RazorpayInstance = {
+	open: () => void;
+	on: (event: "payment.failed", listener: (response: { error?: { description?: string } }) => void) => void;
+};
+
+type RazorpayConstructor = new (options: Record<string, unknown>) => RazorpayInstance;
 
 const PLANS: Plan[] = [
 	{
@@ -66,10 +78,10 @@ function PaymentPage() {
 	const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
 	const [isProcessing, setIsProcessing] = useState(false);
 
-	async function loadRazorpayScript(): Promise<boolean> {
+	function loadRazorpayScript(): Promise<boolean> {
 		return new Promise((resolve) => {
 			if (typeof window === "undefined") return resolve(false);
-			if ((window as any).Razorpay) return resolve(true);
+			if ((window as Window & { Razorpay?: RazorpayConstructor }).Razorpay) return resolve(true);
 			const script = document.createElement("script");
 			script.src = "https://checkout.razorpay.com/v1/checkout.js";
 			script.onload = () => resolve(true);
@@ -82,33 +94,29 @@ function PaymentPage() {
 		setSelectedPlan(plan);
 		setIsProcessing(true);
 
-		const razorpayKey =
-			import.meta.env.VITE_RAZORPAY_KEY_ID ||
-			(typeof window !== "undefined"
-				? localStorage.getItem("rbuilder_razorpay_key_id") || "rzp_live_SKvY1N96y931y4"
-				: "rzp_live_SKvY1N96y931y4");
-
-		const userEmail =
-			typeof window !== "undefined"
-				? localStorage.getItem("rbuilder_user_email") || "user@example.com"
-				: "user@example.com";
+		const userEmail = typeof window !== "undefined" ? localStorage.getItem("rbuilder_user_email") || "" : "";
 		const rawUser = typeof window !== "undefined" ? localStorage.getItem("rbuilder_user") : null;
-		const userName = rawUser ? JSON.parse(rawUser).name || "User" : "User";
-		const amountInPaise = Number(plan.price.replace("₹", "")) * 100;
+		let userName = "User";
+		try {
+			userName = rawUser ? JSON.parse(rawUser).name || "User" : "User";
+		} catch {
+			// A malformed browser cache must not prevent a user from paying.
+		}
 
-		const grantSubscriptionAndProceed = async (paymentId?: string) => {
+		if (!userEmail) {
+			setIsProcessing(false);
+			toast.error("Please sign in before choosing a plan.");
+			void navigate({ to: "/auth/login" });
+			return;
+		}
+
+		const grantSubscriptionAndProceed = (paymentId?: string) => {
 			if (typeof window !== "undefined") {
 				localStorage.setItem("rbuilder_payment_status", "active");
 				localStorage.setItem("rbuilder_subscription_plan", plan.id);
 				if (paymentId) {
 					localStorage.setItem("rbuilder_razorpay_payment_id", paymentId);
 				}
-
-				await saveUserToSupabase({
-					email: userEmail,
-					name: userName,
-					plan: plan.id,
-				}).catch(() => null);
 			}
 
 			toast.success(`Payment Activated! ${plan.title} is now active.`);
@@ -117,17 +125,31 @@ function PaymentPage() {
 		};
 
 		const isScriptLoaded = await loadRazorpayScript();
-		if (!isScriptLoaded || !(window as any).Razorpay) {
+		if (!isScriptLoaded || !(window as Window & { Razorpay?: RazorpayConstructor }).Razorpay) {
 			setIsProcessing(false);
 			toast.error("Unable to load Razorpay payment SDK. Please check your internet connection.");
 			return;
 		}
 
 		try {
+			const orderResponse = await fetch("/api/payments/create-order", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ plan: plan.id, email: userEmail, name: userName }),
+			});
+			const order = (await orderResponse.json().catch(() => null)) as
+				| { keyId: string; orderId: string; amount: number; currency: string }
+				| { error: string }
+				| null;
+			if (!orderResponse.ok || !order || !("orderId" in order)) {
+				throw new Error(order && "error" in order ? order.error : "Failed to create a payment order.");
+			}
+
 			const options = {
-				key: razorpayKey,
-				amount: amountInPaise,
-				currency: "INR",
+				key: order.keyId,
+				order_id: order.orderId,
+				amount: order.amount,
+				currency: order.currency,
 				name: "rbuilder",
 				description: `${plan.title} Subscription (${plan.price})`,
 				image: "/opengraph/logo.png",
@@ -138,14 +160,21 @@ function PaymentPage() {
 				theme: {
 					color: "#10b981",
 				},
-				handler: async (response: any) => {
-					// Real money payment succeeded - verify and store razorpay_payment_id
-					const paymentId = response?.razorpay_payment_id;
-					if (paymentId) {
-						await grantSubscriptionAndProceed(paymentId);
-					} else {
+				handler: async (response: RazorpayCheckoutResponse) => {
+					try {
+						const verifyResponse = await fetch("/api/payments/verify", {
+							method: "POST",
+							headers: { "Content-Type": "application/json" },
+							body: JSON.stringify(response),
+						});
+						if (!verifyResponse.ok) {
+							const result = (await verifyResponse.json().catch(() => null)) as { error?: string } | null;
+							throw new Error(result?.error || "Payment verification failed.");
+						}
+						grantSubscriptionAndProceed(response.razorpay_payment_id);
+					} catch (error) {
 						setIsProcessing(false);
-						toast.error("Payment verification failed. Payment ID missing.");
+						toast.error(error instanceof Error ? error.message : "Payment verification failed.");
 					}
 				},
 				modal: {
@@ -156,17 +185,19 @@ function PaymentPage() {
 				},
 			};
 
-			const rzp = new (window as any).Razorpay(options);
-			rzp.on("payment.failed", (resp: any) => {
+			const Razorpay = (window as Window & { Razorpay?: RazorpayConstructor }).Razorpay;
+			if (!Razorpay) throw new Error("Razorpay checkout could not be initialized.");
+			const rzp = new Razorpay(options);
+			rzp.on("payment.failed", (resp) => {
 				console.warn("Razorpay payment failed:", resp?.error?.description);
 				setIsProcessing(false);
 				toast.error(resp?.error?.description || "Payment failed. Money was not deducted.");
 			});
 			rzp.open();
 		} catch (err) {
-			console.error("Razorpay popup initialization error:", err);
+			console.error("Razorpay checkout error:", err);
 			setIsProcessing(false);
-			toast.error("Failed to initialize Razorpay checkout popup.");
+			toast.error(err instanceof Error ? err.message : "Failed to initialize Razorpay checkout popup.");
 		}
 	}
 
