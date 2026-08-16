@@ -255,3 +255,81 @@ export async function deleteResumeFromSupabase(id: string) {
 		console.warn("Supabase resume delete exception:", e);
 	}
 }
+
+export interface SupabaseFeedbackRecord {
+	id: string;
+	name: string;
+	description: string;
+	rating: number;
+	created_at: string;
+}
+
+/**
+ * Save user feedback to Supabase Database ('feedback' table) & LocalStorage fallback
+ */
+export async function saveFeedbackToSupabase(feedback: { name: string; description: string; rating: number }) {
+	const record: SupabaseFeedbackRecord = {
+		id: String(Date.now()),
+		name: feedback.name || "User",
+		description: feedback.description,
+		rating: feedback.rating || 5,
+		created_at: new Date().toISOString(),
+	};
+
+	if (typeof window !== "undefined") {
+		try {
+			const existingRaw = localStorage.getItem("rbuilder_feedbacks");
+			const list: SupabaseFeedbackRecord[] = existingRaw ? JSON.parse(existingRaw) : [];
+			list.unshift(record);
+			localStorage.setItem("rbuilder_feedbacks", JSON.stringify(list));
+		} catch {
+			// ignore
+		}
+	}
+
+	try {
+		await supabase.from("feedback").insert(record);
+	} catch (e) {
+		console.warn("Supabase feedback save exception:", e);
+	}
+
+	return record;
+}
+
+/**
+ * Fetch all user feedback from Supabase Database ('feedback' table) & LocalStorage fallback
+ */
+export async function getFeedbacksFromSupabase(): Promise<SupabaseFeedbackRecord[]> {
+	const localItems: SupabaseFeedbackRecord[] = [];
+	if (typeof window !== "undefined") {
+		try {
+			const existingRaw = localStorage.getItem("rbuilder_feedbacks");
+			if (existingRaw) {
+				localItems.push(...JSON.parse(existingRaw));
+			}
+		} catch {
+			// ignore
+		}
+	}
+
+	try {
+		const { data, error } = await supabase
+			.from("feedback")
+			.select("*")
+			.order("created_at", { ascending: false })
+			.limit(20);
+
+		if (!error && data && data.length > 0) {
+			const remoteMap = new Map<string, SupabaseFeedbackRecord>();
+			for (const item of localItems) remoteMap.set(item.id, item);
+			for (const item of data) remoteMap.set(item.id, item as SupabaseFeedbackRecord);
+			return Array.from(remoteMap.values()).sort(
+				(a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
+			);
+		}
+	} catch {
+		// ignore
+	}
+
+	return localItems;
+}

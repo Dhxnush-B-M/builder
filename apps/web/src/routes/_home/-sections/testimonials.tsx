@@ -125,21 +125,41 @@ export function Testimonials() {
 
 	useEffect(() => {
 		let isMounted = true;
-		import("@/libs/supabase/db").then(({ getRegisteredProfilesFromSupabase }) => {
-			getRegisteredProfilesFromSupabase()
-				.then((profiles) => {
-					if (!isMounted || !profiles || profiles.length === 0) return;
-					const mapped: Testimonial[] = profiles.map((p, idx) => ({
-						id: p.id || String(idx),
-						name: p.name || (p.email ? p.email.split("@")[0] : "User"),
-						description: "Active user on rbuilder crafting professional ATS resumes.",
-						date: "Registered User",
-						gradient: initialTestimonials[idx % initialTestimonials.length].gradient,
-						rating: 5,
-					}));
-					setTestimonialsList(mapped);
-				})
-				.catch(() => null);
+		import("@/libs/supabase/db").then(({ getFeedbacksFromSupabase, getRegisteredProfilesFromSupabase }) => {
+			Promise.allSettled([getFeedbacksFromSupabase(), getRegisteredProfilesFromSupabase()]).then(([fbRes, profRes]) => {
+				if (!isMounted) return;
+
+				const feedbacks = fbRes.status === "fulfilled" ? fbRes.value : [];
+				const profiles = profRes.status === "fulfilled" ? profRes.value : [];
+
+				const feedbackTestimonials: Testimonial[] = feedbacks.map((fb, idx) => ({
+					id: fb.id,
+					name: fb.name,
+					description: fb.description,
+					date: fb.created_at ? new Date(fb.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric" }) : "Verified Feedback",
+					gradient: initialTestimonials[idx % initialTestimonials.length].gradient,
+					rating: fb.rating || 5,
+				}));
+
+				const profileTestimonials: Testimonial[] = profiles.map((p, idx) => ({
+					id: p.id || `profile-${idx}`,
+					name: p.name || (p.email ? p.email.split("@")[0] : "User"),
+					description: "Active user on rbuilder crafting professional ATS resumes.",
+					date: "Registered User",
+					gradient: initialTestimonials[(idx + feedbackTestimonials.length) % initialTestimonials.length].gradient,
+					rating: 5,
+				}));
+
+				const combined = [...feedbackTestimonials, ...profileTestimonials, ...initialTestimonials];
+				const uniqueMap = new Map<string, Testimonial>();
+				for (const item of combined) {
+					if (!uniqueMap.has(item.name)) {
+						uniqueMap.set(item.name, item);
+					}
+				}
+
+				setTestimonialsList(Array.from(uniqueMap.values()));
+			});
 		});
 
 		return () => {
@@ -152,7 +172,7 @@ export function Testimonials() {
 		setIsModalOpen(true);
 	}
 
-	function handleSubmit(e: FormEvent) {
+	async function handleSubmit(e: FormEvent) {
 		e.preventDefault();
 		if (!name || !description) return;
 
@@ -165,8 +185,13 @@ export function Testimonials() {
 			rating,
 		};
 
-		setTestimonialsList((prev) => [newTestimonial, ...prev.slice(0, 7)]);
+		setTestimonialsList((prev) => [newTestimonial, ...prev]);
 		setIsSubmitted(true);
+
+		// Save feedback directly to Supabase DB & LocalStorage fallback
+		import("@/libs/supabase/db").then(({ saveFeedbackToSupabase }) => {
+			void saveFeedbackToSupabase({ name, description, rating });
+		});
 
 		setTimeout(() => {
 			setIsModalOpen(false);
