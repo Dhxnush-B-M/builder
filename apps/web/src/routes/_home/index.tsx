@@ -13,16 +13,6 @@ import { Testimonials } from "./-sections/testimonials";
 
 export const Route = createFileRoute("/_home/")({
 	component: RouteComponent,
-	beforeLoad: async () => {
-		if (typeof window !== "undefined") {
-			const localUser = localStorage.getItem("rbuilder_user");
-			const supabaseUser = localStorage.getItem("rbuilder_supabase_user");
-			const userEmail = localStorage.getItem("rbuilder_user_email");
-			if (localUser || supabaseUser || userEmail) {
-				throw redirect({ to: "/dashboard/resumes", replace: true });
-			}
-		}
-	},
 	head: () => ({
 		meta: [createNoindexFollowMeta()],
 	}),
