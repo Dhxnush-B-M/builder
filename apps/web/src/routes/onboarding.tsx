@@ -73,18 +73,6 @@ function OnboardingPage() {
 				<div className="size-[600px] animate-pulse rounded-full bg-gradient-to-tr from-emerald-500/20 via-blue-500/20 to-purple-500/20 blur-3xl" />
 			</div>
 
-			{/* Back to Home Button */}
-			<a
-				href="/"
-				onClick={(e) => {
-					e.preventDefault();
-					window.location.href = "/";
-				}}
-				className="relative z-10 mb-4 flex items-center gap-2 text-xs font-semibold text-zinc-400 hover:text-white transition-colors cursor-pointer"
-			>
-				<ArrowLeftIcon className="size-4" />
-				<span>Back to Home</span>
-			</a>
 
 			{/* Main Floating Glassmorphic Container */}
 			<div className="relative z-10 w-full max-w-[460px] rounded-[32px] border border-zinc-800 bg-zinc-900/90 p-8 md:p-10 shadow-2xl backdrop-blur-2xl space-y-6">

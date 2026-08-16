@@ -129,22 +129,10 @@ function PaymentPage() {
 						e.preventDefault();
 						window.location.href = "/";
 					}}
-					className="flex items-center gap-2 text-xs font-semibold text-zinc-400 hover:text-white transition-colors cursor-pointer"
+					className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity"
 				>
-					<ArrowLeftIcon className="size-4" />
-					<span>Back to Home</span>
-				</a>
-
-				<a
-					href="/"
-					onClick={(e) => {
-						e.preventDefault();
-						window.location.href = "/";
-					}}
-					className="flex items-center gap-2 cursor-pointer"
-				>
-					<img src="/opengraph/logo.png" alt="rbuilder logo" className="size-7 rounded-full border border-emerald-500/40" />
-					<span className="font-bold text-base tracking-tight text-white">rbuilder</span>
+					<img src="/opengraph/logo.png" alt="rbuilder logo" className="size-8 rounded-full border border-emerald-500/40" />
+					<span className="font-bold text-lg tracking-tight text-white">rbuilder</span>
 				</a>
 			</header>
 
