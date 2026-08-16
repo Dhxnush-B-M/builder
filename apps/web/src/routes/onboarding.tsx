@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState, type FormEvent } from "react";
 import { toast } from "sonner";
-import { ArrowLeftIcon, DeviceMobileIcon, ShieldCheckIcon, UserIcon, CheckCircleIcon } from "@phosphor-icons/react";
+import { DeviceMobileIcon, UserIcon } from "@phosphor-icons/react";
 import { saveUserDetailsToSupabase } from "@/libs/supabase/db";
 
 export const Route = createFileRoute("/onboarding")({

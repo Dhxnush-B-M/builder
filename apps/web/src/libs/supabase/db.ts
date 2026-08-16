@@ -36,7 +36,7 @@ function getActiveUserEmailFromStorage(): string | null {
 /**
  * Save or update user profile in Supabase Database ('profiles' table)
  */
-export async function saveUserToSupabase(user: { email: string; name: string; avatar?: string }) {
+export async function saveUserToSupabase(user: { email: string; name: string; avatar?: string; plan?: string }) {
 	const userEmail = user.email || "user@example.com";
 	const userName = user.name || userEmail.split("@")[0] || "User";
 	const userAvatar =

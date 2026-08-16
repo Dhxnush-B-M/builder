@@ -1,8 +1,8 @@
 import type { MessageDescriptor } from "@lingui/core";
-import { msg, t } from "@lingui/core/macro";
+import { msg } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react";
 import { Trans } from "@lingui/react/macro";
-import { BriefcaseIcon, LockSimpleIcon, MagnifyingGlassIcon, ReadCvLogoIcon, SlidersHorizontalIcon, UserCircleIcon } from "@phosphor-icons/react";
+import { BriefcaseIcon, LockSimpleIcon, MagnifyingGlassIcon, ReadCvLogoIcon } from "@phosphor-icons/react";
 import { Link } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { Avatar, AvatarFallback, AvatarImage } from "@rbuilder/ui/components/avatar";
@@ -43,19 +43,6 @@ const appSidebarItems: SidebarItem[] = [
 		icon: <BriefcaseIcon />,
 		label: "Portfolio",
 		isLocked: true,
-	},
-];
-
-const settingsSidebarItems: SidebarItem[] = [
-	{
-		icon: <UserCircleIcon />,
-		label: msg`Profile`,
-		href: "/dashboard/settings/profile",
-	},
-	{
-		icon: <SlidersHorizontalIcon />,
-		label: "Predilection",
-		href: "/dashboard/settings/preferences",
 	},
 ];
 

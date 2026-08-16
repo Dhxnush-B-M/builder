@@ -2,14 +2,8 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { toast } from "sonner";
 import {
-	ArrowLeftIcon,
 	CheckCircleIcon,
-	CreditCardIcon,
 	LockKeyIcon,
-	QrCodeIcon,
-	ShieldCheckIcon,
-	SparkleIcon,
-	XIcon,
 } from "@phosphor-icons/react";
 import { saveUserToSupabase } from "@/libs/supabase/db";
 
@@ -73,9 +67,6 @@ const PLANS: Plan[] = [
 function PaymentPage() {
 	const navigate = useNavigate();
 	const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
-	const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
-	const [paymentMethod, setPaymentMethod] = useState<"upi" | "card" | "qr">("upi");
-	const [upiId, setUpiId] = useState("");
 	const [isProcessing, setIsProcessing] = useState(false);
 
 	async function loadRazorpayScript(): Promise<boolean> {
