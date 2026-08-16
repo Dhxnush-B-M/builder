@@ -146,22 +146,12 @@ function PaymentPage() {
 					<img src="/opengraph/logo.png" alt="rbuilder logo" className="size-7 rounded-full border border-emerald-500/40" />
 					<span className="font-bold text-base tracking-tight text-white">rbuilder</span>
 				</a>
-
-				<div className="flex items-center gap-1.5 px-3 py-1 rounded-full border border-emerald-500/30 bg-emerald-500/10 text-emerald-400 text-xs font-medium">
-					<ShieldCheckIcon className="size-4" />
-					<span>Autopay Protection</span>
-				</div>
 			</header>
 
 			{/* Main Content Area */}
 			<main className="relative z-10 w-full max-w-5xl my-auto py-8 space-y-8 flex flex-col items-center">
 				{/* Title Section */}
 				<div className="text-center space-y-3 max-w-2xl">
-					<div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-yellow-500/10 border border-yellow-500/30 text-yellow-400 text-xs font-bold uppercase tracking-wider">
-						<SparkleIcon className="size-3.5" />
-						<span>Subscription & Autopay Setup</span>
-					</div>
-
 					<h1 className="text-3xl md:text-5xl font-extrabold tracking-tight bg-gradient-to-r from-white via-zinc-200 to-zinc-400 bg-clip-text text-transparent">
 						Choose Your Autopay Plan
 					</h1>
