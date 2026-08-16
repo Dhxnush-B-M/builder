@@ -70,7 +70,8 @@ function AuthLoginPage() {
 
 					window.history.replaceState(null, "", window.location.pathname);
 					toast.success("Signed in successfully!");
-					void navigate({ to: "/dashboard/resumes" });
+					const isPaid = typeof window !== "undefined" && localStorage.getItem("rbuilder_payment_status") === "active";
+					void navigate({ to: isPaid ? "/dashboard/resumes" : "/payment" });
 
 					// Non-blocking background sync to Supabase
 					void saveUserToSupabase({
@@ -115,7 +116,8 @@ function AuthLoginPage() {
 			}
 
 			toast.success("Signed in successfully!");
-			void navigate({ to: "/dashboard/resumes" });
+			const isPaid = typeof window !== "undefined" && localStorage.getItem("rbuilder_payment_status") === "active";
+			void navigate({ to: isPaid ? "/dashboard/resumes" : "/payment" });
 			setLoading(false);
 
 			// Non-blocking background sync
@@ -129,7 +131,8 @@ function AuthLoginPage() {
 			window.location.href = googleAuthUrl;
 		} catch {
 			toast.success("Signed in successfully!");
-			void navigate({ to: "/dashboard/resumes" });
+			const isPaid = typeof window !== "undefined" && localStorage.getItem("rbuilder_payment_status") === "active";
+			void navigate({ to: isPaid ? "/dashboard/resumes" : "/payment" });
 		} finally {
 			setLoading(false);
 		}
@@ -154,7 +157,8 @@ function AuthLoginPage() {
 			}
 
 			toast.success(mode === "login" ? "Signed in successfully!" : "Account created successfully!");
-			void navigate({ to: "/dashboard/resumes" });
+			const isPaid = typeof window !== "undefined" && localStorage.getItem("rbuilder_payment_status") === "active";
+			void navigate({ to: isPaid ? "/dashboard/resumes" : "/payment" });
 
 			// Non-blocking background sync to Supabase
 			void saveUserToSupabase({

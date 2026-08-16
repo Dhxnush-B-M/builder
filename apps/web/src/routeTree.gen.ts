@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from "./routes/__root";
 import { Route as HomeRouteRouteImport } from "./routes/_home/route";
 import { Route as AuthRouteRouteImport } from "./routes/auth/route";
 import { Route as DashboardRouteRouteImport } from "./routes/dashboard/route";
+import { Route as PaymentRouteImport } from "./routes/payment";
 import { Route as UsernameSlugRouteImport } from "./routes/$username/$slug";
 import { Route as HomeIndexRouteImport } from "./routes/_home/index";
 import { Route as AuthIndexRouteImport } from "./routes/auth/index";
@@ -44,6 +45,11 @@ const AuthRouteRoute = AuthRouteRouteImport.update({
 const DashboardRouteRoute = DashboardRouteRouteImport.update({
   id: "/dashboard",
   path: "/dashboard",
+  getParentRoute: () => rootRouteImport,
+} as any);
+const PaymentRoute = PaymentRouteImport.update({
+  id: "/payment",
+  path: "/payment",
   getParentRoute: () => rootRouteImport,
 } as any);
 const UsernameSlugRoute = UsernameSlugRouteImport.update({
@@ -149,6 +155,7 @@ export interface FileRoutesByFullPath {
   "/": typeof HomeIndexRoute;
   "/auth": typeof AuthRouteRouteWithChildren;
   "/dashboard": typeof DashboardRouteRouteWithChildren;
+  "/payment": typeof PaymentRoute;
   "/builder/$resumeId": typeof BuilderResumeIdRouteRouteWithChildren;
   "/$username/$slug": typeof UsernameSlugRoute;
   "/auth/forgot-password": typeof AuthForgotPasswordRoute;
@@ -169,6 +176,7 @@ export interface FileRoutesByFullPath {
   "/dashboard/resumes/": typeof DashboardResumesIndexRoute;
 }
 export interface FileRoutesByTo {
+  "/payment": typeof PaymentRoute;
   "/$username/$slug": typeof UsernameSlugRoute;
   "/auth/forgot-password": typeof AuthForgotPasswordRoute;
   "/auth/login": typeof AuthLoginRoute;
@@ -193,6 +201,7 @@ export interface FileRoutesById {
   "/_home": typeof HomeRouteRouteWithChildren;
   "/auth": typeof AuthRouteRouteWithChildren;
   "/dashboard": typeof DashboardRouteRouteWithChildren;
+  "/payment": typeof PaymentRoute;
   "/builder/$resumeId": typeof BuilderResumeIdRouteRouteWithChildren;
   "/$username/$slug": typeof UsernameSlugRoute;
   "/auth/forgot-password": typeof AuthForgotPasswordRoute;
@@ -219,6 +228,7 @@ export interface FileRouteTypes {
     | "/"
     | "/auth"
     | "/dashboard"
+    | "/payment"
     | "/builder/$resumeId"
     | "/$username/$slug"
     | "/auth/forgot-password"
@@ -239,6 +249,7 @@ export interface FileRouteTypes {
     | "/dashboard/resumes/";
   fileRoutesByTo: FileRoutesByTo;
   to:
+    | "/payment"
     | "/$username/$slug"
     | "/auth/forgot-password"
     | "/auth/login"
@@ -262,6 +273,7 @@ export interface FileRouteTypes {
     | "/_home"
     | "/auth"
     | "/dashboard"
+    | "/payment"
     | "/builder/$resumeId"
     | "/$username/$slug"
     | "/auth/forgot-password"
@@ -287,6 +299,7 @@ export interface RootRouteChildren {
   HomeRouteRoute: typeof HomeRouteRouteWithChildren;
   AuthRouteRoute: typeof AuthRouteRouteWithChildren;
   DashboardRouteRoute: typeof DashboardRouteRouteWithChildren;
+  PaymentRoute: typeof PaymentRoute;
   BuilderResumeIdRouteRoute: typeof BuilderResumeIdRouteRouteWithChildren;
   UsernameSlugRoute: typeof UsernameSlugRoute;
   TemplatesSplatRoute: typeof TemplatesSplatRoute;
@@ -314,6 +327,13 @@ declare module "@tanstack/react-router" {
       path: "/dashboard";
       fullPath: "/dashboard";
       preLoaderRoute: typeof DashboardRouteRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    "/payment": {
+      id: "/payment";
+      path: "/payment";
+      fullPath: "/payment";
+      preLoaderRoute: typeof PaymentRouteImport;
       parentRoute: typeof rootRouteImport;
     };
     "/$username/$slug": {
@@ -525,6 +545,7 @@ const rootRouteChildren: RootRouteChildren = {
   HomeRouteRoute: HomeRouteRouteWithChildren,
   AuthRouteRoute: AuthRouteRouteWithChildren,
   DashboardRouteRoute: DashboardRouteRouteWithChildren,
+  PaymentRoute: PaymentRoute,
   BuilderResumeIdRouteRoute: BuilderResumeIdRouteRouteWithChildren,
   UsernameSlugRoute: UsernameSlugRoute,
   TemplatesSplatRoute: TemplatesSplatRoute,

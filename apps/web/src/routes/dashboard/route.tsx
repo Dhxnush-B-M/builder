@@ -31,6 +31,13 @@ export const Route = createFileRoute("/dashboard")({
 		if (!isAuth) {
 			throw redirect({ to: "/auth/login", replace: true });
 		}
+
+		if (typeof window !== "undefined") {
+			const paymentStatus = localStorage.getItem("rbuilder_payment_status");
+			if (paymentStatus !== "active") {
+				throw redirect({ to: "/payment", replace: true });
+			}
+		}
 	},
 	loader: () => {
 		const sidebarState = getDashboardSidebarState();
