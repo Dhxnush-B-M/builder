@@ -78,8 +78,82 @@ function PaymentPage() {
 	const [upiId, setUpiId] = useState("");
 	const [isProcessing, setIsProcessing] = useState(false);
 
-	function handleSelectPlan(plan: Plan) {
+	async function loadRazorpayScript(): Promise<boolean> {
+		return new Promise((resolve) => {
+			if (typeof window === "undefined") return resolve(false);
+			if ((window as any).Razorpay) return resolve(true);
+			const script = document.createElement("script");
+			script.src = "https://checkout.razorpay.com/v1/checkout.js";
+			script.onload = () => resolve(true);
+			script.onerror = () => resolve(false);
+			document.body.appendChild(script);
+		});
+	}
+
+	async function handleSelectPlan(plan: Plan) {
 		setSelectedPlan(plan);
+		setIsProcessing(true);
+		const razorpayKey = import.meta.env.VITE_RAZORPAY_KEY_ID || "";
+
+		const userEmail = typeof window !== "undefined" ? localStorage.getItem("rbuilder_user_email") || "user@example.com" : "user@example.com";
+		const rawUser = typeof window !== "undefined" ? localStorage.getItem("rbuilder_user") : null;
+		const userName = rawUser ? (JSON.parse(rawUser).name || "User") : "User";
+		const amountInPaise = Number(plan.price.replace("₹", "")) * 100;
+
+		const isScriptLoaded = await loadRazorpayScript();
+		if (isScriptLoaded && (window as any).Razorpay && razorpayKey) {
+			try {
+				const options = {
+					key: razorpayKey,
+					amount: amountInPaise,
+					currency: "INR",
+					name: "rbuilder",
+					description: `${plan.title} Subscription (${plan.price})`,
+					image: "/opengraph/logo.png",
+					prefill: {
+						name: userName,
+						email: userEmail,
+					},
+					theme: {
+						color: "#10b981",
+					},
+					handler: async function (response: any) {
+						if (typeof window !== "undefined") {
+							localStorage.setItem("rbuilder_payment_status", "active");
+							localStorage.setItem("rbuilder_subscription_plan", plan.id);
+							if (response?.razorpay_payment_id) {
+								localStorage.setItem("rbuilder_razorpay_payment_id", response.razorpay_payment_id);
+							}
+
+							await saveUserToSupabase({
+								email: userEmail,
+								name: userName,
+								plan: plan.id,
+							}).catch(() => null);
+						}
+
+						toast.success(`Payment Successful! ${plan.title} is now active.`);
+						setIsProcessing(false);
+						setIsCheckoutOpen(false);
+						void navigate({ to: "/onboarding" });
+					},
+					modal: {
+						ondismiss: function () {
+							setIsProcessing(false);
+						},
+					},
+				};
+
+				const rzp = new (window as any).Razorpay(options);
+				rzp.open();
+				return;
+			} catch (err) {
+				console.warn("Razorpay live popup error, using fallback modal:", err);
+			}
+		}
+
+		// Direct modal checkout fallback
+		setIsProcessing(false);
 		setIsCheckoutOpen(true);
 	}
 
