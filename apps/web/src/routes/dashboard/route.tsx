@@ -47,6 +47,17 @@ export const Route = createFileRoute("/dashboard")({
 		}
 
 		if (userEmail) {
+			if (typeof window !== "undefined") {
+				const paymentStatus = localStorage.getItem("rbuilder_payment_status");
+				const onboardingCompleted = localStorage.getItem("rbuilder_onboarding_completed");
+				const isPaidLocally = paymentStatus === "active" || localStorage.getItem(`rbuilder_paid_${userEmail}`) === "true";
+				const isOnboardedLocally = onboardingCompleted === "true" || localStorage.getItem(`rbuilder_onboarded_${userEmail}`) === "true";
+
+				if (isPaidLocally && isOnboardedLocally) {
+					return; // Instant access to dashboard
+				}
+			}
+
 			const { paid, onboarded } = await checkUserSubscriptionAndOnboardingFromSupabase(userEmail);
 			if (!paid) {
 				throw redirect({ to: "/payment", replace: true });

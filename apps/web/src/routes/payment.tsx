@@ -1,10 +1,25 @@
 import { CheckCircleIcon, LockKeyIcon } from "@phosphor-icons/react";
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, redirect } from "@tanstack/react-router";
 import { useState } from "react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/payment")({
 	component: PaymentPage,
+	beforeLoad: async () => {
+		if (typeof window !== "undefined") {
+			const localUser = localStorage.getItem("rbuilder_user");
+			const supabaseUser = localStorage.getItem("rbuilder_supabase_user");
+			const storedEmail = localStorage.getItem("rbuilder_user_email");
+			const userEmail =
+				storedEmail ||
+				(localUser ? JSON.parse(localUser).email : "") ||
+				(supabaseUser ? JSON.parse(supabaseUser).email : "");
+
+			if (!userEmail) {
+				throw redirect({ to: "/auth/login", replace: true });
+			}
+		}
+	},
 });
 
 type Plan = {

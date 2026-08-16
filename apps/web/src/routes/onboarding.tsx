@@ -1,12 +1,35 @@
-import type { FormEvent } from "react";
-import { DeviceMobileIcon, UserIcon } from "@phosphor-icons/react";
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, redirect } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { saveUserDetailsToSupabase } from "@/libs/supabase/db";
+import { saveUserDetailsToSupabase, checkUserSubscriptionAndOnboardingFromSupabase } from "@/libs/supabase/db";
 
 export const Route = createFileRoute("/onboarding")({
 	component: OnboardingPage,
+	beforeLoad: async () => {
+		if (typeof window !== "undefined") {
+			const localUser = localStorage.getItem("rbuilder_user");
+			const supabaseUser = localStorage.getItem("rbuilder_supabase_user");
+			const storedEmail = localStorage.getItem("rbuilder_user_email");
+			const userEmail =
+				storedEmail ||
+				(localUser ? JSON.parse(localUser).email : "") ||
+				(supabaseUser ? JSON.parse(supabaseUser).email : "");
+
+			if (!userEmail) {
+				throw redirect({ to: "/auth/login", replace: true });
+			}
+
+			const paymentStatus = localStorage.getItem("rbuilder_payment_status");
+			const isPaidLocally = paymentStatus === "active" || localStorage.getItem(`rbuilder_paid_${userEmail}`) === "true";
+
+			if (!isPaidLocally) {
+				const { paid } = await checkUserSubscriptionAndOnboardingFromSupabase(userEmail);
+				if (!paid) {
+					throw redirect({ to: "/payment", replace: true });
+				}
+			}
+		}
+	},
 });
 
 function OnboardingPage() {
