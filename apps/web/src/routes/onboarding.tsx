@@ -56,11 +56,11 @@ function OnboardingPage() {
 				phone: fullPhone,
 			});
 
-			toast.success("Profile details saved! Please choose your plan to activate.");
-			void navigate({ to: "/payment" });
+			toast.success("Profile details saved! Welcome to rbuilder.");
+			void navigate({ to: "/dashboard/resumes" });
 		} catch {
 			toast.success("Profile details saved!");
-			void navigate({ to: "/payment" });
+			void navigate({ to: "/dashboard/resumes" });
 		} finally {
 			setIsSubmitting(false);
 		}

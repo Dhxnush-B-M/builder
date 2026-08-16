@@ -121,7 +121,7 @@ function PaymentPage() {
 
 			toast.success(`Payment Activated! ${plan.title} is now active.`);
 			setIsProcessing(false);
-			void navigate({ to: "/dashboard/resumes" });
+			void navigate({ to: "/onboarding" });
 		};
 
 		const isScriptLoaded = await loadRazorpayScript();
