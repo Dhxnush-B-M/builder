@@ -82,9 +82,26 @@ function PaymentPage() {
 		setSelectedPlan(plan);
 		setIsProcessing(true);
 
-		const razorpayKey =
+		let razorpayKey =
 			import.meta.env.VITE_RAZORPAY_KEY_ID ||
-			(typeof window !== "undefined" ? localStorage.getItem("rbuilder_razorpay_key_id") || "rzp_live_key" : "rzp_live_key");
+			(typeof window !== "undefined" ? localStorage.getItem("rbuilder_razorpay_key_id") || "" : "");
+
+		if (!razorpayKey || razorpayKey === "rzp_live_key") {
+			const enteredKey = prompt(
+				"Razorpay 401 Error: Valid Razorpay Key ID is missing.\n\nPlease enter your Razorpay Key ID (starts with rzp_live_ or rzp_test_ from https://dashboard.razorpay.com/app/keys):",
+				"",
+			);
+			if (enteredKey?.trim()) {
+				razorpayKey = enteredKey.trim();
+				if (typeof window !== "undefined") {
+					localStorage.setItem("rbuilder_razorpay_key_id", razorpayKey);
+				}
+			} else {
+				setIsProcessing(false);
+				toast.error("Valid Razorpay Key ID (rzp_live_... or rzp_test_...) is required for checkout.");
+				return;
+			}
+		}
 
 		const userEmail =
 			typeof window !== "undefined"
