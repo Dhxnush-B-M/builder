@@ -9,7 +9,7 @@ import {
 	UserPlusIcon,
 } from "@phosphor-icons/react";
 import { supabase } from "@/libs/supabase/client";
-import { saveUserToSupabase } from "@/libs/supabase/db";
+import { checkUserSubscriptionAndOnboardingFromSupabase, saveUserToSupabase } from "@/libs/supabase/db";
 
 export const Route = createFileRoute("/auth/login")({
 	component: AuthLoginPage,
@@ -19,7 +19,15 @@ export const Route = createFileRoute("/auth/login")({
 			const supabaseUser = localStorage.getItem("rbuilder_supabase_user");
 			const userEmail = localStorage.getItem("rbuilder_user_email");
 			if (localUser || supabaseUser || userEmail) {
-				throw redirect({ to: "/dashboard/resumes", replace: true });
+				const email = userEmail || (localUser ? JSON.parse(localUser).email : "") || (supabaseUser ? JSON.parse(supabaseUser).email : "");
+				const { paid, onboarded } = await checkUserSubscriptionAndOnboardingFromSupabase(email);
+				if (paid && onboarded) {
+					throw redirect({ to: "/dashboard/resumes", replace: true });
+				} else if (paid) {
+					throw redirect({ to: "/onboarding", replace: true });
+				} else {
+					throw redirect({ to: "/payment", replace: true });
+				}
 			}
 		}
 	},
@@ -52,7 +60,7 @@ function AuthLoginPage() {
 			headers: { Authorization: `Bearer ${accessToken}` },
 		})
 			.then((res) => res.json())
-			.then((googleUser) => {
+			.then(async (googleUser) => {
 				if (googleUser && googleUser.email) {
 					const realEmail = googleUser.email;
 					const realName = googleUser.name || googleUser.given_name || realEmail.split("@")[0];
@@ -70,8 +78,15 @@ function AuthLoginPage() {
 
 					window.history.replaceState(null, "", window.location.pathname);
 					toast.success("Signed in successfully!");
-					const isPaid = typeof window !== "undefined" && localStorage.getItem("rbuilder_payment_status") === "active";
-					void navigate({ to: isPaid ? "/dashboard/resumes" : "/payment" });
+
+					const { paid, onboarded } = await checkUserSubscriptionAndOnboardingFromSupabase(realEmail);
+					if (paid && onboarded) {
+						void navigate({ to: "/dashboard/resumes" });
+					} else if (paid) {
+						void navigate({ to: "/onboarding" });
+					} else {
+						void navigate({ to: "/payment" });
+					}
 
 					// Non-blocking background sync to Supabase
 					void saveUserToSupabase({
@@ -116,8 +131,14 @@ function AuthLoginPage() {
 			}
 
 			toast.success("Signed in successfully!");
-			const isPaid = typeof window !== "undefined" && localStorage.getItem("rbuilder_payment_status") === "active";
-			void navigate({ to: isPaid ? "/dashboard/resumes" : "/payment" });
+			const { paid, onboarded } = await checkUserSubscriptionAndOnboardingFromSupabase(typedEmail);
+			if (paid && onboarded) {
+				void navigate({ to: "/dashboard/resumes" });
+			} else if (paid) {
+				void navigate({ to: "/onboarding" });
+			} else {
+				void navigate({ to: "/payment" });
+			}
 			setLoading(false);
 
 			// Non-blocking background sync
@@ -131,8 +152,7 @@ function AuthLoginPage() {
 			window.location.href = googleAuthUrl;
 		} catch {
 			toast.success("Signed in successfully!");
-			const isPaid = typeof window !== "undefined" && localStorage.getItem("rbuilder_payment_status") === "active";
-			void navigate({ to: isPaid ? "/dashboard/resumes" : "/payment" });
+			void navigate({ to: "/payment" });
 		} finally {
 			setLoading(false);
 		}
@@ -157,8 +177,14 @@ function AuthLoginPage() {
 			}
 
 			toast.success(mode === "login" ? "Signed in successfully!" : "Account created successfully!");
-			const isPaid = typeof window !== "undefined" && localStorage.getItem("rbuilder_payment_status") === "active";
-			void navigate({ to: isPaid ? "/dashboard/resumes" : "/payment" });
+			const { paid, onboarded } = await checkUserSubscriptionAndOnboardingFromSupabase(typedEmail);
+			if (paid && onboarded) {
+				void navigate({ to: "/dashboard/resumes" });
+			} else if (paid) {
+				void navigate({ to: "/onboarding" });
+			} else {
+				void navigate({ to: "/payment" });
+			}
 
 			// Non-blocking background sync to Supabase
 			void saveUserToSupabase({

@@ -7,32 +7,52 @@ import { getSession } from "@/libs/auth/session";
 import { getDashboardSidebarState, setDashboardSidebarState } from "./-components/functions";
 import { DashboardSidebar } from "./-components/sidebar";
 
+import { checkUserSubscriptionAndOnboardingFromSupabase } from "@/libs/supabase/db";
+
 export const Route = createFileRoute("/dashboard")({
 	component: RouteComponent,
 	beforeLoad: async ({ context }) => {
 		let isAuth = false;
+		let userEmail = "";
 		if (typeof window !== "undefined") {
 			const localUser = localStorage.getItem("rbuilder_user");
 			const supabaseUser = localStorage.getItem("rbuilder_supabase_user");
-			const userEmail = localStorage.getItem("rbuilder_user_email");
-			if (localUser || supabaseUser || userEmail) isAuth = true;
+			const storedEmail = localStorage.getItem("rbuilder_user_email");
+			if (localUser || supabaseUser || storedEmail) {
+				isAuth = true;
+				userEmail = storedEmail || (localUser ? JSON.parse(localUser).email : "") || (supabaseUser ? JSON.parse(supabaseUser).email : "");
+			}
 		}
 		if (!isAuth) {
 			const { data } = await supabase.auth.getSession().catch(() => ({ data: { session: null } }));
-			if (data?.session?.user) isAuth = true;
+			if (data?.session?.user) {
+				isAuth = true;
+				userEmail = data.session.user.email || "";
+			}
 		}
 		if (!isAuth) {
 			let session = context.session;
 			if (!session || session.user?.id === "guest-user") {
 				session = await getSession().catch(() => null);
 			}
-			if (session?.user && session.user.id !== "guest-user") isAuth = true;
+			if (session?.user && session.user.id !== "guest-user") {
+				isAuth = true;
+				userEmail = session.user.email || "";
+			}
 		}
 		if (!isAuth) {
 			throw redirect({ to: "/auth/login", replace: true });
 		}
 
-		if (typeof window !== "undefined") {
+		if (userEmail) {
+			const { paid, onboarded } = await checkUserSubscriptionAndOnboardingFromSupabase(userEmail);
+			if (!paid) {
+				throw redirect({ to: "/payment", replace: true });
+			}
+			if (!onboarded) {
+				throw redirect({ to: "/onboarding", replace: true });
+			}
+		} else if (typeof window !== "undefined") {
 			const paymentStatus = localStorage.getItem("rbuilder_payment_status");
 			if (paymentStatus !== "active") {
 				throw redirect({ to: "/payment", replace: true });

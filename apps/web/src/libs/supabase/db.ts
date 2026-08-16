@@ -360,6 +360,8 @@ export async function saveUserDetailsToSupabase(details: { email?: string; name:
 	if (typeof window !== "undefined") {
 		localStorage.setItem("rbuilder_user_phone", details.phone);
 		localStorage.setItem("rbuilder_onboarding_completed", "true");
+		localStorage.setItem(`rbuilder_onboarded_${activeEmail}`, "true");
+		localStorage.setItem(`rbuilder_paid_${activeEmail}`, "true");
 		try {
 			const existingUser = localStorage.getItem("rbuilder_user");
 			const parsed = existingUser ? JSON.parse(existingUser) : {};
@@ -382,4 +384,54 @@ export async function saveUserDetailsToSupabase(details: { email?: string; name:
 	}
 
 	return record;
+}
+
+/**
+ * Check if a specific Gmail/user email has already completed payment & onboarding in Supabase
+ */
+export async function checkUserSubscriptionAndOnboardingFromSupabase(email: string): Promise<{ paid: boolean; onboarded: boolean }> {
+	const cleanEmail = (email || "").trim().toLowerCase();
+	if (!cleanEmail) return { paid: false, onboarded: false };
+
+	if (typeof window !== "undefined") {
+		const isPerEmailPaid = localStorage.getItem(`rbuilder_paid_${cleanEmail}`) === "true";
+		const isPerEmailOnboarded = localStorage.getItem(`rbuilder_onboarded_${cleanEmail}`) === "true";
+
+		if (isPerEmailPaid && isPerEmailOnboarded) {
+			localStorage.setItem("rbuilder_payment_status", "active");
+			localStorage.setItem("rbuilder_onboarding_completed", "true");
+			return { paid: true, onboarded: true };
+		}
+	}
+
+	try {
+		const { data: detail } = await supabase.from("user_details").select("*").eq("email", cleanEmail).maybeSingle();
+		if (detail) {
+			if (typeof window !== "undefined") {
+				localStorage.setItem(`rbuilder_paid_${cleanEmail}`, "true");
+				localStorage.setItem(`rbuilder_onboarded_${cleanEmail}`, "true");
+				localStorage.setItem("rbuilder_payment_status", "active");
+				localStorage.setItem("rbuilder_onboarding_completed", "true");
+			}
+			return { paid: true, onboarded: true };
+		}
+
+		const { data: profile } = await supabase.from("profiles").select("*").eq("email", cleanEmail).maybeSingle();
+		if (profile && profile.phone) {
+			if (typeof window !== "undefined") {
+				localStorage.setItem(`rbuilder_paid_${cleanEmail}`, "true");
+				localStorage.setItem(`rbuilder_onboarded_${cleanEmail}`, "true");
+				localStorage.setItem("rbuilder_payment_status", "active");
+				localStorage.setItem("rbuilder_onboarding_completed", "true");
+			}
+			return { paid: true, onboarded: true };
+		}
+	} catch {
+		// ignore
+	}
+
+	const fallbackPaid = typeof window !== "undefined" && localStorage.getItem("rbuilder_payment_status") === "active";
+	const fallbackOnboarded = typeof window !== "undefined" && localStorage.getItem("rbuilder_onboarding_completed") === "true";
+
+	return { paid: fallbackPaid, onboarded: fallbackOnboarded };
 }
