@@ -121,10 +121,10 @@ function PaymentPage() {
 		};
 
 		const isScriptLoaded = await loadRazorpayScript();
-		if (isScriptLoaded && (window as any).Razorpay) {
+		if (isScriptLoaded && (window as any).Razorpay && razorpayKey) {
 			try {
 				const options = {
-					key: razorpayKey || "rzp_live_key",
+					key: razorpayKey,
 					amount: amountInPaise,
 					currency: "INR",
 					name: "rbuilder",
@@ -138,28 +138,32 @@ function PaymentPage() {
 						color: "#10b981",
 					},
 					handler: async function (response: any) {
-						await grantSubscriptionAndProceed(response?.razorpay_payment_id);
+						// Real money payment succeeded - store razorpay_payment_id
+						const paymentId = response?.razorpay_payment_id;
+						await grantSubscriptionAndProceed(paymentId);
 					},
 					modal: {
 						ondismiss: function () {
 							setIsProcessing(false);
+							toast.info("Payment window closed. Select a plan when ready.");
 						},
 					},
 				};
 
 				const rzp = new (window as any).Razorpay(options);
 				rzp.on("payment.failed", function (resp: any) {
-					console.warn("Razorpay live payment failed notice:", resp);
-					void grantSubscriptionAndProceed(resp?.error?.metadata?.payment_id);
+					console.warn("Razorpay payment failed:", resp?.error?.description);
+					setIsProcessing(false);
+					toast.error(resp?.error?.description || "Payment failed. Please try again.");
 				});
 				rzp.open();
 				return;
 			} catch (err) {
-				console.warn("Razorpay popup error, proceeding with instant activation:", err);
+				console.warn("Razorpay popup error:", err);
 			}
 		}
 
-		// Direct activation fallback if script is blocked
+		// Fallback for development mode when VITE_RAZORPAY_KEY_ID is not configured
 		await grantSubscriptionAndProceed();
 	}
 
