@@ -20,164 +20,151 @@ function AuthLoginPage() {
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 
-	// Listen for Google OAuth callback & clean address bar immediately to prevent Chrome Safe Browsing warnings
+	// Listen for Supabase session & Google OAuth callback
 	useEffect(() => {
 		if (typeof window === "undefined") return;
 
-		// Immediately wipe any URL hash to prevent Chrome Safe Browsing warnings
-		if (window.location.hash) {
-			window.history.replaceState(null, "", window.location.pathname + window.location.search);
-		}
-
-		const urlParams = new URLSearchParams(window.location.search);
-		const hashParams = new URLSearchParams(window.location.hash.replace(/^#/, ""));
-		const accessToken = hashParams.get("access_token");
-		const code = urlParams.get("code");
-
-		if (accessToken || code) {
+		// Clean address bar parameters if returning from OAuth
+		if (window.location.hash || window.location.search.includes("code=")) {
 			window.history.replaceState(null, "", window.location.pathname);
-
-			if (accessToken) {
-				setLoading(true);
-				fetch("https://www.googleapis.com/oauth2/v3/userinfo", {
-					headers: { Authorization: `Bearer ${accessToken}` },
-				})
-					.then((res) => res.json())
-					.then(async (googleUser) => {
-						if (googleUser?.email) {
-							const realEmail = googleUser.email;
-							const realName = googleUser.name || googleUser.given_name || realEmail.split("@")[0];
-							const realAvatar =
-								googleUser.picture || `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(realEmail)}`;
-
-							localStorage.setItem(
-								"rbuilder_user",
-								JSON.stringify({
-									email: realEmail,
-									name: realName,
-									avatar_url: realAvatar,
-								}),
-							);
-							localStorage.setItem("rbuilder_user_email", realEmail);
-
-							toast.success("Signed in successfully!");
-							void navigate({ to: "/dashboard/resumes" });
-							void saveUserToSupabase({
-								email: realEmail,
-								name: realName,
-								avatar: realAvatar,
-							});
-						}
-					})
-					.catch((err) => {
-						console.error("Google userinfo fetch error:", err);
-						toast.error("Authentication error.");
-					})
-					.finally(() => {
-						setLoading(false);
-					});
-			} else if (code) {
-				// Handle code callback
-				const fallbackEmail = `user_${Date.now().toString().slice(-4)}@gmail.com`;
-				localStorage.setItem(
-					"rbuilder_user",
-					JSON.stringify({
-						email: fallbackEmail,
-						name: "Google User",
-						avatar_url: `https://api.dicebear.com/7.x/avataaars/svg?seed=${fallbackEmail}`,
-					}),
-				);
-				localStorage.setItem("rbuilder_user_email", fallbackEmail);
-				toast.success("Signed in with Google!");
-				void navigate({ to: "/dashboard/resumes" });
-			}
 		}
+
+		// Sync current Supabase session
+		supabase.auth.getSession().then(({ data: { session } }) => {
+			if (session?.user) {
+				const user = session.user;
+				const realEmail = user.email || "";
+				if (realEmail) {
+					const userMeta = user.user_metadata || {};
+					const realName = userMeta.full_name || userMeta.name || realEmail.split("@")[0];
+					const realAvatar = userMeta.avatar_url || userMeta.picture;
+
+					localStorage.setItem(
+						"rbuilder_user",
+						JSON.stringify({
+							email: realEmail,
+							name: realName,
+							avatar_url: realAvatar,
+						}),
+					);
+					localStorage.setItem("rbuilder_user_email", realEmail);
+					localStorage.setItem("rbuilder_supabase_user", JSON.stringify(user));
+
+					void saveUserToSupabase({ email: realEmail, name: realName, avatar: realAvatar }).catch(() => null);
+					void navigate({ to: "/dashboard/resumes" });
+				}
+			}
+		});
+
+		const {
+			data: { subscription },
+		} = supabase.auth.onAuthStateChange((_event, session) => {
+			if (session?.user) {
+				const user = session.user;
+				const realEmail = user.email || "";
+				if (realEmail) {
+					const userMeta = user.user_metadata || {};
+					const realName = userMeta.full_name || userMeta.name || realEmail.split("@")[0];
+					const realAvatar = userMeta.avatar_url || userMeta.picture;
+
+					localStorage.setItem(
+						"rbuilder_user",
+						JSON.stringify({
+							email: realEmail,
+							name: realName,
+							avatar_url: realAvatar,
+						}),
+					);
+					localStorage.setItem("rbuilder_user_email", realEmail);
+					localStorage.setItem("rbuilder_supabase_user", JSON.stringify(user));
+
+					void saveUserToSupabase({ email: realEmail, name: realName, avatar: realAvatar }).catch(() => null);
+					void navigate({ to: "/dashboard/resumes" });
+				}
+			}
+		});
+
+		return () => subscription.unsubscribe();
 	}, [navigate]);
 
 	async function handleGoogleOAuth2() {
 		setLoading(true);
-		const typedEmail = email.trim();
-		const typedName = name.trim();
-
-		if (typedEmail) {
-			const activeName = typedName || typedEmail.split("@")[0] || "User";
-			const activeAvatar = `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(typedEmail)}`;
-
-			if (typeof window !== "undefined") {
-				localStorage.setItem(
-					"rbuilder_user",
-					JSON.stringify({ email: typedEmail, name: activeName, avatar_url: activeAvatar }),
-				);
-				localStorage.setItem("rbuilder_user_email", typedEmail);
+		try {
+			const { error } = await supabase.auth.signInWithOAuth({
+				provider: "google",
+				options: {
+					redirectTo: `${window.location.origin}/auth/login`,
+				},
+			});
+			if (error) {
+				toast.error(error.message || "Failed to launch Google sign-in with Supabase.");
+				setLoading(false);
 			}
-
-			toast.success("Signed in successfully!");
-			void navigate({ to: "/dashboard/resumes" });
+		} catch (err) {
+			console.error("Supabase OAuth error:", err);
+			toast.error("Failed to connect to Supabase authentication.");
 			setLoading(false);
-
-			void saveUserToSupabase({ email: typedEmail, name: activeName, avatar: activeAvatar }).catch(() => null);
-			return;
 		}
-
-		// Launch direct Google OAuth 2.0 with Authorization Code Flow (response_type=code)
-		const googleClientId =
-			import.meta.env.VITE_GOOGLE_CLIENT_ID ||
-			"925681943886-vr4mi6ebqvi2o9bioivpvtv9ugthd2ct.apps.googleusercontent.com";
-		const redirectUri = `${window.location.origin}/auth/login`;
-		const googleAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?response_type=code&client_id=${encodeURIComponent(googleClientId)}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=openid%20profile%20email&prompt=select_account`;
-
-		window.location.href = googleAuthUrl;
 	}
 
 	async function handleSubmit(e: FormEvent) {
 		e.preventDefault();
-		if (!email || !password) return;
+		const typedEmail = email.trim();
+		const typedPassword = password.trim();
+		if (!typedEmail || !typedPassword) {
+			toast.error("Please provide both email and password.");
+			return;
+		}
 
 		setLoading(true);
 		try {
-			const typedEmail = email.trim();
-			const userName = name.trim() || typedEmail.split("@")[0] || "User";
-			const userAvatar = `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(typedEmail)}`;
-
-			if (typeof window !== "undefined") {
-				localStorage.setItem(
-					"rbuilder_user",
-					JSON.stringify({ email: typedEmail, name: userName, avatar_url: userAvatar }),
-				);
-				localStorage.setItem("rbuilder_user_email", typedEmail);
-			}
-
-			toast.success(mode === "login" ? "Signed in successfully!" : "Account created successfully!");
-			const { paid, onboarded } = await checkUserSubscriptionAndOnboardingFromSupabase(typedEmail);
-			if (paid && onboarded) {
-				void navigate({ to: "/dashboard/resumes" });
-			} else if (paid) {
-				void navigate({ to: "/onboarding" });
+			if (mode === "register") {
+				const typedName = name.trim() || typedEmail.split("@")[0];
+				const { data, error } = await supabase.auth.signUp({
+					email: typedEmail,
+					password: typedPassword,
+					options: {
+						data: { name: typedName },
+					},
+				});
+				if (error) throw error;
+				if (data.user) {
+					const realEmail = data.user.email || typedEmail;
+					const realName = typedName;
+					toast.success("Account created successfully!");
+					localStorage.setItem(
+						"rbuilder_user",
+						JSON.stringify({ email: realEmail, name: realName }),
+					);
+					localStorage.setItem("rbuilder_user_email", realEmail);
+					void saveUserToSupabase({ email: realEmail, name: realName }).catch(() => null);
+					void navigate({ to: "/dashboard/resumes" });
+				}
 			} else {
-				void navigate({ to: "/payment" });
-			}
+				const { data, error } = await supabase.auth.signInWithPassword({
+					email: typedEmail,
+					password: typedPassword,
+				});
+				if (error) throw error;
+				if (data.user) {
+					const realEmail = data.user.email || typedEmail;
+					const userMeta = data.user.user_metadata || {};
+					const realName = userMeta.name || userMeta.full_name || realEmail.split("@")[0];
+					const realAvatar = userMeta.avatar_url || userMeta.picture;
 
-			// Non-blocking background sync to Supabase
-			void saveUserToSupabase({
-				email: typedEmail,
-				name: userName,
-				avatar: userAvatar,
-			});
-
-			if (mode === "login") {
-				void supabase.auth.signInWithPassword({ email: typedEmail, password }).catch(() => null);
-			} else {
-				void supabase.auth
-					.signUp({
-						email: typedEmail,
-						password,
-						options: { data: { name: userName } },
-					})
-					.catch(() => null);
+					toast.success("Signed in successfully!");
+					localStorage.setItem(
+						"rbuilder_user",
+						JSON.stringify({ email: realEmail, name: realName, avatar_url: realAvatar }),
+					);
+					localStorage.setItem("rbuilder_user_email", realEmail);
+					void saveUserToSupabase({ email: realEmail, name: realName, avatar: realAvatar }).catch(() => null);
+					void navigate({ to: "/dashboard/resumes" });
+				}
 			}
-		} catch {
-			toast.success("Signed in successfully!");
-			void navigate({ to: "/dashboard/resumes" });
+		} catch (err) {
+			console.error("Auth error:", err);
+			toast.error(err instanceof Error ? err.message : "Authentication failed.");
 		} finally {
 			setLoading(false);
 		}
