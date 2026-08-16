@@ -163,15 +163,6 @@ export function DashboardSidebar() {
 						<SidebarItemList items={appSidebarItems} />
 					</SidebarGroupContent>
 				</SidebarGroup>
-
-				<SidebarGroup>
-					<SidebarGroupLabel>
-						<Trans>Settings</Trans>
-					</SidebarGroupLabel>
-					<SidebarGroupContent>
-						<SidebarItemList items={settingsSidebarItems} />
-					</SidebarGroupContent>
-				</SidebarGroup>
 			</SidebarContent>
 
 			<SidebarSeparator />
