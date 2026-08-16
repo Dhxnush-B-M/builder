@@ -35,7 +35,7 @@ const PLANS: Plan[] = [
 		id: "monthly",
 		title: "Starter Monthly",
 		price: "₹11",
-		period: "/ 1st Month (Autopay)",
+		period: "/ 1st Month",
 		originalPrice: "₹49",
 		description: "Get full access to all resume templates, PDF exports, and builder tools for your first month.",
 		features: [
@@ -43,7 +43,7 @@ const PLANS: Plan[] = [
 			"Unlimited PDF & DOCX Downloads",
 			"Live Cloud Storage & Supabase Sync",
 			"100% ATS-Friendly Resume Layouts",
-			"Autopay Enabled (Cancel Anytime)",
+			"Cancel Anytime",
 		],
 		buttonText: "Activate ₹11 / Month Plan",
 		highlighted: false,
@@ -52,7 +52,7 @@ const PLANS: Plan[] = [
 		id: "quarterly",
 		title: "Pro Quarter",
 		price: "₹20",
-		period: "/ 3 Months (Autopay)",
+		period: "/ 3 Months",
 		originalPrice: "₹149",
 		badge: "MOST POPULAR • SAVE 85%",
 		description: "Maximum savings for job seekers. 3 full months of unlimited builder access with automated renewal.",
@@ -61,7 +61,7 @@ const PLANS: Plan[] = [
 			"3 Months Continuous Access",
 			"Priority AI Resume & Summary Enhancer",
 			"Custom Portfolio & Public Web Link",
-			"Autopay Security Guarantee (Cancel Anytime)",
+			"24/7 Premium Access (Cancel Anytime)",
 		],
 		buttonText: "Activate ₹20 / 3 Months Plan",
 		highlighted: true,
@@ -83,7 +83,8 @@ function PaymentPage() {
 
 	async function handleApprovePayment() {
 		if (paymentMethod === "upi" && !upiId.trim()) {
-			setUpiId("user@okicici");
+			toast.error("Please enter your UPI ID.");
+			return;
 		}
 
 		setIsProcessing(true);
@@ -103,7 +104,7 @@ function PaymentPage() {
 				}).catch(() => null);
 			}
 
-			toast.success(`Autopay Activated! ${selectedPlan?.title} is now active.`);
+			toast.success(`Payment Approved! ${selectedPlan?.title} is now active.`);
 			setIsProcessing(false);
 			setIsCheckoutOpen(false);
 
@@ -141,7 +142,7 @@ function PaymentPage() {
 				{/* Title Section */}
 				<div className="text-center space-y-3 max-w-2xl">
 					<h1 className="text-3xl md:text-5xl font-extrabold tracking-tight bg-gradient-to-r from-white via-zinc-200 to-zinc-400 bg-clip-text text-transparent">
-						Choose Your Autopay Plan
+						Choose Your Plan
 					</h1>
 
 					<p className="text-zinc-400 text-sm md:text-base leading-relaxed">
@@ -215,16 +216,16 @@ function PaymentPage() {
 				<div className="flex items-center justify-center gap-6 text-xs text-zinc-500 pt-4">
 					<div className="flex items-center gap-1.5">
 						<LockKeyIcon className="size-4 text-emerald-400" />
-						<span>256-bit Encrypted Autopay</span>
+						<span>256-bit Encrypted Payment</span>
 					</div>
 					<div className="flex items-center gap-1.5">
 						<CheckCircleIcon className="size-4 text-emerald-400" />
-						<span>Cancel Autopay Anytime</span>
+						<span>Cancel Anytime</span>
 					</div>
 				</div>
 			</main>
 
-			{/* Checkout & Autopay Modal */}
+			{/* Checkout & Payment Modal */}
 			{isCheckoutOpen && selectedPlan && (
 				<div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 backdrop-blur-md">
 					<div className="relative w-full max-w-md rounded-3xl border border-zinc-700/80 bg-zinc-900 p-6 md:p-8 shadow-2xl space-y-6 text-zinc-100">
@@ -239,7 +240,7 @@ function PaymentPage() {
 
 						{/* Modal Header */}
 						<div className="space-y-1 border-b border-zinc-800 pb-4">
-							<span className="text-xs font-bold text-yellow-400 uppercase tracking-wider">UPI Autopay Checkout</span>
+							<span className="text-xs font-bold text-yellow-400 uppercase tracking-wider">Fast & Secure Checkout</span>
 							<h3 className="text-xl font-bold text-white">{selectedPlan.title}</h3>
 							<p className="text-2xl font-extrabold text-white">
 								{selectedPlan.price} <span className="text-xs font-normal text-zinc-400">{selectedPlan.period}</span>
@@ -248,7 +249,7 @@ function PaymentPage() {
 
 						{/* Payment Method Selector */}
 						<div className="space-y-3">
-							<label className="text-xs font-semibold text-zinc-300">Select Autopay Method</label>
+							<label className="text-xs font-semibold text-zinc-300">Select Payment Method</label>
 							<div className="grid grid-cols-3 gap-2">
 								<button
 									type="button"
@@ -260,7 +261,7 @@ function PaymentPage() {
 									}`}
 								>
 									<ShieldCheckIcon className="size-5" />
-									<span>UPI Autopay</span>
+									<span>Instant UPI</span>
 								</button>
 
 								<button
@@ -317,7 +318,7 @@ function PaymentPage() {
 										className="size-full"
 									/>
 								</div>
-								<p className="text-xs text-zinc-400">Scan with any UPI app to authorize {selectedPlan.price} Autopay</p>
+								<p className="text-xs text-zinc-400">Scan with any UPI app to complete {selectedPlan.price} payment</p>
 							</div>
 						)}
 
@@ -343,11 +344,11 @@ function PaymentPage() {
 							</div>
 						)}
 
-						{/* Mandate Authorization Checkbox */}
+						{/* Authorization Checkbox */}
 						<div className="flex items-start gap-2.5 bg-zinc-950/60 p-3 rounded-xl border border-zinc-800 text-xs text-zinc-400">
 							<input type="checkbox" defaultChecked id="mandate" className="mt-0.5 rounded accent-yellow-400" />
 							<label htmlFor="mandate" className="cursor-pointer leading-tight text-[11px]">
-								I authorize <strong className="text-zinc-200">rbuilder</strong> to setup automated recurring payments for {selectedPlan.price} {selectedPlan.period}. I can pause or cancel anytime.
+								I authorize <strong className="text-zinc-200">rbuilder</strong> subscription for {selectedPlan.price} {selectedPlan.period}. I can pause or cancel anytime.
 							</label>
 						</div>
 
@@ -361,7 +362,7 @@ function PaymentPage() {
 							{isProcessing ? (
 								<>
 									<div className="size-4 border-2 border-zinc-950 border-t-transparent rounded-full animate-spin" />
-									<span>Authorizing Autopay Mandate...</span>
+									<span>Processing Payment...</span>
 								</>
 							) : (
 								<span>Approve & Complete ({selectedPlan.price})</span>
