@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState, type FormEvent } from "react";
 import { toast } from "sonner";
-import { DeviceMobileIcon, ShieldCheckIcon, UserIcon, CheckCircleIcon } from "@phosphor-icons/react";
+import { ArrowLeftIcon, DeviceMobileIcon, ShieldCheckIcon, UserIcon, CheckCircleIcon } from "@phosphor-icons/react";
 import { saveUserDetailsToSupabase } from "@/libs/supabase/db";
 
 export const Route = createFileRoute("/onboarding")({
@@ -73,13 +73,33 @@ function OnboardingPage() {
 				<div className="size-[600px] animate-pulse rounded-full bg-gradient-to-tr from-emerald-500/20 via-blue-500/20 to-purple-500/20 blur-3xl" />
 			</div>
 
+			{/* Back to Home Button */}
+			<a
+				href="/"
+				onClick={(e) => {
+					e.preventDefault();
+					window.location.href = "/";
+				}}
+				className="relative z-10 mb-4 flex items-center gap-2 text-xs font-semibold text-zinc-400 hover:text-white transition-colors cursor-pointer"
+			>
+				<ArrowLeftIcon className="size-4" />
+				<span>Back to Home</span>
+			</a>
+
 			{/* Main Floating Glassmorphic Container */}
 			<div className="relative z-10 w-full max-w-[460px] rounded-[32px] border border-zinc-800 bg-zinc-900/90 p-8 md:p-10 shadow-2xl backdrop-blur-2xl space-y-6">
 				{/* Top Logo & Title */}
 				<div className="text-center space-y-2">
-					<div className="flex items-center justify-center gap-2 mb-2">
+					<a
+						href="/"
+						onClick={(e) => {
+							e.preventDefault();
+							window.location.href = "/";
+						}}
+						className="inline-flex items-center justify-center gap-2 mb-2 cursor-pointer"
+					>
 						<img src="/opengraph/logo.png" alt="rbuilder logo" className="size-10 rounded-full border border-emerald-500/50" />
-					</div>
+					</a>
 
 					<div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-bold">
 						<CheckCircleIcon className="size-4" />

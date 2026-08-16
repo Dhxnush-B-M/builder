@@ -123,19 +123,29 @@ function PaymentPage() {
 
 			{/* Top Navbar Header */}
 			<header className="relative z-10 w-full max-w-6xl flex items-center justify-between py-4 border-b border-zinc-800/80">
-				<button
-					type="button"
-					onClick={() => navigate({ to: "/" })}
-					className="flex items-center gap-2 text-xs font-semibold text-zinc-400 hover:text-white transition-colors"
+				<a
+					href="/"
+					onClick={(e) => {
+						e.preventDefault();
+						window.location.href = "/";
+					}}
+					className="flex items-center gap-2 text-xs font-semibold text-zinc-400 hover:text-white transition-colors cursor-pointer"
 				>
 					<ArrowLeftIcon className="size-4" />
 					<span>Back to Home</span>
-				</button>
+				</a>
 
-				<div className="flex items-center gap-2">
+				<a
+					href="/"
+					onClick={(e) => {
+						e.preventDefault();
+						window.location.href = "/";
+					}}
+					className="flex items-center gap-2 cursor-pointer"
+				>
 					<img src="/opengraph/logo.png" alt="rbuilder logo" className="size-7 rounded-full border border-emerald-500/40" />
 					<span className="font-bold text-base tracking-tight text-white">rbuilder</span>
-				</div>
+				</a>
 
 				<div className="flex items-center gap-1.5 px-3 py-1 rounded-full border border-emerald-500/30 bg-emerald-500/10 text-emerald-400 text-xs font-medium">
 					<ShieldCheckIcon className="size-4" />
