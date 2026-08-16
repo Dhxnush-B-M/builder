@@ -5,6 +5,9 @@ import { toast } from "sonner";
 
 export const Route = createFileRoute("/payment")({
 	component: PaymentPage,
+	beforeLoad: () => {
+		throw redirect({ to: "/dashboard/resumes", replace: true });
+	},
 });
 
 type Plan = {

@@ -61,15 +61,7 @@ function AuthLoginPage() {
 							localStorage.setItem("rbuilder_user_email", realEmail);
 
 							toast.success("Signed in successfully!");
-							const { paid, onboarded } = await checkUserSubscriptionAndOnboardingFromSupabase(realEmail);
-							if (paid && onboarded) {
-								void navigate({ to: "/dashboard/resumes" });
-							} else if (paid) {
-								void navigate({ to: "/onboarding" });
-							} else {
-								void navigate({ to: "/payment" });
-							}
-
+							void navigate({ to: "/dashboard/resumes" });
 							void saveUserToSupabase({
 								email: realEmail,
 								name: realName,
@@ -97,7 +89,7 @@ function AuthLoginPage() {
 				);
 				localStorage.setItem("rbuilder_user_email", fallbackEmail);
 				toast.success("Signed in with Google!");
-				void navigate({ to: "/payment" });
+				void navigate({ to: "/dashboard/resumes" });
 			}
 		}
 	}, [navigate]);
@@ -120,14 +112,7 @@ function AuthLoginPage() {
 			}
 
 			toast.success("Signed in successfully!");
-			const { paid, onboarded } = await checkUserSubscriptionAndOnboardingFromSupabase(typedEmail);
-			if (paid && onboarded) {
-				void navigate({ to: "/dashboard/resumes" });
-			} else if (paid) {
-				void navigate({ to: "/onboarding" });
-			} else {
-				void navigate({ to: "/payment" });
-			}
+			void navigate({ to: "/dashboard/resumes" });
 			setLoading(false);
 
 			void saveUserToSupabase({ email: typedEmail, name: activeName, avatar: activeAvatar }).catch(() => null);

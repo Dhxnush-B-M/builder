@@ -6,6 +6,9 @@ import { saveUserDetailsToSupabase, checkUserSubscriptionAndOnboardingFromSupaba
 
 export const Route = createFileRoute("/onboarding")({
 	component: OnboardingPage,
+	beforeLoad: () => {
+		throw redirect({ to: "/dashboard/resumes", replace: true });
+	},
 });
 
 function OnboardingPage() {
