@@ -24,14 +24,12 @@ function AuthLoginPage() {
 	useEffect(() => {
 		if (typeof window === "undefined") return;
 
-		const hasHashToken = window.location.hash?.includes("access_token");
-		const hasCodeParam = window.location.search?.includes("code=");
-
-		if (hasHashToken || hasCodeParam) {
-			const hashParams = new URLSearchParams(window.location.hash.replace("#", "?"));
+		if (window.location.hash && window.location.hash.length > 1) {
+			const hashString = window.location.hash.replace(/^#/, "");
+			const hashParams = new URLSearchParams(hashString);
 			const accessToken = hashParams.get("access_token");
 
-			// Clean URL instantly to remove sensitive fragment from browser history & Chrome filters
+			// Clean URL INSTANTLY to remove #iss=, #access_token=, etc. from browser address bar
 			window.history.replaceState(null, "", window.location.pathname);
 
 			if (accessToken) {
@@ -146,14 +144,22 @@ function AuthLoginPage() {
 			return;
 		}
 
-		// Launch Google OAuth 2.0 directly
-		const googleClientId =
-			import.meta.env.VITE_GOOGLE_CLIENT_ID ||
-			"925681943886-vr4mi6ebqvi2o9bioivpvtv9ugthd2ct.apps.googleusercontent.com";
-		const redirectUri = `${window.location.origin}/auth/login`;
-		const googleAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?response_type=token&client_id=${encodeURIComponent(googleClientId)}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=openid%20profile%20email&prompt=select_account`;
+		// Launch Google OAuth with PKCE flow to prevent Chrome fragment warnings
+		const { data, error } = await supabase.auth.signInWithOAuth({
+			provider: "google",
+			options: {
+				redirectTo: `${window.location.origin}/auth/login`,
+				queryParams: { prompt: "select_account" },
+			},
+		});
 
-		window.location.href = googleAuthUrl;
+		if (error || !data?.url) {
+			const googleClientId =
+				import.meta.env.VITE_GOOGLE_CLIENT_ID ||
+				"925681943886-vr4mi6ebqvi2o9bioivpvtv9ugthd2ct.apps.googleusercontent.com";
+			const redirectUri = `${window.location.origin}/auth/login`;
+			window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?response_type=code&client_id=${encodeURIComponent(googleClientId)}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=openid%20profile%20email&prompt=select_account`;
+		}
 	}
 
 	async function handleSubmit(e: FormEvent) {
