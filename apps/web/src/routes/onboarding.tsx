@@ -82,6 +82,13 @@ function OnboardingPage() {
 						href="/"
 						onClick={(e) => {
 							e.preventDefault();
+							if (typeof window !== "undefined") {
+								localStorage.removeItem("rbuilder_user");
+								localStorage.removeItem("rbuilder_user_email");
+								localStorage.removeItem("rbuilder_supabase_user");
+								localStorage.removeItem("rbuilder_payment_status");
+								localStorage.removeItem("rbuilder_onboarding_completed");
+							}
 							window.location.href = "/";
 						}}
 						className="inline-flex items-center justify-center gap-2 mb-2 cursor-pointer"
