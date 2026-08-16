@@ -14,7 +14,6 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@rbuilder/ui/components
 import { getInitials } from "@rbuilder/utils/string";
 import { useCurrentResume, useIsResumeLocked, usePatchResume } from "@/features/resume/builder/draft";
 import { UserDropdownMenu } from "@/features/user/dropdown-menu";
-import { getResumeErrorMessage } from "@/libs/error-message";
 import { orpc } from "@/libs/orpc/client";
 import { getSectionIcon, getSectionTitle, leftSidebarSections } from "@/libs/resume/section";
 import { BuilderSidebarEdge } from "../../-components/edge";
@@ -65,7 +64,10 @@ export function BuilderSidebarLeft() {
 		<>
 			<SidebarEdge />
 
-			<ScrollArea ref={scrollAreaRef} className="@container h-[calc(100svh-3.5rem)] bg-background/50 backdrop-blur-2xl border-r border-emerald-500/20 shadow-2xl md:ms-12">
+			<ScrollArea
+				ref={scrollAreaRef}
+				className="@container h-[calc(100svh-3.5rem)] border-emerald-500/20 border-r bg-background/50 shadow-2xl backdrop-blur-2xl md:ms-12"
+			>
 				<div className="space-y-4 p-4">
 					{isLocked && <LockBanner />}
 
@@ -84,7 +86,7 @@ export function BuilderSidebarLeft() {
 }
 
 function LockBanner() {
-	const resume = useCurrentResume();
+	const _resume = useCurrentResume();
 	const patchResume = usePatchResume();
 	const { mutate: setLocked, isPending } = useMutation(orpc.resume.setLocked.mutationOptions());
 
@@ -131,7 +133,6 @@ function SidebarEdge() {
 			<div className="flex min-h-0 w-full flex-1 flex-col items-center gap-y-2 overflow-hidden">
 				<div className="no-scrollbar min-h-0 w-full flex-1 overflow-y-auto overflow-x-hidden">
 					<div className="flex min-h-full flex-col items-center justify-center gap-y-2">
-
 						{leftSidebarSections.map((section) => (
 							<Tooltip key={section}>
 								<TooltipTrigger

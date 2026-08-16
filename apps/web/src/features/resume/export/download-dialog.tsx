@@ -1,12 +1,6 @@
-import type { ResumeExportTarget } from "@rbuilder/resume/export-sections";
 import type { ReactElement, ReactNode } from "react";
 import { Trans } from "@lingui/react/macro";
-import {
-	CircleNotchIcon,
-	DownloadSimpleIcon,
-	FileDocIcon,
-	FilePdfIcon,
-} from "@phosphor-icons/react";
+import { CircleNotchIcon, DownloadSimpleIcon, FileDocIcon, FilePdfIcon } from "@phosphor-icons/react";
 import { useState } from "react";
 import { Button } from "@rbuilder/ui/components/button";
 import {

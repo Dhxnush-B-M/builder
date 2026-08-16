@@ -5,6 +5,8 @@ import { Separator } from "@rbuilder/ui/components/separator";
 import { ProfileSettingsPage } from "@/features/settings/pages/profile";
 import { DashboardHeader } from "../-components/header";
 
+type AuthSession = any;
+
 export const Route = createFileRoute("/dashboard/settings/profile")({
 	component: RouteComponent,
 });

@@ -4,12 +4,7 @@ import { Trans } from "@lingui/react/macro";
 import { useStore } from "@tanstack/react-form";
 import { typographySchema } from "@rbuilder/schema/resume/data";
 import { FormControl, FormItem, FormLabel, FormMessage } from "@rbuilder/ui/components/form";
-import {
-	InputGroup,
-	InputGroupAddon,
-	InputGroupInput,
-	InputGroupText,
-} from "@rbuilder/ui/components/input-group";
+import { InputGroup, InputGroupAddon, InputGroupInput, InputGroupText } from "@rbuilder/ui/components/input-group";
 import { Separator } from "@rbuilder/ui/components/separator";
 import { FontFamilyCombobox, FontWeightCombobox } from "@/components/typography/combobox";
 import { getNextWeights } from "@/components/typography/get-next-weights";

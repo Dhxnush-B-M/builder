@@ -1,13 +1,12 @@
 import { Trans } from "@lingui/react/macro";
 import { createFileRoute, Outlet, redirect, useRouter } from "@tanstack/react-router";
 import { SidebarProvider } from "@rbuilder/ui/components/sidebar";
+import { getSession } from "@/libs/auth/session";
 import { createNoindexFollowMeta } from "@/libs/seo";
 import { supabase } from "@/libs/supabase/client";
-import { getSession } from "@/libs/auth/session";
+import { checkUserSubscriptionAndOnboardingFromSupabase } from "@/libs/supabase/db";
 import { getDashboardSidebarState, setDashboardSidebarState } from "./-components/functions";
 import { DashboardSidebar } from "./-components/sidebar";
-
-import { checkUserSubscriptionAndOnboardingFromSupabase } from "@/libs/supabase/db";
 
 export const Route = createFileRoute("/dashboard")({
 	component: RouteComponent,
@@ -28,7 +27,10 @@ export const Route = createFileRoute("/dashboard")({
 			const storedEmail = localStorage.getItem("rbuilder_user_email");
 			if (localUser || supabaseUser || storedEmail) {
 				isAuth = true;
-				userEmail = storedEmail || (localUser ? JSON.parse(localUser).email : "") || (supabaseUser ? JSON.parse(supabaseUser).email : "");
+				userEmail =
+					storedEmail ||
+					(localUser ? JSON.parse(localUser).email : "") ||
+					(supabaseUser ? JSON.parse(supabaseUser).email : "");
 			}
 		}
 		if (!isAuth) {
@@ -100,7 +102,7 @@ function RouteComponent() {
 
 				<DashboardSidebar />
 
-				<main id="main-content" className="relative z-10 @container flex-1 p-4 md:ps-2">
+				<main id="main-content" className="@container relative z-10 flex-1 p-4 md:ps-2">
 					<div className="min-h-[calc(100vh-2rem)] rounded-3xl border border-white/10 bg-background/50 p-6 shadow-2xl backdrop-blur-2xl">
 						<Outlet />
 					</div>

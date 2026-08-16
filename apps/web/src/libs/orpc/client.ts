@@ -2,7 +2,6 @@ import type { InferRouterInputs, InferRouterOutputs, RouterClient } from "@orpc/
 import type router from "@rbuilder/api/routers";
 import { createORPCClient, onError } from "@orpc/client";
 import { RPCLink } from "@orpc/client/fetch";
-import { BatchLinkPlugin } from "@orpc/client/plugins";
 import { createTanstackQueryUtils } from "@orpc/tanstack-query";
 
 const getRpcUrl = () => {

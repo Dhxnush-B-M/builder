@@ -1,10 +1,7 @@
+import { CheckCircleIcon, LockKeyIcon } from "@phosphor-icons/react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { toast } from "sonner";
-import {
-	CheckCircleIcon,
-	LockKeyIcon,
-} from "@phosphor-icons/react";
 import { saveUserToSupabase } from "@/libs/supabase/db";
 
 export const Route = createFileRoute("/payment")({
@@ -86,9 +83,12 @@ function PaymentPage() {
 		setIsProcessing(true);
 
 		const razorpayKey = import.meta.env.VITE_RAZORPAY_KEY_ID || "rzp_live_key";
-		const userEmail = typeof window !== "undefined" ? localStorage.getItem("rbuilder_user_email") || "user@example.com" : "user@example.com";
+		const userEmail =
+			typeof window !== "undefined"
+				? localStorage.getItem("rbuilder_user_email") || "user@example.com"
+				: "user@example.com";
 		const rawUser = typeof window !== "undefined" ? localStorage.getItem("rbuilder_user") : null;
-		const userName = rawUser ? (JSON.parse(rawUser).name || "User") : "User";
+		const userName = rawUser ? JSON.parse(rawUser).name || "User" : "User";
 		const amountInPaise = Number(plan.price.replace("₹", "")) * 100;
 
 		const grantSubscriptionAndProceed = async (paymentId?: string) => {
@@ -133,7 +133,7 @@ function PaymentPage() {
 				theme: {
 					color: "#10b981",
 				},
-				handler: async function (response: any) {
+				handler: async (response: any) => {
 					// Real money payment succeeded - verify and store razorpay_payment_id
 					const paymentId = response?.razorpay_payment_id;
 					if (paymentId) {
@@ -144,7 +144,7 @@ function PaymentPage() {
 					}
 				},
 				modal: {
-					ondismiss: function () {
+					ondismiss: () => {
 						setIsProcessing(false);
 						toast.info("Payment window closed.");
 					},
@@ -152,7 +152,7 @@ function PaymentPage() {
 			};
 
 			const rzp = new (window as any).Razorpay(options);
-			rzp.on("payment.failed", function (resp: any) {
+			rzp.on("payment.failed", (resp: any) => {
 				console.warn("Razorpay payment failed:", resp?.error?.description);
 				setIsProcessing(false);
 				toast.error(resp?.error?.description || "Payment failed. Money was not deducted.");
@@ -166,7 +166,7 @@ function PaymentPage() {
 	}
 
 	return (
-		<div className="relative min-h-screen w-full bg-zinc-950 text-zinc-100 flex flex-col items-center justify-between p-4 md:p-8 font-sans selection:bg-emerald-500 selection:text-black">
+		<div className="relative flex min-h-screen w-full flex-col items-center justify-between bg-zinc-950 p-4 font-sans text-zinc-100 selection:bg-emerald-500 selection:text-black md:p-8">
 			{/* Ambient Glowing Background Lights */}
 			<div aria-hidden="true" className="pointer-events-none fixed inset-0 flex items-center justify-center opacity-30">
 				<div className="size-[600px] animate-pulse rounded-full bg-gradient-to-tr from-emerald-500/20 via-yellow-500/20 to-teal-500/20 blur-3xl" />
@@ -176,7 +176,7 @@ function PaymentPage() {
 			</div>
 
 			{/* Top Navbar Header */}
-			<header className="relative z-10 w-full max-w-6xl flex items-center justify-between py-4 border-b border-zinc-800/80">
+			<header className="relative z-10 flex w-full max-w-6xl items-center justify-between border-zinc-800/80 border-b py-4">
 				<a
 					href="/"
 					onClick={(e) => {
@@ -190,62 +190,67 @@ function PaymentPage() {
 						}
 						window.location.href = "/";
 					}}
-					className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity"
+					className="flex cursor-pointer items-center gap-2 transition-opacity hover:opacity-80"
 				>
-					<img src="/opengraph/logo.png" alt="rbuilder logo" className="size-8 rounded-full border border-emerald-500/40" />
-					<span className="font-bold text-lg tracking-tight text-white">rbuilder</span>
+					<img
+						src="/opengraph/logo.png"
+						alt="rbuilder logo"
+						className="size-8 rounded-full border border-emerald-500/40"
+					/>
+					<span className="font-bold text-lg text-white tracking-tight">rbuilder</span>
 				</a>
 			</header>
 
 			{/* Main Content Area */}
-			<main className="relative z-10 w-full max-w-5xl my-auto py-8 space-y-8 flex flex-col items-center">
+			<main className="relative z-10 my-auto flex w-full max-w-5xl flex-col items-center space-y-8 py-8">
 				{/* Title Section */}
-				<div className="text-center space-y-3 max-w-2xl">
-					<h1 className="text-3xl md:text-5xl font-extrabold tracking-tight bg-gradient-to-r from-white via-zinc-200 to-zinc-400 bg-clip-text text-transparent">
+				<div className="max-w-2xl space-y-3 text-center">
+					<h1 className="bg-gradient-to-r from-white via-zinc-200 to-zinc-400 bg-clip-text font-extrabold text-3xl text-transparent tracking-tight md:text-5xl">
 						Choose Your Plan
 					</h1>
 
-					<p className="text-zinc-400 text-sm md:text-base leading-relaxed">
-						Activate your plan to unlock the complete Resume Builder, all templates, unlimited PDF exports, and live cloud sync.
+					<p className="text-sm text-zinc-400 leading-relaxed md:text-base">
+						Activate your plan to unlock the complete Resume Builder, all templates, unlimited PDF exports, and live
+						cloud sync.
 					</p>
 				</div>
 
 				{/* 2 Plan Cards Grid */}
-				<div className="w-full grid md:grid-cols-2 gap-6 lg:gap-8 items-stretch max-w-4xl">
+				<div className="grid w-full max-w-4xl items-stretch gap-6 md:grid-cols-2 lg:gap-8">
 					{PLANS.map((plan) => (
 						<div
 							key={plan.id}
-							className={`relative flex flex-col justify-between rounded-3xl p-6 md:p-8 transition-all duration-300 ${
+							className={`relative flex flex-col justify-between rounded-3xl p-6 transition-all duration-300 md:p-8 ${
 								plan.highlighted
-									? "bg-zinc-900/90 border-2 border-yellow-400 shadow-2xl shadow-yellow-500/20 scale-[1.02]"
-									: "bg-zinc-900/50 border border-zinc-800 hover:border-zinc-700 shadow-xl backdrop-blur-xl"
+									? "scale-[1.02] border-2 border-yellow-400 bg-zinc-900/90 shadow-2xl shadow-yellow-500/20"
+									: "border border-zinc-800 bg-zinc-900/50 shadow-xl backdrop-blur-xl hover:border-zinc-700"
 							}`}
 						>
 							{/* Popular Badge */}
 							{plan.badge && (
-								<div className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-gradient-to-r from-yellow-400 to-amber-500 text-zinc-950 font-black text-[11px] uppercase tracking-wider shadow-lg">
+								<div className="absolute -top-3.5 left-1/2 -translate-x-1/2 rounded-full bg-gradient-to-r from-yellow-400 to-amber-500 px-4 py-1 font-black text-[11px] text-zinc-950 uppercase tracking-wider shadow-lg">
 									{plan.badge}
 								</div>
 							)}
 
 							<div className="space-y-6">
 								{/* Card Header */}
-								<div className="space-y-2 border-b border-zinc-800/80 pb-6">
-									<h3 className="text-xl font-bold text-white">{plan.title}</h3>
+								<div className="space-y-2 border-zinc-800/80 border-b pb-6">
+									<h3 className="font-bold text-white text-xl">{plan.title}</h3>
 									<div className="flex items-baseline gap-2">
-										<span className="text-4xl md:text-5xl font-extrabold text-white tracking-tight">{plan.price}</span>
-										<span className="text-sm font-semibold text-zinc-400">{plan.period}</span>
+										<span className="font-extrabold text-4xl text-white tracking-tight md:text-5xl">{plan.price}</span>
+										<span className="font-semibold text-sm text-zinc-400">{plan.period}</span>
 										{plan.originalPrice && (
-											<span className="text-xs text-zinc-500 line-through ml-1">{plan.originalPrice}</span>
+											<span className="ml-1 text-xs text-zinc-500 line-through">{plan.originalPrice}</span>
 										)}
 									</div>
-									<p className="text-xs text-zinc-400 leading-relaxed pt-1">{plan.description}</p>
+									<p className="pt-1 text-xs text-zinc-400 leading-relaxed">{plan.description}</p>
 								</div>
 
 								{/* Features List */}
 								<ul className="space-y-3">
 									{plan.features.map((feature, idx) => (
-										<li key={idx} className="flex items-center gap-3 text-xs md:text-sm text-zinc-300">
+										<li key={idx} className="flex items-center gap-3 text-xs text-zinc-300 md:text-sm">
 											<CheckCircleIcon
 												weight="fill"
 												className={`size-4 shrink-0 ${plan.highlighted ? "text-yellow-400" : "text-emerald-400"}`}
@@ -261,15 +266,15 @@ function PaymentPage() {
 								type="button"
 								disabled={isProcessing && selectedPlan?.id === plan.id}
 								onClick={() => handleSelectPlan(plan)}
-								className={`w-full mt-8 py-3.5 px-6 rounded-2xl font-bold text-sm shadow-lg transition-all active:scale-[0.98] disabled:opacity-50 flex items-center justify-center gap-2 ${
+								className={`mt-8 flex w-full items-center justify-center gap-2 rounded-2xl px-6 py-3.5 font-bold text-sm shadow-lg transition-all active:scale-[0.98] disabled:opacity-50 ${
 									plan.highlighted
-										? "bg-yellow-400 hover:bg-yellow-300 text-zinc-950 shadow-yellow-500/25"
-										: "bg-zinc-800 hover:bg-zinc-700 text-white border border-zinc-700"
+										? "bg-yellow-400 text-zinc-950 shadow-yellow-500/25 hover:bg-yellow-300"
+										: "border border-zinc-700 bg-zinc-800 text-white hover:bg-zinc-700"
 								}`}
 							>
 								{isProcessing && selectedPlan?.id === plan.id ? (
 									<>
-										<div className="size-4 border-2 border-zinc-950 border-t-transparent rounded-full animate-spin" />
+										<div className="size-4 animate-spin rounded-full border-2 border-zinc-950 border-t-transparent" />
 										<span>Opening Razorpay...</span>
 									</>
 								) : (
@@ -281,7 +286,7 @@ function PaymentPage() {
 				</div>
 
 				{/* Security Guarantee Footer Note */}
-				<div className="flex items-center justify-center gap-6 text-xs text-zinc-500 pt-4">
+				<div className="flex items-center justify-center gap-6 pt-4 text-xs text-zinc-500">
 					<div className="flex items-center gap-1.5">
 						<LockKeyIcon className="size-4 text-emerald-400" />
 						<span>256-bit Encrypted Payment</span>

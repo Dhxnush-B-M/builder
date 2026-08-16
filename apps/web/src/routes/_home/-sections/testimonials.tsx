@@ -1,11 +1,6 @@
 import type { FormEvent } from "react";
+import { PaperPlaneIcon, StarIcon, UserCheckIcon, XIcon } from "@phosphor-icons/react";
 import { useEffect, useState } from "react";
-import {
-	PaperPlaneIcon,
-	StarIcon,
-	UserCheckIcon,
-	XIcon,
-} from "@phosphor-icons/react";
 
 type Testimonial = {
 	id: string;
@@ -94,7 +89,8 @@ function getInitials(name: string) {
 
 function playCenterClickSound() {
 	try {
-		const AudioCtx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+		const AudioCtx =
+			window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
 		if (!AudioCtx) return;
 		const ctx = new AudioCtx();
 		const osc = ctx.createOscillator();
@@ -136,7 +132,9 @@ export function Testimonials() {
 					id: fb.id,
 					name: fb.name,
 					description: fb.description,
-					date: fb.created_at ? new Date(fb.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric" }) : "Verified Feedback",
+					date: fb.created_at
+						? new Date(fb.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric" })
+						: "Verified Feedback",
 					gradient: initialTestimonials[idx % initialTestimonials.length].gradient,
 					rating: fb.rating || 5,
 				}));
@@ -225,13 +223,14 @@ export function Testimonials() {
 			`}</style>
 
 			<div className="container mx-auto px-4">
-				<div className="flex flex-col items-center text-center space-y-4">
+				<div className="flex flex-col items-center space-y-4 text-center">
 					<h2 className="bg-gradient-to-r from-foreground via-primary to-indigo-500 bg-clip-text font-extrabold text-3xl text-transparent tracking-tight sm:text-4xl md:text-5xl">
 						Loved by Professionals Worldwide
 					</h2>
 
 					<p className="max-w-2xl text-base text-muted-foreground leading-relaxed md:text-lg">
-						Click the center <span className="font-semibold text-primary">rbuilder</span> logo to submit feedback or view active platform users.
+						Click the center <span className="font-semibold text-primary">rbuilder</span> logo to submit feedback or
+						view active platform users.
 					</p>
 				</div>
 
@@ -243,17 +242,13 @@ export function Testimonials() {
 						onClick={handleCenterCircleClick}
 						title="Click to give feedback!"
 						aria-label="Click to give feedback and play sound"
-						className="absolute flex size-20 sm:size-24 items-center justify-center rounded-full bg-black border-2 border-emerald-500/50 p-2 shadow-2xl backdrop-blur-xl z-20 cursor-pointer hover:scale-110 active:scale-95 transition-all duration-300 hover:border-emerald-400 hover:shadow-emerald-500/40"
+						className="absolute z-20 flex size-20 cursor-pointer items-center justify-center rounded-full border-2 border-emerald-500/50 bg-black p-2 shadow-2xl backdrop-blur-xl transition-all duration-300 hover:scale-110 hover:border-emerald-400 hover:shadow-emerald-500/40 active:scale-95 sm:size-24"
 					>
-						<img
-							src="/opengraph/logo.png"
-							alt="rbuilder logo"
-							className="size-full object-cover rounded-full"
-						/>
+						<img src="/opengraph/logo.png" alt="rbuilder logo" className="size-full rounded-full object-cover" />
 					</button>
 
 					{/* Orbit Ring Container */}
-					<div className="animate-orbit relative flex size-[360px] sm:size-[450px] items-center justify-center rounded-full border border-dashed border-primary/30">
+					<div className="relative flex size-[360px] animate-orbit items-center justify-center rounded-full border border-primary/30 border-dashed sm:size-[450px]">
 						{testimonialsList.map((item, index) => {
 							const angle = (360 / testimonialsList.length) * index;
 							const radius = typeof window !== "undefined" && window.innerWidth < 640 ? 180 : 225;
@@ -266,22 +261,22 @@ export function Testimonials() {
 									style={{
 										transform: `translate(${x}px, ${y}px)`,
 									}}
-									className="absolute flex items-center justify-center group cursor-pointer"
+									className="group absolute flex cursor-pointer items-center justify-center"
 								>
-									<div className="animate-counter-rotate relative flex flex-col items-center">
-										<div className="relative flex size-14 sm:size-18 items-center justify-center rounded-full bg-gradient-to-tr p-[3px] shadow-xl transition-transform duration-300 group-hover:scale-125">
+									<div className="relative flex animate-counter-rotate flex-col items-center">
+										<div className="relative flex size-14 items-center justify-center rounded-full bg-gradient-to-tr p-[3px] shadow-xl transition-transform duration-300 group-hover:scale-125 sm:size-18">
 											<div className={`size-full rounded-full bg-gradient-to-tr ${item.gradient} p-[2px]`}>
-												<div className="flex size-full items-center justify-center rounded-full bg-background font-extrabold text-foreground text-xs sm:text-sm shadow-inner">
+												<div className="flex size-full items-center justify-center rounded-full bg-background font-extrabold text-foreground text-xs shadow-inner sm:text-sm">
 													{getInitials(item.name)}
 												</div>
 											</div>
-											<div className="absolute -bottom-1 -right-1 flex size-5 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-md">
+											<div className="absolute -right-1 -bottom-1 flex size-5 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-md">
 												<UserCheckIcon weight="bold" className="size-3" />
 											</div>
 										</div>
 
 										{/* Floating Tooltip Card on Hover */}
-										<div className="absolute bottom-full mb-3 hidden w-64 rounded-2xl border border-border/80 bg-background/95 p-4 shadow-2xl backdrop-blur-xl group-hover:flex group-hover:flex-col z-30 transition-all">
+										<div className="absolute bottom-full z-30 mb-3 hidden w-64 rounded-2xl border border-border/80 bg-background/95 p-4 shadow-2xl backdrop-blur-xl transition-all group-hover:flex group-hover:flex-col">
 											<div className="flex items-center justify-between">
 												<span className="font-bold text-foreground text-sm">{item.name}</span>
 												<div className="flex text-amber-400">
@@ -290,11 +285,11 @@ export function Testimonials() {
 													))}
 												</div>
 											</div>
-											<p className="mt-2 text-xs text-foreground/90 leading-relaxed italic">"{item.description}"</p>
+											<p className="mt-2 text-foreground/90 text-xs italic leading-relaxed">"{item.description}"</p>
 											<span className="mt-2 text-[10px] text-muted-foreground">{item.date}</span>
 										</div>
 
-										<span className="mt-2 font-bold text-foreground text-xs tracking-tight whitespace-nowrap shadow-sm">
+										<span className="mt-2 whitespace-nowrap font-bold text-foreground text-xs tracking-tight shadow-sm">
 											{item.name}
 										</span>
 									</div>
@@ -312,36 +307,38 @@ export function Testimonials() {
 						<button
 							type="button"
 							onClick={() => setIsModalOpen(false)}
-							className="absolute top-5 right-5 rounded-full p-2 text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+							className="absolute top-5 right-5 rounded-full p-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
 						>
 							<XIcon className="size-5" />
 						</button>
 
 						{isSubmitted ? (
 							<div className="flex flex-col items-center py-8 text-center">
-								<div className="flex size-16 items-center justify-center rounded-full bg-emerald-500/20 text-emerald-500 animate-bounce">
+								<div className="flex size-16 animate-bounce items-center justify-center rounded-full bg-emerald-500/20 text-emerald-500">
 									<UserCheckIcon weight="bold" className="size-8" />
 								</div>
-								<h3 className="mt-4 font-bold text-xl text-foreground">Thank You!</h3>
+								<h3 className="mt-4 font-bold text-foreground text-xl">Thank You!</h3>
 								<p className="mt-2 text-muted-foreground text-sm">
 									Your feedback has joined the 360° rotating circle showcase!
 								</p>
 							</div>
 						) : (
 							<div>
-								<div className="flex items-center gap-3 border-b border-border/60 pb-4">
-									<div className="flex size-11 items-center justify-center rounded-2xl bg-primary/20 text-primary shrink-0">
+								<div className="flex items-center gap-3 border-border/60 border-b pb-4">
+									<div className="flex size-11 shrink-0 items-center justify-center rounded-2xl bg-primary/20 text-primary">
 										<PaperPlaneIcon weight="fill" className="size-6" />
 									</div>
 									<div>
 										<h3 className="font-bold text-foreground text-xl">Give Your Feedback</h3>
-										<p className="text-muted-foreground text-xs">Fill out your name, rating, and review to join the circle!</p>
+										<p className="text-muted-foreground text-xs">
+											Fill out your name, rating, and review to join the circle!
+										</p>
 									</div>
 								</div>
 
 								<form onSubmit={handleSubmit} className="mt-6 space-y-5">
 									<div>
-										<label htmlFor="modal-name" className="block text-xs font-semibold text-foreground">
+										<label htmlFor="modal-name" className="block font-semibold text-foreground text-xs">
 											Your Name
 										</label>
 										<input
@@ -351,12 +348,12 @@ export function Testimonials() {
 											value={name}
 											onChange={(e) => setName(e.target.value)}
 											placeholder="Enter your name"
-											className="mt-1.5 w-full rounded-xl border border-border bg-muted/40 px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+											className="mt-1.5 w-full rounded-xl border border-border bg-muted/40 px-4 py-2.5 text-foreground text-sm transition-all placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
 										/>
 									</div>
 
 									<div>
-										<label className="block text-xs font-semibold text-foreground">Rating</label>
+										<label className="block font-semibold text-foreground text-xs">Rating</label>
 										<div className="mt-1.5 flex items-center gap-1.5">
 											{[1, 2, 3, 4, 5].map((star) => (
 												<button
@@ -375,12 +372,12 @@ export function Testimonials() {
 													/>
 												</button>
 											))}
-											<span className="ml-2 font-bold text-sm text-muted-foreground">{rating} / 5</span>
+											<span className="ml-2 font-bold text-muted-foreground text-sm">{rating} / 5</span>
 										</div>
 									</div>
 
 									<div>
-										<label htmlFor="modal-description" className="block text-xs font-semibold text-foreground">
+										<label htmlFor="modal-description" className="block font-semibold text-foreground text-xs">
 											Feedback / Review
 										</label>
 										<textarea
@@ -390,13 +387,13 @@ export function Testimonials() {
 											value={description}
 											onChange={(e) => setDescription(e.target.value)}
 											placeholder="Share your thoughts about rbuilder..."
-											className="mt-1.5 w-full rounded-xl border border-border bg-muted/40 p-3.5 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+											className="mt-1.5 w-full rounded-xl border border-border bg-muted/40 p-3.5 text-foreground text-sm transition-all placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
 										/>
 									</div>
 
 									<button
 										type="submit"
-										className="w-full flex h-12 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-primary via-indigo-600 to-purple-600 font-bold text-white text-sm shadow-xl shadow-primary/25 transition-all hover:scale-[1.02] active:scale-[0.98]"
+										className="flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-primary via-indigo-600 to-purple-600 font-bold text-sm text-white shadow-primary/25 shadow-xl transition-all hover:scale-[1.02] active:scale-[0.98]"
 									>
 										<PaperPlaneIcon weight="fill" className="size-4" />
 										<span>Submit Feedback</span>

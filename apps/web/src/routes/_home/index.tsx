@@ -1,4 +1,4 @@
-import { createFileRoute, redirect } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { createNoindexFollowMeta } from "@/libs/seo";
 import { Faq } from "./-sections/faq";
 import { Features } from "./-sections/features";
@@ -20,29 +20,35 @@ export const Route = createFileRoute("/_home/")({
 
 function RouteComponent() {
 	return (
-		<main id="main-content" className="relative min-h-screen bg-slate-50/80 text-foreground dark:bg-background overflow-hidden">
+		<main
+			id="main-content"
+			className="relative min-h-screen overflow-hidden bg-slate-50/80 text-foreground dark:bg-background"
+		>
 			{/* Light Resume Watermark Background Grid */}
-			<div aria-hidden="true" className="pointer-events-none absolute inset-0 z-0 overflow-hidden opacity-[0.12] dark:opacity-[0.05]">
+			<div
+				aria-hidden="true"
+				className="pointer-events-none absolute inset-0 z-0 overflow-hidden opacity-[0.12] dark:opacity-[0.05]"
+			>
 				{/* Background Resume Floating Cards */}
 				<img
 					src="/templates/jpg/ditgar.jpg"
 					alt=""
-					className="absolute -top-12 left-5 w-72 rounded-xl shadow-2xl border border-slate-300 transform -rotate-6 blur-[1px]"
+					className="absolute -top-12 left-5 w-72 -rotate-6 transform rounded-xl border border-slate-300 shadow-2xl blur-[1px]"
 				/>
 				<img
 					src="/templates/jpg/azurill.jpg"
 					alt=""
-					className="absolute top-1/4 -right-16 w-80 rounded-xl shadow-2xl border border-slate-300 transform rotate-6 blur-[1px]"
+					className="absolute top-1/4 -right-16 w-80 rotate-6 transform rounded-xl border border-slate-300 shadow-2xl blur-[1px]"
 				/>
 				<img
 					src="/templates/jpg/kakuna.jpg"
 					alt=""
-					className="absolute top-1/2 -left-20 w-80 rounded-xl shadow-2xl border border-slate-300 transform -rotate-3 blur-[1px]"
+					className="absolute top-1/2 -left-20 w-80 -rotate-3 transform rounded-xl border border-slate-300 shadow-2xl blur-[1px]"
 				/>
 				<img
 					src="/templates/jpg/leafish.jpg"
 					alt=""
-					className="absolute bottom-1/4 -right-10 w-72 rounded-xl shadow-2xl border border-slate-300 transform rotate-3 blur-[1px]"
+					className="absolute -right-10 bottom-1/4 w-72 rotate-3 transform rounded-xl border border-slate-300 shadow-2xl blur-[1px]"
 				/>
 			</div>
 

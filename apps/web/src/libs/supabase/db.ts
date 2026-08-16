@@ -39,8 +39,7 @@ function getActiveUserEmailFromStorage(): string | null {
 export async function saveUserToSupabase(user: { email: string; name: string; avatar?: string; plan?: string }) {
 	const userEmail = user.email || "user@example.com";
 	const userName = user.name || userEmail.split("@")[0] || "User";
-	const userAvatar =
-		user.avatar || "https://api.dicebear.com/7.x/avataaars/svg?seed=" + encodeURIComponent(userEmail);
+	const userAvatar = user.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(userEmail)}`;
 	const userId = userEmail;
 	const isoNow = new Date().toISOString();
 
@@ -119,12 +118,15 @@ export async function saveResumeToSupabase(
 			console.warn("Supabase upsert note, executing fallback insert/update:", upsertErr.message);
 			const { data: existing } = await supabase.from("resumes").select("id").eq("id", record.id).maybeSingle();
 			if (existing) {
-				await supabase.from("resumes").update({
-					user_id: record.user_id,
-					title: record.title,
-					content: record.content,
-					updated_at: record.updated_at,
-				}).eq("id", record.id);
+				await supabase
+					.from("resumes")
+					.update({
+						user_id: record.user_id,
+						title: record.title,
+						content: record.content,
+						updated_at: record.updated_at,
+					})
+					.eq("id", record.id);
 			} else {
 				await supabase.from("resumes").insert(record);
 			}
@@ -175,9 +177,7 @@ export async function getUsersCountFromSupabase(): Promise<number> {
  */
 export async function getAllResumesCountFromSupabase(): Promise<number> {
 	try {
-		const { count, error } = await supabase
-			.from("resumes")
-			.select("*", { count: "exact", head: true });
+		const { count, error } = await supabase.from("resumes").select("*", { count: "exact", head: true });
 		if (!error && count !== null) return count;
 		return 0;
 	} catch {
@@ -221,20 +221,14 @@ export async function getResumesFromSupabase(targetEmail?: string): Promise<Supa
 		if (!email) return [];
 
 		// Query by case-insensitive email matching in Supabase
-		const { data, error } = await supabase
-			.from("resumes")
-			.select("*")
-			.ilike("user_id", email);
+		const { data, error } = await supabase.from("resumes").select("*").ilike("user_id", email);
 
 		if (!error && data && data.length > 0) {
 			return data as SupabaseResumeRecord[];
 		}
 
 		// Fallback query by exact eq in case ilike is restricted
-		const { data: fallbackData } = await supabase
-			.from("resumes")
-			.select("*")
-			.eq("user_id", email);
+		const { data: fallbackData } = await supabase.from("resumes").select("*").eq("user_id", email);
 
 		return (fallbackData || []) as SupabaseResumeRecord[];
 	} catch {
@@ -346,14 +340,21 @@ export interface SupabaseUserDetailsRecord {
 /**
  * Save user name and phone number directly into Supabase Database ('user_details' table) & LocalStorage
  */
-export async function saveUserDetailsToSupabase(details: { email?: string; name: string; phone: string; plan?: string }) {
+export async function saveUserDetailsToSupabase(details: {
+	email?: string;
+	name: string;
+	phone: string;
+	plan?: string;
+}) {
 	const activeEmail = (details.email || getActiveUserEmailFromStorage() || "user@example.com").trim().toLowerCase();
 	const record: SupabaseUserDetailsRecord = {
 		id: activeEmail,
 		email: activeEmail,
 		name: details.name || "User",
 		phone: details.phone || "",
-		plan: details.plan || (typeof window !== "undefined" ? localStorage.getItem("rbuilder_subscription_plan") || "monthly" : "monthly"),
+		plan:
+			details.plan ||
+			(typeof window !== "undefined" ? localStorage.getItem("rbuilder_subscription_plan") || "monthly" : "monthly"),
 		created_at: new Date().toISOString(),
 	};
 
@@ -377,7 +378,12 @@ export async function saveUserDetailsToSupabase(details: { email?: string; name:
 	try {
 		await Promise.allSettled([
 			supabase.from("user_details").upsert(record, { onConflict: "email" }),
-			supabase.from("profiles").upsert({ id: activeEmail, email: activeEmail, name: details.name, phone: details.phone }, { onConflict: "email" }),
+			supabase
+				.from("profiles")
+				.upsert(
+					{ id: activeEmail, email: activeEmail, name: details.name, phone: details.phone },
+					{ onConflict: "email" },
+				),
 		]);
 	} catch (e) {
 		console.warn("Supabase user details sync exception:", e);
@@ -389,7 +395,9 @@ export async function saveUserDetailsToSupabase(details: { email?: string; name:
 /**
  * Check if a specific Gmail/user email has already completed payment & onboarding in Supabase
  */
-export async function checkUserSubscriptionAndOnboardingFromSupabase(email: string): Promise<{ paid: boolean; onboarded: boolean }> {
+export async function checkUserSubscriptionAndOnboardingFromSupabase(
+	email: string,
+): Promise<{ paid: boolean; onboarded: boolean }> {
 	const cleanEmail = (email || "").trim().toLowerCase();
 	if (!cleanEmail) return { paid: false, onboarded: false };
 
@@ -417,7 +425,7 @@ export async function checkUserSubscriptionAndOnboardingFromSupabase(email: stri
 		}
 
 		const { data: profile } = await supabase.from("profiles").select("*").eq("email", cleanEmail).maybeSingle();
-		if (profile && profile.phone) {
+		if (profile?.phone) {
 			if (typeof window !== "undefined") {
 				localStorage.setItem(`rbuilder_paid_${cleanEmail}`, "true");
 				localStorage.setItem(`rbuilder_onboarded_${cleanEmail}`, "true");
@@ -431,7 +439,8 @@ export async function checkUserSubscriptionAndOnboardingFromSupabase(email: stri
 	}
 
 	const fallbackPaid = typeof window !== "undefined" && localStorage.getItem("rbuilder_payment_status") === "active";
-	const fallbackOnboarded = typeof window !== "undefined" && localStorage.getItem("rbuilder_onboarding_completed") === "true";
+	const fallbackOnboarded =
+		typeof window !== "undefined" && localStorage.getItem("rbuilder_onboarding_completed") === "true";
 
 	return { paid: fallbackPaid, onboarded: fallbackOnboarded };
 }

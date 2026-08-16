@@ -60,7 +60,7 @@ export function Templates() {
 									}}
 								>
 									<m.div
-										className="group relative w-44 rounded-xl border border-white/20 dark:border-white/10 bg-card/80 backdrop-blur-md p-2 shadow-2xl transition-all duration-300 hover:scale-110 hover:border-primary/80 sm:w-52 md:w-56"
+										className="group relative w-44 rounded-xl border border-white/20 bg-card/80 p-2 shadow-2xl backdrop-blur-md transition-all duration-300 hover:scale-110 hover:border-primary/80 sm:w-52 md:w-56 dark:border-white/10"
 										whileHover={{ y: -8 }}
 									>
 										<div className="relative aspect-[3/4] w-full overflow-hidden rounded-lg border bg-background">
@@ -76,7 +76,7 @@ export function Templates() {
 											<div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
 
 											<div className="absolute inset-x-0 bottom-0 translate-y-3 p-3 opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
-												<span className="inline-block font-extrabold text-sm sm:text-base text-white tracking-wide drop-shadow-md">
+												<span className="inline-block font-extrabold text-sm text-white tracking-wide drop-shadow-md sm:text-base">
 													{metadata.name}
 												</span>
 											</div>

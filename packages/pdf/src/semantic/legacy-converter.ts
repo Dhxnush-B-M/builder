@@ -1,6 +1,6 @@
-import type { Style } from "@react-pdf/types";
 import type { ResumeData, StyleIntent, StyleRule, StyleSlot } from "@rbuilder/schema/resume/data";
 import type { StylesheetSource } from "@rbuilder/schema/resume/stylesheet";
+import type { Style } from "@react-pdf/types";
 import { escapeCssComment, escapeCssString, serializeGeneratedStylesheet } from "@rbuilder/resume/stylesheet";
 import { styleRulesSchema } from "@rbuilder/schema/resume/data";
 import { getSectionStyleRuleContext } from "@rbuilder/schema/resume/style-rules";

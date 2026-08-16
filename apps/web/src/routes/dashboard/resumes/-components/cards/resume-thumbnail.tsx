@@ -4,12 +4,12 @@ import { FileTextIcon, SparkleIcon } from "@phosphor-icons/react";
 import { useQuery } from "@tanstack/react-query";
 import { useInView } from "motion/react";
 import { useEffect, useRef } from "react";
+import { defaultResumeData } from "@rbuilder/schema/resume/default";
 import { cn } from "@rbuilder/utils/style";
 import { createResumePdfBlob } from "@/features/resume/export/pdf-document";
 import { createPdfFirstPageImageUrl } from "@/features/resume/preview/pdf-thumbnail";
 import { getResumeThumbnailCacheKey } from "@/features/resume/preview/resume-thumbnail.shared";
 import { orpc } from "@/libs/orpc/client";
-import { defaultResumeData } from "@rbuilder/schema/resume/default";
 
 type ResumeListItem = RouterOutput["resume"]["list"][number] & {
 	data?: ResumeData;
@@ -94,10 +94,7 @@ export function ResumeThumbnail({ isLocked, resume }: ResumeThumbnailProps) {
 	return (
 		<div
 			ref={containerRef}
-			className={cn(
-				"relative size-full overflow-hidden bg-background/60 transition-all",
-				isLocked && "blur-xs",
-			)}
+			className={cn("relative size-full overflow-hidden bg-background/60 transition-all", isLocked && "blur-xs")}
 		>
 			{thumbnail.status === "ready" ? (
 				<div
@@ -138,8 +135,8 @@ export function ResumeThumbnail({ isLocked, resume }: ResumeThumbnailProps) {
 
 					{/* Bottom Badge */}
 					<div className="flex items-center justify-between pt-1 text-[10px] text-muted-foreground">
-						<span className="font-mono text-[9px] uppercase tracking-wider text-primary/80">Live Document</span>
-						<SparkleIcon className="size-3 text-primary animate-pulse" />
+						<span className="font-mono text-[9px] text-primary/80 uppercase tracking-wider">Live Document</span>
+						<SparkleIcon className="size-3 animate-pulse text-primary" />
 					</div>
 				</div>
 			)}

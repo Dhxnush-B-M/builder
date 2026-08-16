@@ -64,7 +64,7 @@ export function SectionBase({ type, className, ...props }: Props) {
 			value={collapsed ? [] : [type]}
 			onValueChange={() => toggleCollapsed(type)}
 			className={cn(
-				"space-y-4 rounded-3xl border border-emerald-500/20 bg-card/40 backdrop-blur-2xl p-5 shadow-2xl transition-all duration-300 hover:border-emerald-400/80 hover:shadow-emerald-500/20 dark:border-white/10 dark:bg-slate-900/40",
+				"space-y-4 rounded-3xl border border-emerald-500/20 bg-card/40 p-5 shadow-2xl backdrop-blur-2xl transition-all duration-300 hover:border-emerald-400/80 hover:shadow-emerald-500/20 dark:border-white/10 dark:bg-slate-900/40",
 				isHidden && "opacity-50",
 			)}
 		>

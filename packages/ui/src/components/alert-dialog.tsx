@@ -42,7 +42,7 @@ function AlertDialogContent({
 				data-slot="alert-dialog-content"
 				data-size={size}
 				className={cn(
-					"group/alert-dialog-content data-open:fade-in-0 data-open:zoom-in-95 data-open:slide-in-from-bottom-4 data-closed:fade-out-0 data-closed:zoom-out-95 fixed inset-s-1/2 top-1/2 z-50 grid w-full -translate-x-1/2 -translate-y-1/2 gap-5 overflow-hidden rounded-3xl border border-emerald-500/40 bg-background/85 p-6 text-popover-foreground outline-none shadow-2xl shadow-emerald-500/20 backdrop-blur-2xl transition-all duration-300 ease-out data-[size=default]:max-w-md data-[size=sm]:max-w-sm rtl:translate-x-1/2",
+					"group/alert-dialog-content data-open:fade-in-0 data-open:zoom-in-95 data-open:slide-in-from-bottom-4 data-closed:fade-out-0 data-closed:zoom-out-95 fixed inset-s-1/2 top-1/2 z-50 grid w-full -translate-x-1/2 -translate-y-1/2 gap-5 overflow-hidden rounded-3xl border border-emerald-500/40 bg-background/85 p-6 text-popover-foreground shadow-2xl shadow-emerald-500/20 outline-none backdrop-blur-2xl transition-all duration-300 ease-out data-[size=default]:max-w-md data-[size=sm]:max-w-sm rtl:translate-x-1/2",
 					className,
 				)}
 				{...props}
@@ -69,7 +69,7 @@ function AlertDialogFooter({ className, ...props }: React.ComponentProps<"div">)
 		<div
 			data-slot="alert-dialog-footer"
 			className={cn(
-				"-mx-6 -mb-6 mt-4 flex flex-col-reverse gap-2.5 border-t border-emerald-500/20 bg-background/50 p-4.5 backdrop-blur-2xl sm:flex-row sm:justify-end",
+				"-mx-6 mt-4 -mb-6 flex flex-col-reverse gap-2.5 border-emerald-500/20 border-t bg-background/50 p-4.5 backdrop-blur-2xl sm:flex-row sm:justify-end",
 				className,
 			)}
 			{...props}

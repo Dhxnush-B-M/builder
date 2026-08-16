@@ -1,6 +1,5 @@
 import { m } from "motion/react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@rbuilder/ui/components/accordion";
-import { cn } from "@rbuilder/utils/style";
 
 type FAQItemData = {
 	question: string;
@@ -10,7 +9,8 @@ type FAQItemData = {
 const faqItems: FAQItemData[] = [
 	{
 		question: "Is rbuilder really free?",
-		answer: "Yes! rbuilder is completely free to use, with no hidden costs, premium tiers, or subscription fees. It's open-source and will always remain free.",
+		answer:
+			"Yes! rbuilder is completely free to use, with no hidden costs, premium tiers, or subscription fees. It's open-source and will always remain free.",
 	},
 	{
 		question: "How is my data protected?",
@@ -18,7 +18,8 @@ const faqItems: FAQItemData[] = [
 	},
 	{
 		question: "Can I export my resume to PDF?",
-		answer: "Absolutely! You can export your resume to PDF with a single click. The exported PDF maintains all your formatting and styling perfectly.",
+		answer:
+			"Absolutely! You can export your resume to PDF with a single click. The exported PDF maintains all your formatting and styling perfectly.",
 	},
 	{
 		question: "Is rbuilder available in multiple languages?",
@@ -26,11 +27,13 @@ const faqItems: FAQItemData[] = [
 	},
 	{
 		question: "What makes rbuilder different from other resume builders?",
-		answer: "rbuilder is open-source, privacy-focused, and completely free. Unlike other resume builders, it doesn't show ads, track your data, or limit your features behind a paywall.",
+		answer:
+			"rbuilder is open-source, privacy-focused, and completely free. Unlike other resume builders, it doesn't show ads, track your data, or limit your features behind a paywall.",
 	},
 	{
 		question: "How do I share my resume?",
-		answer: "You can share your resume via a unique public URL, protect it with a password, or download it as a PDF to share directly.",
+		answer:
+			"You can share your resume via a unique public URL, protect it with a password, or download it as a PDF to share directly.",
 	},
 ];
 
@@ -38,11 +41,11 @@ export function Faq() {
 	return (
 		<section
 			id="frequently-asked-questions"
-			className="relative overflow-hidden py-16 md:py-24 border-b border-border/40"
+			className="relative overflow-hidden border-border/40 border-b py-16 md:py-24"
 		>
 			{/* Ambient Glowing Glass Highlights */}
-			<div className="pointer-events-none absolute -left-20 top-1/2 size-96 -translate-y-1/2 rounded-full bg-primary/10 blur-3xl" />
-			<div className="pointer-events-none absolute -right-20 top-1/3 size-96 rounded-full bg-indigo-500/10 blur-3xl" />
+			<div className="pointer-events-none absolute top-1/2 -left-20 size-96 -translate-y-1/2 rounded-full bg-primary/10 blur-3xl" />
+			<div className="pointer-events-none absolute top-1/3 -right-20 size-96 rounded-full bg-indigo-500/10 blur-3xl" />
 
 			<div className="relative mx-auto max-w-6xl px-4 md:px-8">
 				<div className="flex flex-col gap-x-12 gap-y-10 lg:flex-row lg:items-start">
@@ -54,7 +57,7 @@ export function Faq() {
 						viewport={{ once: true }}
 						transition={{ duration: 0.45 }}
 					>
-						<span className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-3.5 py-1 font-semibold text-xs text-primary uppercase tracking-widest backdrop-blur-md">
+						<span className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-3.5 py-1 font-semibold text-primary text-xs uppercase tracking-widest backdrop-blur-md">
 							Got Questions?
 						</span>
 						<h2 className="bg-gradient-to-r from-foreground via-foreground/90 to-primary bg-clip-text font-extrabold text-3xl text-transparent tracking-tight sm:text-4xl md:text-5xl">
@@ -73,7 +76,7 @@ export function Faq() {
 						transition={{ duration: 0.45, delay: 0.08 }}
 						className="w-full flex-2 lg:max-w-2xl 2xl:max-w-3xl"
 					>
-						<div className="relative overflow-hidden rounded-3xl border border-white/20 bg-card/40 p-3 md:p-6 shadow-2xl backdrop-blur-2xl dark:border-white/10 dark:bg-slate-900/40">
+						<div className="relative overflow-hidden rounded-3xl border border-white/20 bg-card/40 p-3 shadow-2xl backdrop-blur-2xl md:p-6 dark:border-white/10 dark:bg-slate-900/40">
 							<Accordion multiple className="space-y-2">
 								{faqItems.map((item, index) => (
 									<FAQItemComponent key={item.question} item={item} index={index} />

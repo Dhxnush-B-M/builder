@@ -55,7 +55,7 @@ export function SocialAuth({ requestSignUp = false }: SocialAuthProps) {
 	);
 }
 
-function SocialAuthSkeleton() {
+function _SocialAuthSkeleton() {
 	return (
 		<div className="flex w-full flex-col gap-3">
 			<Skeleton className="h-11 w-full rounded-xl" />

@@ -71,7 +71,7 @@ export function BuilderDock({ pageLayout, onTogglePageLayout }: BuilderDockProps
 		session?.user.username && resumeSlug ? `${window.location.origin}/${session.user.username}/${resumeSlug}` : "";
 
 	return (
-		<div className="fixed inset-x-0 bottom-20 flex items-center justify-center md:bottom-4 z-40">
+		<div className="fixed inset-x-0 bottom-20 z-40 flex items-center justify-center md:bottom-4">
 			<m.div
 				initial={{ opacity: 0, y: 18 }}
 				animate={{ opacity: 1, y: 0 }}

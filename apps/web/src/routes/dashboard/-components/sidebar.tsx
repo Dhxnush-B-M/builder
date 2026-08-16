@@ -99,7 +99,7 @@ function SidebarItemList({ items }: SidebarItemListProps) {
 	);
 }
 
-function SidebarSearchButton() {
+function _SidebarSearchButton() {
 	const { i18n } = useLingui();
 	const setOpen = useCommandPaletteStore((state) => state.setOpen);
 
@@ -173,7 +173,9 @@ export function DashboardSidebar() {
 								const user = session?.user ?? {
 									name: savedUser?.name || "Account User",
 									email: savedUser?.email || "user@rbuilder.com",
-									image: savedUser?.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(savedUser?.email || "user")}`,
+									image:
+										savedUser?.avatar_url ||
+										`https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(savedUser?.email || "user")}`,
 								};
 								return (
 									<SidebarMenuButton className="h-auto gap-x-3 group-data-[collapsible=icon]:p-1!">

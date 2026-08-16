@@ -1,5 +1,5 @@
-import type { Style } from "@react-pdf/types";
 import type { Picture, ResumeData } from "@rbuilder/schema/resume/data";
+import type { Style } from "@react-pdf/types";
 import type { getTemplateMetrics } from "./metrics";
 import type { createRtlStyleHelpers } from "./rtl";
 import { rgbaStringToHex } from "@rbuilder/utils/color";

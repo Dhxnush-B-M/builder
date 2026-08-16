@@ -17,12 +17,7 @@ import {
 } from "@rbuilder/ui/components/dialog";
 import { FormControl, FormDescription, FormItem, FormLabel, FormMessage } from "@rbuilder/ui/components/form";
 import { Input } from "@rbuilder/ui/components/input";
-import {
-	InputGroup,
-	InputGroupAddon,
-	InputGroupButton,
-	InputGroupInput,
-} from "@rbuilder/ui/components/input-group";
+import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from "@rbuilder/ui/components/input-group";
 import { Combobox } from "@/components/ui/combobox";
 import { useFormBlocker } from "@/hooks/use-form-blocker";
 import { authClient } from "@/libs/auth/client";

@@ -16,7 +16,6 @@ import {
 } from "@codemirror/view";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
-import { BookOpenIcon } from "@phosphor-icons/react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useMediaQuery } from "usehooks-ts";
 import { PopoverTrigger } from "@rbuilder/ui/components/popover";
@@ -26,11 +25,7 @@ import { useTheme } from "@/features/theme/provider";
 import { useBuilderSidebarStore } from "@/routes/builder/$resumeId/-store/sidebar";
 import { compositionAwareDocumentListener, createSemanticCssEditorExtensions } from "./editor-extensions";
 import { enterStylesheetFocusMode } from "./focus-mode";
-import { formatEditorDocument } from "./formatter";
-import { LegacyStylesheetBanner } from "./legacy-banner";
-import { StylesheetStatus } from "./status";
 import { useStylesheetStore } from "./store";
-import { StylesheetToolbar } from "./toolbar";
 
 const externalReplacement = Annotation.define<boolean>();
 const emptyMetadata: SemanticCssEditorMetadata = {
@@ -319,25 +314,25 @@ function StylesheetEditorShell({ readOnly = false }: StylesheetEditorShellProps)
 	const isMobile = useMediaQuery("(max-width: 767px)", { initializeWithValue: false });
 	const [focusOpen, setFocusOpen] = useState(false);
 	const restoreDesktopRef = useRef<(() => void) | null>(null);
-	const mode = useStylesheetStore((state) => state.mode);
+	const _mode = useStylesheetStore((state) => state.mode);
 	const source = useStylesheetStore((state) => state.source.text);
-	const applied = useStylesheetStore((state) => state.applied.text);
+	const _applied = useStylesheetStore((state) => state.applied.text);
 	const diagnostics = useStylesheetStore((state) => state.diagnostics);
 	const colorTokens = useStylesheetStore((state) => state.colorTokens);
 	const metadata = useStylesheetStore((state) => state.editorMetadata);
 	const status = useStylesheetStore((state) => state.status);
 	const restoreLocked = useStylesheetStore((state) => state.restoreLocked);
-	const canUndo = useStylesheetStore((state) => state.canUndo);
-	const canRedo = useStylesheetStore((state) => state.canRedo);
+	const _canUndo = useStylesheetStore((state) => state.canUndo);
+	const _canRedo = useStylesheetStore((state) => state.canRedo);
 	const setSourceText = useStylesheetStore((state) => state.setSourceText);
 	const setFocused = useStylesheetStore((state) => state.setFocused);
-	const activate = useStylesheetStore((state) => state.activate);
+	const _activate = useStylesheetStore((state) => state.activate);
 	const undo = useStylesheetStore((state) => state.undo);
 	const redo = useStylesheetStore((state) => state.redo);
 	const refreshIntelligence = useStylesheetStore((state) => state.refreshIntelligence);
 	const editorViewRef = useRef<EditorView | null>(null);
-	const hasErrors = status === "error" || diagnostics.some(({ severity }) => severity === "error");
-	const isChecking = status === "compiling" || status === "preflighting" || status === "saving";
+	const _hasErrors = status === "error" || diagnostics.some(({ severity }) => severity === "error");
+	const _isChecking = status === "compiling" || status === "preflighting" || status === "saving";
 
 	useEffect(
 		() => () => {
@@ -350,7 +345,7 @@ function StylesheetEditorShell({ readOnly = false }: StylesheetEditorShellProps)
 		refreshIntelligence();
 	}, [refreshIntelligence]);
 
-	const toggleFocus = () => {
+	const _toggleFocus = () => {
 		if (isMobile) {
 			setFocusOpen((open) => !open);
 			return;

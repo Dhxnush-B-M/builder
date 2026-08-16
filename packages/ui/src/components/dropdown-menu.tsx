@@ -41,7 +41,7 @@ function DropdownMenuContent({
 				<MenuPrimitive.Popup
 					data-slot="dropdown-menu-content"
 					className={cn(
-						"relative z-50 max-h-(--available-height) w-fit min-w-[calc(var(--anchor-width)+--spacing(7))] origin-(--transform-origin) overflow-y-auto overflow-x-hidden rounded-2xl bg-popover/95 p-1.5 text-popover-foreground shadow-2xl ring-1 ring-foreground/10 transition-all duration-200 ease-out before:pointer-events-none before:absolute before:inset-0 before:-z-1 before:rounded-[inherit] before:backdrop-blur-2xl before:backdrop-saturate-150 data-ending-style:scale-95 data-starting-style:scale-95 data-ending-style:opacity-0 data-starting-style:opacity-0 animate-in fade-in-0 zoom-in-95 data-[side=top]:slide-in-from-bottom-2 data-[side=bottom]:slide-in-from-top-2 **:data-[slot$=-item]:data-highlighted:bg-foreground/10 **:data-[slot$=-separator]:bg-foreground/5 **:data-[variant=destructive]:**:text-accent-foreground! **:data-[variant=destructive]:text-accent-foreground! **:data-[slot$=-trigger]:aria-expanded:bg-foreground/10! **:data-[slot$=-item]:focus:bg-foreground/10 **:data-[slot$=-trigger]:focus:bg-foreground/10 **:data-[variant=destructive]:focus:bg-foreground/10!",
+						"fade-in-0 zoom-in-95 data-[side=top]:slide-in-from-bottom-2 data-[side=bottom]:slide-in-from-top-2 relative z-50 max-h-(--available-height) w-fit min-w-[calc(var(--anchor-width)+--spacing(7))] origin-(--transform-origin) animate-in overflow-y-auto overflow-x-hidden rounded-2xl bg-popover/95 p-1.5 text-popover-foreground shadow-2xl ring-1 ring-foreground/10 transition-all duration-200 ease-out before:pointer-events-none before:absolute before:inset-0 before:-z-1 before:rounded-[inherit] before:backdrop-blur-2xl before:backdrop-saturate-150 data-ending-style:scale-95 data-starting-style:scale-95 data-ending-style:opacity-0 data-starting-style:opacity-0 **:data-[slot$=-item]:data-highlighted:bg-foreground/10 **:data-[slot$=-separator]:bg-foreground/5 **:data-[variant=destructive]:**:text-accent-foreground! **:data-[variant=destructive]:text-accent-foreground! **:data-[slot$=-trigger]:aria-expanded:bg-foreground/10! **:data-[slot$=-item]:focus:bg-foreground/10 **:data-[slot$=-trigger]:focus:bg-foreground/10 **:data-[variant=destructive]:focus:bg-foreground/10!",
 						className,
 					)}
 					{...props}
@@ -87,7 +87,7 @@ function DropdownMenuItem({
 			data-inset={inset}
 			data-variant={variant}
 			className={cn(
-				"group/dropdown-menu-item relative flex cursor-pointer select-none items-center gap-2 rounded-xl px-2.5 py-2 text-sm font-medium outline-hidden transition-all duration-200 ease-out active:scale-[0.98] hover:translate-x-0.5 focus:bg-accent focus:text-accent-foreground not-data-[variant=destructive]:focus:**:text-accent-foreground data-disabled:pointer-events-none data-inset:ps-7 data-[variant=destructive]:text-destructive data-disabled:opacity-50 data-[variant=destructive]:focus:bg-destructive/10 data-[variant=destructive]:focus:text-destructive dark:data-[variant=destructive]:focus:bg-destructive/20 [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg]:transition-transform [&_svg]:duration-200 group-hover/dropdown-menu-item/svg:scale-110 data-[variant=destructive]:*:[svg]:text-destructive",
+				"group/dropdown-menu-item relative flex cursor-pointer select-none items-center gap-2 rounded-xl px-2.5 py-2 font-medium text-sm outline-hidden transition-all duration-200 ease-out hover:translate-x-0.5 focus:bg-accent focus:text-accent-foreground not-data-[variant=destructive]:focus:**:text-accent-foreground active:scale-[0.98] group-hover/dropdown-menu-item/svg:scale-110 data-disabled:pointer-events-none data-inset:ps-7 data-[variant=destructive]:text-destructive data-disabled:opacity-50 data-[variant=destructive]:focus:bg-destructive/10 data-[variant=destructive]:focus:text-destructive dark:data-[variant=destructive]:focus:bg-destructive/20 [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg]:transition-transform [&_svg]:duration-200 data-[variant=destructive]:*:[svg]:text-destructive",
 				className,
 			)}
 			{...props}
@@ -112,13 +112,13 @@ function DropdownMenuSubTrigger({
 			data-slot="dropdown-menu-sub-trigger"
 			data-inset={inset}
 			className={cn(
-				"group/dropdown-menu-sub flex cursor-pointer select-none items-center gap-2 rounded-xl px-2.5 py-2 text-sm font-medium outline-hidden transition-all duration-200 ease-out active:scale-[0.98] hover:translate-x-0.5 focus:bg-accent focus:text-accent-foreground not-data-[variant=destructive]:focus:**:text-accent-foreground data-open:bg-accent data-popup-open:bg-accent data-inset:ps-7 data-open:text-accent-foreground data-popup-open:text-accent-foreground [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg]:transition-transform [&_svg]:duration-200 group-hover/dropdown-menu-sub/svg:scale-110",
+				"group/dropdown-menu-sub flex cursor-pointer select-none items-center gap-2 rounded-xl px-2.5 py-2 font-medium text-sm outline-hidden transition-all duration-200 ease-out hover:translate-x-0.5 focus:bg-accent focus:text-accent-foreground not-data-[variant=destructive]:focus:**:text-accent-foreground active:scale-[0.98] group-hover/dropdown-menu-sub/svg:scale-110 data-open:bg-accent data-popup-open:bg-accent data-inset:ps-7 data-open:text-accent-foreground data-popup-open:text-accent-foreground [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg]:transition-transform [&_svg]:duration-200",
 				className,
 			)}
 			{...props}
 		>
 			{children}
-			<CaretRightIcon className="ms-auto rtl:rotate-180 transition-transform duration-200 group-hover/dropdown-menu-sub:translate-x-1" />
+			<CaretRightIcon className="ms-auto transition-transform duration-200 group-hover/dropdown-menu-sub:translate-x-1 rtl:rotate-180" />
 		</MenuPrimitive.SubmenuTrigger>
 	);
 }

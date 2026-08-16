@@ -1,9 +1,8 @@
 import { m } from "motion/react";
-import { TextMaskEffect } from "@/components/animation/text-mask";
 
 export function Prefooter() {
 	return (
-		<section id="prefooter" className="relative overflow-hidden py-16 md:py-28 border-t border-border/30">
+		<section id="prefooter" className="relative overflow-hidden border-border/30 border-t py-16 md:py-28">
 			{/* Glowing Glass Ambient Backdrops */}
 			<div aria-hidden="true" className="pointer-events-none absolute inset-0">
 				<div className="absolute inset-s-1/4 top-10 size-96 rounded-full bg-primary/10 blur-3xl" />
@@ -12,14 +11,14 @@ export function Prefooter() {
 
 			<div className="relative space-y-12">
 				{/* Continuous Left-to-Right Animated Marquee Text Banner */}
-				<div className="relative w-full overflow-hidden py-6 border-y border-white/10 bg-card/20 backdrop-blur-xl shadow-xl dark:bg-slate-900/30">
-					<div className="flex w-max animate-[marquee_20s_linear_infinite] select-none items-center gap-12 font-extrabold tracking-tighter text-7xl md:text-9xl">
+				<div className="relative w-full overflow-hidden border-white/10 border-y bg-card/20 py-6 shadow-xl backdrop-blur-xl dark:bg-slate-900/30">
+					<div className="flex w-max animate-[marquee_20s_linear_infinite] select-none items-center gap-12 font-extrabold text-7xl tracking-tighter md:text-9xl">
 						{Array.from({ length: 8 }).map((_, idx) => (
 							<div key={idx} className="flex items-center gap-12">
 								<span className="bg-gradient-to-r from-primary via-indigo-500 to-purple-500 bg-clip-text text-transparent opacity-90 transition-all hover:opacity-100">
 									rbuilder
 								</span>
-								<span className="text-primary/30 text-4xl md:text-6xl">•</span>
+								<span className="text-4xl text-primary/30 md:text-6xl">•</span>
 							</div>
 						))}
 					</div>

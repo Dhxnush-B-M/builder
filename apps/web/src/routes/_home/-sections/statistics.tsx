@@ -27,9 +27,12 @@ function StatisticCard({ statistic, index }: StatisticCardProps) {
 			transition={{ duration: 0.5, delay: index * 0.1, ease: "easeOut" }}
 		>
 			{/* Glowing Background Radial Light */}
-			<div aria-hidden="true" className="pointer-events-none absolute -right-10 -top-10 size-44 rounded-full bg-gradient-to-br from-primary/20 via-indigo-500/10 to-transparent blur-2xl opacity-60 transition-opacity duration-300 group-hover:opacity-100" />
+			<div
+				aria-hidden="true"
+				className="pointer-events-none absolute -top-10 -right-10 size-44 rounded-full bg-gradient-to-br from-primary/20 via-indigo-500/10 to-transparent opacity-60 blur-2xl transition-opacity duration-300 group-hover:opacity-100"
+			/>
 
-			<div className="relative z-10 flex flex-col items-center justify-center text-center gap-y-4">
+			<div className="relative z-10 flex flex-col items-center justify-center gap-y-4 text-center">
 				{/* Icon Badge */}
 				<m.div
 					aria-hidden="true"
@@ -46,7 +49,7 @@ function StatisticCard({ statistic, index }: StatisticCardProps) {
 				</span>
 
 				{/* Label */}
-				<p className="font-semibold text-sm text-muted-foreground uppercase tracking-wider">{statistic.label}</p>
+				<p className="font-semibold text-muted-foreground text-sm uppercase tracking-wider">{statistic.label}</p>
 			</div>
 		</m.div>
 	);

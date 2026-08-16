@@ -1,4 +1,3 @@
-import type { Style } from "@react-pdf/types";
 import type {
 	AwardItem,
 	CertificationItem,
@@ -18,6 +17,7 @@ import type {
 	SummaryItem,
 	VolunteerItem,
 } from "@rbuilder/schema/resume/data";
+import type { Style } from "@react-pdf/types";
 import type { IconName } from "phosphor-icons-react-pdf/dynamic";
 import type { ReactElement, ReactNode } from "react";
 import type { CombinedTextName } from "../../semantic/node-keys";

@@ -3,12 +3,7 @@ import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { pageSchema } from "@rbuilder/schema/resume/data";
 import { FormControl, FormItem, FormLabel, FormMessage } from "@rbuilder/ui/components/form";
-import {
-	InputGroup,
-	InputGroupAddon,
-	InputGroupInput,
-	InputGroupText,
-} from "@rbuilder/ui/components/input-group";
+import { InputGroup, InputGroupAddon, InputGroupInput, InputGroupText } from "@rbuilder/ui/components/input-group";
 import { Switch } from "@rbuilder/ui/components/switch";
 import { Combobox } from "@/components/ui/combobox";
 import { getLocaleOptions } from "@/features/locale/locale-options";

@@ -1,11 +1,7 @@
+import type { SupabaseResumeRecord } from "@/libs/supabase/db";
 import { useEffect, useState } from "react";
 import { defaultResumeData } from "@rbuilder/schema/resume/default";
-import {
-	deleteResumeFromSupabase,
-	getResumesFromSupabase,
-	saveResumeToSupabase,
-	type SupabaseResumeRecord,
-} from "@/libs/supabase/db";
+import { deleteResumeFromSupabase, getResumesFromSupabase, saveResumeToSupabase } from "@/libs/supabase/db";
 
 export type SavedResume = {
 	id: string;
@@ -67,7 +63,7 @@ function mapSupabaseRecordToSavedResume(rec: SupabaseResumeRecord): SavedResume 
 }
 
 export function useLocalResumes(): SavedResume[] {
-	const activeEmail = getActiveUserEmail();
+	const _activeEmail = getActiveUserEmail();
 	const [resumes, setResumes] = useState<SavedResume[]>(inMemoryStore);
 
 	useEffect(() => {
@@ -121,7 +117,7 @@ export function useLocalResumes(): SavedResume[] {
 			isMounted = false;
 			window.removeEventListener(RESUMES_UPDATED_EVENT, handleUpdate);
 		};
-	}, [activeEmail]);
+	}, []);
 
 	return resumes;
 }
@@ -158,9 +154,11 @@ export function saveLocalResume(resume: Partial<SavedResume> & { id: string; nam
 		id: newResume.id,
 		title: newResume.name,
 		data: newResume.data,
-	}).then(() => {
-		notifyResumesUpdated();
-	}).catch(() => null);
+	})
+		.then(() => {
+			notifyResumesUpdated();
+		})
+		.catch(() => null);
 
 	return newResume;
 }

@@ -1,6 +1,6 @@
-import type { Style } from "@react-pdf/types";
 import type { ResumeData } from "@rbuilder/schema/resume/data";
 import type { Template } from "@rbuilder/schema/templates";
+import type { Style } from "@react-pdf/types";
 import type { TemplateStyleSlots } from "../templates/shared/types";
 import { describe, expect, it, vi } from "vitest";
 import { createCanvas } from "@napi-rs/canvas";

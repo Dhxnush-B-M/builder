@@ -94,15 +94,14 @@ export function ImportResumeDialog(_: DialogProps<"resume.import">) {
 			const toastId = toast.loading(t`Importing your resume...`);
 
 			try {
-				let data: ResumeData | undefined;
 				const parsed = JSON.parse(await value.file.text()) as Partial<ResumeData>;
-				data = { ...defaultResumeData, ...parsed };
+				const data: ResumeData = { ...defaultResumeData, ...parsed };
 
 				if (!data) {
 					throw new Error(t`The selected file is not a supported JSON resume format.`);
 				}
 
-				const id = await importResume({ data });
+				const id = await importResume({ data } as any);
 				toast.success(t`Your resume has been imported successfully.`, { id: toastId, description: null });
 				closeDialog();
 				void navigate({ to: "/builder/$resumeId", params: { resumeId: id } });

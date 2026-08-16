@@ -1,10 +1,7 @@
-import type { AuthSession } from "@rbuilder/auth/types";
-import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { PaletteIcon, SignOutIcon } from "@phosphor-icons/react";
 import { useRouter } from "@tanstack/react-router";
 import { toast } from "sonner";
-import { useIsClient } from "usehooks-ts";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -20,15 +17,22 @@ import {
 } from "@rbuilder/ui/components/dropdown-menu";
 import { useTheme } from "@/features/theme/provider";
 import { authClient } from "@/libs/auth/client";
-import { getReadableErrorMessage } from "@/libs/error-message";
 import { isTheme } from "@/libs/theme";
+
+type AuthSession = {
+	user?: {
+		id?: string;
+		name?: string;
+		email?: string;
+		image?: string;
+	};
+} | null;
 
 type Props = {
 	children: ({ session }: { session: AuthSession }) => React.ComponentProps<typeof DropdownMenuTrigger>["render"];
 };
 
 export function UserDropdownMenu({ children }: Props) {
-	const isClient = useIsClient();
 	const router = useRouter();
 	const { theme, setTheme } = useTheme();
 	const { data: session } = authClient.useSession();
@@ -82,30 +86,31 @@ export function UserDropdownMenu({ children }: Props) {
 	const saved = getSavedUser();
 	const userName = saved?.name || "Logged In User";
 	const userEmail = saved?.email || "user@rbuilder.com";
-	const userAvatar = saved?.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(userEmail)}`;
+	const userAvatar =
+		saved?.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(userEmail)}`;
 
 	const activeSession: AuthSession = session?.user
 		? (session as AuthSession)
 		: {
-		user: {
-			id: saved?.id || "logged_in_user",
-			name: userName,
-			email: userEmail,
-			image: userAvatar,
-			emailVerified: true,
-			createdAt: new Date(),
-			updatedAt: new Date(),
-			username: userEmail.split("@")[0] || "user",
-		},
-		session: {
-			id: "auth-session",
-			userId: saved?.id || "logged_in_user",
-			token: "",
-			expiresAt: new Date(),
-			createdAt: new Date(),
-			updatedAt: new Date(),
-		},
-	};
+				user: {
+					id: saved?.id || "logged_in_user",
+					name: userName,
+					email: userEmail,
+					image: userAvatar,
+					emailVerified: true,
+					createdAt: new Date(),
+					updatedAt: new Date(),
+					username: userEmail.split("@")[0] || "user",
+				},
+				session: {
+					id: "auth-session",
+					userId: saved?.id || "logged_in_user",
+					token: "",
+					expiresAt: new Date(),
+					createdAt: new Date(),
+					updatedAt: new Date(),
+				},
+			};
 
 	return (
 		<DropdownMenu>

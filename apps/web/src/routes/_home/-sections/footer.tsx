@@ -39,8 +39,8 @@ export function Footer() {
 					<div className="space-y-2">
 						<h2 className="font-semibold text-lg tracking-tight">rbuilder</h2>
 						<p className="max-w-xs text-muted-foreground text-sm leading-relaxed">
-							A modern resume builder designed to empower your career growth with intuitive tools, high impact
-							designs, and privacy.
+							A modern resume builder designed to empower your career growth with intuitive tools, high impact designs,
+							and privacy.
 						</p>
 					</div>
 
@@ -83,7 +83,7 @@ export function Footer() {
 				/>
 			</div>
 
-			<div className="flex flex-col items-center justify-between gap-4 border-border/40 border-t pt-6 sm:flex-row text-xs text-muted-foreground">
+			<div className="flex flex-col items-center justify-between gap-4 border-border/40 border-t pt-6 text-muted-foreground text-xs sm:flex-row">
 				<p>© {new Date().getFullYear()} rbuilder. All rights reserved.</p>
 				<p>By the community, for the community.</p>
 			</div>

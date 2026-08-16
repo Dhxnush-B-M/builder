@@ -41,7 +41,7 @@ export function BuilderSidebarRight() {
 	return (
 		<ScrollArea
 			ref={scrollAreaRef}
-			className="@container h-[calc(100svh-3.5rem)] overflow-hidden bg-background/60 backdrop-blur-2xl border-l border-white/20 dark:border-white/10 shadow-lg w-full"
+			className="@container h-[calc(100svh-3.5rem)] w-full overflow-hidden border-white/20 border-l bg-background/60 shadow-lg backdrop-blur-2xl dark:border-white/10"
 		>
 			<div className="space-y-4 p-4">
 				{rightSidebarSections.map((section) => (
@@ -57,7 +57,7 @@ export function BuilderSidebarRight() {
 	);
 }
 
-function SidebarEdge() {
+function _SidebarEdge() {
 	const { toggleSidebar } = useBuilderSidebar();
 
 	const scrollToSection = useCallback(

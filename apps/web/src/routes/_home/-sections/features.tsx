@@ -89,7 +89,7 @@ function FeatureCard({ icon: Icon, title, description }: Feature) {
 
 export function Features() {
 	return (
-		<section id="features" className="container mx-auto px-4 py-16 md:py-24 border-b border-border/40">
+		<section id="features" className="container mx-auto border-border/40 border-b px-4 py-16 md:py-24">
 			<m.div
 				className="mb-12 flex flex-col items-center space-y-4 text-center will-change-[transform,opacity]"
 				initial={{ opacity: 0, y: 20 }}

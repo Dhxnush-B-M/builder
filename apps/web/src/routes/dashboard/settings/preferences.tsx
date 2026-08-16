@@ -1,4 +1,3 @@
-import { t } from "@lingui/core/macro";
 import { SlidersHorizontalIcon } from "@phosphor-icons/react";
 import { createFileRoute } from "@tanstack/react-router";
 import { Separator } from "@rbuilder/ui/components/separator";

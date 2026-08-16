@@ -1,7 +1,8 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useEffect, useState, type FormEvent } from "react";
-import { toast } from "sonner";
+import type { FormEvent } from "react";
 import { DeviceMobileIcon, UserIcon } from "@phosphor-icons/react";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
 import { saveUserDetailsToSupabase } from "@/libs/supabase/db";
 
 export const Route = createFileRoute("/onboarding")({
@@ -67,7 +68,7 @@ function OnboardingPage() {
 	}
 
 	return (
-		<div className="relative min-h-screen w-full bg-slate-50 text-slate-900 flex flex-col items-center justify-center p-4 md:p-8 font-sans selection:bg-emerald-500 selection:text-white">
+		<div className="relative flex min-h-screen w-full flex-col items-center justify-center bg-slate-50 p-4 font-sans text-slate-900 selection:bg-emerald-500 selection:text-white md:p-8">
 			{/* Ambient Luminous Mesh Background */}
 			<div aria-hidden="true" className="pointer-events-none fixed inset-0 flex items-center justify-center opacity-70">
 				<div className="size-[700px] animate-pulse rounded-full bg-gradient-to-tr from-emerald-200/50 via-teal-100/60 to-cyan-200/40 blur-3xl" />
@@ -77,9 +78,9 @@ function OnboardingPage() {
 			</div>
 
 			{/* Main White Glassy Panel */}
-			<div className="relative z-10 w-full max-w-[480px] rounded-[36px] border border-white/80 bg-white/85 p-8 md:p-11 shadow-2xl shadow-slate-200/60 backdrop-blur-3xl space-y-7">
+			<div className="relative z-10 w-full max-w-[480px] space-y-7 rounded-[36px] border border-white/80 bg-white/85 p-8 shadow-2xl shadow-slate-200/60 backdrop-blur-3xl md:p-11">
 				{/* Top Logo & Title */}
-				<div className="text-center space-y-2.5">
+				<div className="space-y-2.5 text-center">
 					<a
 						href="/"
 						onClick={(e) => {
@@ -93,16 +94,18 @@ function OnboardingPage() {
 							}
 							window.location.href = "/";
 						}}
-						className="inline-flex items-center justify-center gap-2 mb-1 cursor-pointer hover:opacity-80 transition-opacity"
+						className="mb-1 inline-flex cursor-pointer items-center justify-center gap-2 transition-opacity hover:opacity-80"
 					>
-						<img src="/opengraph/logo.png" alt="rbuilder logo" className="size-11 rounded-full border-2 border-emerald-500/30 shadow-md" />
+						<img
+							src="/opengraph/logo.png"
+							alt="rbuilder logo"
+							className="size-11 rounded-full border-2 border-emerald-500/30 shadow-md"
+						/>
 					</a>
 
-					<h1 className="text-2xl md:text-3xl font-extrabold text-slate-900 tracking-tight">
-						Enter Your Details
-					</h1>
+					<h1 className="font-extrabold text-2xl text-slate-900 tracking-tight md:text-3xl">Enter Your Details</h1>
 
-					<p className="text-xs md:text-sm text-slate-500 leading-relaxed max-w-sm mx-auto">
+					<p className="mx-auto max-w-sm text-slate-500 text-xs leading-relaxed md:text-sm">
 						Please provide your name and mobile number to access your resume builder dashboard.
 					</p>
 				</div>
@@ -111,7 +114,7 @@ function OnboardingPage() {
 				<form onSubmit={handleSubmit} className="space-y-4 pt-1">
 					{/* Full Name */}
 					<div className="space-y-1.5">
-						<label htmlFor="user-name" className="text-xs font-bold text-slate-700 flex items-center gap-1.5">
+						<label htmlFor="user-name" className="flex items-center gap-1.5 font-bold text-slate-700 text-xs">
 							<UserIcon className="size-4 text-emerald-600" />
 							<span>Full Name</span>
 						</label>
@@ -122,13 +125,13 @@ function OnboardingPage() {
 							value={name}
 							onChange={(e) => setName(e.target.value)}
 							placeholder="Enter your full name"
-							className="w-full px-4 py-3.5 text-sm font-medium rounded-2xl border border-slate-200 bg-white/90 text-slate-900 placeholder:text-slate-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 shadow-sm transition-all"
+							className="w-full rounded-2xl border border-slate-200 bg-white/90 px-4 py-3.5 font-medium text-slate-900 text-sm shadow-sm transition-all placeholder:text-slate-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
 						/>
 					</div>
 
 					{/* Phone Number */}
 					<div className="space-y-1.5">
-						<label htmlFor="user-phone" className="text-xs font-bold text-slate-700 flex items-center gap-1.5">
+						<label htmlFor="user-phone" className="flex items-center gap-1.5 font-bold text-slate-700 text-xs">
 							<DeviceMobileIcon className="size-4 text-emerald-600" />
 							<span>Phone Number</span>
 						</label>
@@ -136,7 +139,7 @@ function OnboardingPage() {
 							<select
 								value={countryCode}
 								onChange={(e) => setCountryCode(e.target.value)}
-								className="px-3.5 py-3.5 rounded-2xl border border-slate-200 bg-white/90 text-xs font-bold text-slate-800 focus:border-emerald-500 focus:outline-none shadow-sm"
+								className="rounded-2xl border border-slate-200 bg-white/90 px-3.5 py-3.5 font-bold text-slate-800 text-xs shadow-sm focus:border-emerald-500 focus:outline-none"
 							>
 								<option value="+91">🇮🇳 +91</option>
 								<option value="+1">🇺🇸 +1</option>
@@ -152,7 +155,7 @@ function OnboardingPage() {
 								value={phone}
 								onChange={(e) => setPhone(e.target.value)}
 								placeholder="Enter 10-digit mobile number"
-								className="flex-1 px-4 py-3.5 text-sm font-medium rounded-2xl border border-slate-200 bg-white/90 text-slate-900 placeholder:text-slate-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 shadow-sm transition-all"
+								className="flex-1 rounded-2xl border border-slate-200 bg-white/90 px-4 py-3.5 font-medium text-slate-900 text-sm shadow-sm transition-all placeholder:text-slate-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
 							/>
 						</div>
 					</div>
@@ -161,11 +164,11 @@ function OnboardingPage() {
 					<button
 						type="submit"
 						disabled={isSubmitting}
-						className="w-full py-4 px-6 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-sm shadow-xl shadow-emerald-600/25 transition-all active:scale-[0.99] disabled:opacity-50 mt-5 flex items-center justify-center gap-2"
+						className="mt-5 flex w-full items-center justify-center gap-2 rounded-2xl bg-emerald-600 px-6 py-4 font-extrabold text-sm text-white shadow-emerald-600/25 shadow-xl transition-all hover:bg-emerald-500 active:scale-[0.99] disabled:opacity-50"
 					>
 						{isSubmitting ? (
 							<>
-								<div className="size-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+								<div className="size-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
 								<span>Saving Details...</span>
 							</>
 						) : (

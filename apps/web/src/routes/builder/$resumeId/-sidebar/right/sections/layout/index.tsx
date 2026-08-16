@@ -2,12 +2,7 @@ import type z from "zod";
 import { Trans } from "@lingui/react/macro";
 import { metadataSchema } from "@rbuilder/schema/resume/data";
 import { FormControl, FormItem, FormLabel, FormMessage } from "@rbuilder/ui/components/form";
-import {
-	InputGroup,
-	InputGroupAddon,
-	InputGroupInput,
-	InputGroupText,
-} from "@rbuilder/ui/components/input-group";
+import { InputGroup, InputGroupAddon, InputGroupInput, InputGroupText } from "@rbuilder/ui/components/input-group";
 import { Slider } from "@rbuilder/ui/components/slider";
 import { useCurrentResume, useUpdateResumeData } from "@/features/resume/builder/draft";
 import { useSyncFormValues } from "@/hooks/use-sync-form-values";

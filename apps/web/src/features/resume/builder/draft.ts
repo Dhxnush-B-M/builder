@@ -194,10 +194,9 @@ async function flushResumeSave(id: string) {
 	});
 
 	try {
-		const updated = (await orpc.resume.update.call(
-			{ id: submitted.id, data: submittedData },
-			{ signal: runtime.abortController.signal },
-		).catch(() => null)) as Resume | null;
+		const updated = (await orpc.resume.update
+			.call({ id: submitted.id, data: submittedData }, { signal: runtime.abortController.signal })
+			.catch(() => null)) as Resume | null;
 
 		if (updated) {
 			runtime.queryClient?.setQueryData(getResumeQueryKey(submitted.id), updated);

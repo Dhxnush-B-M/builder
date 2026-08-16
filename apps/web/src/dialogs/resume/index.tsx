@@ -1,16 +1,12 @@
-import type { RouterInput } from "@/libs/orpc/client";
 import type { DialogProps } from "../store";
-import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
-import { CaretDownIcon, MagicWandIcon, PencilSimpleLineIcon, PlusIcon, TestTubeIcon } from "@phosphor-icons/react";
+import { PencilSimpleLineIcon, PlusIcon } from "@phosphor-icons/react";
 import { useStore } from "@tanstack/react-form";
-import { useMutation } from "@tanstack/react-query";
-import { useNavigate, useParams } from "@tanstack/react-router";
+import { useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef } from "react";
 import { toast } from "sonner";
 import z from "zod";
 import { Button } from "@rbuilder/ui/components/button";
-import { ButtonGroup } from "@rbuilder/ui/components/button-group";
 import {
 	DialogContent,
 	DialogDescription,
@@ -18,30 +14,14 @@ import {
 	DialogHeader,
 	DialogTitle,
 } from "@rbuilder/ui/components/dialog";
-import {
-	DropdownMenu,
-	DropdownMenuContent,
-	DropdownMenuItem,
-	DropdownMenuTrigger,
-} from "@rbuilder/ui/components/dropdown-menu";
 import { FormControl, FormDescription, FormItem, FormLabel, FormMessage } from "@rbuilder/ui/components/form";
 import { Input } from "@rbuilder/ui/components/input";
-import {
-	InputGroup,
-	InputGroupAddon,
-	InputGroupInput,
-	InputGroupText,
-} from "@rbuilder/ui/components/input-group";
 import { generateId, generateRandomName, slugify } from "@rbuilder/utils/string";
-import { ChipInput } from "@/components/input/chip-input";
 import { usePatchResume } from "@/features/resume/builder/draft";
 import { useFormBlocker } from "@/hooks/use-form-blocker";
-import { authClient } from "@/libs/auth/client";
-import { getResumeErrorMessage } from "@/libs/error-message";
-import { orpc } from "@/libs/orpc/client";
+import { saveLocalResume } from "@/libs/resume/local-storage";
 import { useAppForm, withForm } from "@/libs/tanstack-form";
 import { useDialogStore } from "../store";
-import { saveLocalResume } from "@/libs/resume/local-storage";
 
 const formSchema = z.object({
 	id: z.string(),
@@ -99,7 +79,7 @@ export function CreateResumeDialog(_: DialogProps<"resume.create">) {
 		shouldBlock: () => !didCreateRef.current && form.state.isDirty && !form.state.isSubmitting,
 	});
 
-	const onCreateSampleResume = () => {
+	const _onCreateSampleResume = () => {
 		didCreateRef.current = true;
 		const newId = generateId();
 		saveLocalResume({
@@ -275,42 +255,40 @@ export function DuplicateResumeDialog({ data }: DialogProps<"resume.duplicate">)
 const ResumeForm = withForm({
 	defaultValues,
 	render: function ResumeFormRenderer({ form }) {
-		const slugPrefix = typeof window !== "undefined" ? `${window.location.origin}/` : "/";
+		const _slugPrefix = typeof window !== "undefined" ? `${window.location.origin}/` : "/";
 
-		const onGenerateName = () => {
+		const _onGenerateName = () => {
 			form.setFieldValue("name", generateRandomName());
 		};
 
 		return (
-			<>
-				<form.Field name="name">
-					{(field) => (
-						<FormItem hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}>
-							<FormLabel>
-								<Trans>Name</Trans>
-							</FormLabel>
-							<div className="flex items-center gap-x-2">
-								<FormControl
-									render={
-										<Input
-											min={1}
-											max={64}
-											name={field.name}
-											value={field.state.value}
-											onBlur={field.handleBlur}
-											onChange={(event) => field.handleChange(event.target.value)}
-										/>
-									}
-								/>
-							</div>
-							<FormMessage errors={field.state.meta.errors} />
-							<FormDescription>
-								<Trans>Tip: You can name the resume referring to the position you are applying for.</Trans>
-							</FormDescription>
-						</FormItem>
-					)}
-				</form.Field>
-			</>
+			<form.Field name="name">
+				{(field) => (
+					<FormItem hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}>
+						<FormLabel>
+							<Trans>Name</Trans>
+						</FormLabel>
+						<div className="flex items-center gap-x-2">
+							<FormControl
+								render={
+									<Input
+										min={1}
+										max={64}
+										name={field.name}
+										value={field.state.value}
+										onBlur={field.handleBlur}
+										onChange={(event) => field.handleChange(event.target.value)}
+									/>
+								}
+							/>
+						</div>
+						<FormMessage errors={field.state.meta.errors} />
+						<FormDescription>
+							<Trans>Tip: You can name the resume referring to the position you are applying for.</Trans>
+						</FormDescription>
+					</FormItem>
+				)}
+			</form.Field>
 		);
 	},
 });

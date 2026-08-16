@@ -1,14 +1,15 @@
+import type { BuilderLayout } from "./-store/sidebar";
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo } from "react";
 import { useMediaQuery } from "usehooks-ts";
+import { defaultResumeData } from "@rbuilder/schema/resume/default";
 import { useResumeCleanup, useResumeStore } from "@/features/resume/builder/draft";
 import { initializeStylesheetStore, useStylesheetStore } from "@/features/resume/stylesheet/store";
-import { defaultResumeData } from "@rbuilder/schema/resume/default";
-import { createNoindexFollowMeta } from "@/libs/seo";
 import { getLocalResumes } from "@/libs/resume/local-storage";
+import { createNoindexFollowMeta } from "@/libs/seo";
 import { DesktopBuilderShell } from "./-components/desktop-builder-shell";
 import { MobileBuilderShell } from "./-components/mobile-builder-shell";
-import { getBuilderLayout, type BuilderLayout } from "./-store/sidebar";
+import { getBuilderLayout } from "./-store/sidebar";
 
 export const Route = createFileRoute("/builder/$resumeId")({
 	component: RouteComponent,
@@ -33,10 +34,7 @@ function RouteComponent() {
 		return list.find((r) => r.id === resumeId);
 	}, [resumeId]);
 
-	const resumeData = useMemo(
-		() => savedResume?.data || structuredClone(defaultResumeData),
-		[savedResume],
-	);
+	const resumeData = useMemo(() => savedResume?.data || structuredClone(defaultResumeData), [savedResume]);
 
 	const resume = useMemo(
 		() => ({

@@ -1,6 +1,6 @@
-import type { Style } from "@react-pdf/types";
 import type { ResumeData, StyleIntent, StyleSlot } from "@rbuilder/schema/resume/data";
 import type { SectionStyleRuleContext } from "@rbuilder/schema/resume/style-rules";
+import type { Style } from "@react-pdf/types";
 import { getSectionStyleRuleContext, resolveStyleIntentForSlot } from "@rbuilder/schema/resume/style-rules";
 import { rgbaStringToHex } from "@rbuilder/utils/color";
 

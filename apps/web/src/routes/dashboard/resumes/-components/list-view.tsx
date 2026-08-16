@@ -1,7 +1,7 @@
 import type { RouterOutput } from "@/libs/orpc/client";
 import { useLingui } from "@lingui/react";
 import { Trans } from "@lingui/react/macro";
-import { DotsThreeIcon, DownloadSimpleIcon, PlusIcon } from "@phosphor-icons/react";
+import { DotsThreeIcon, PlusIcon } from "@phosphor-icons/react";
 import { Link } from "@tanstack/react-router";
 import { AnimatePresence, m } from "motion/react";
 import { useMemo } from "react";
@@ -36,7 +36,7 @@ export function ListView({ resumes, hasResumes }: ListViewProps) {
 			openDialog("resume.create", undefined);
 		};
 
-		const handleImportResume = () => {
+		const _handleImportResume = () => {
 			openDialog("resume.import", undefined);
 		};
 

@@ -6,12 +6,7 @@ import { useStore } from "@tanstack/react-form";
 import { profileItemSchema } from "@rbuilder/schema/resume/data";
 import { FormControl, FormItem, FormLabel, FormMessage } from "@rbuilder/ui/components/form";
 import { Input } from "@rbuilder/ui/components/input";
-import {
-	InputGroup,
-	InputGroupAddon,
-	InputGroupInput,
-	InputGroupText,
-} from "@rbuilder/ui/components/input-group";
+import { InputGroup, InputGroupAddon, InputGroupInput, InputGroupText } from "@rbuilder/ui/components/input-group";
 import { PopoverTrigger } from "@rbuilder/ui/components/popover";
 import { Switch } from "@rbuilder/ui/components/switch";
 import { cn } from "@rbuilder/utils/style";

@@ -4,8 +4,8 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { useConfirm } from "@/hooks/use-confirm";
-import { deleteLocalResume } from "@/libs/resume/local-storage";
 import { orpc } from "@/libs/orpc/client";
+import { deleteLocalResume } from "@/libs/resume/local-storage";
 
 type Resume = RouterOutput["resume"]["list"][number];
 

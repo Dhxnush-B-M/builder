@@ -28,12 +28,7 @@ import {
 } from "@rbuilder/ui/components/dialog";
 import { FormControl, FormItem, FormLabel, FormMessage } from "@rbuilder/ui/components/form";
 import { Input } from "@rbuilder/ui/components/input";
-import {
-	InputGroup,
-	InputGroupAddon,
-	InputGroupInput,
-	InputGroupText,
-} from "@rbuilder/ui/components/input-group";
+import { InputGroup, InputGroupAddon, InputGroupInput, InputGroupText } from "@rbuilder/ui/components/input-group";
 import { Slider } from "@rbuilder/ui/components/slider";
 import "react-easy-crop/react-easy-crop.css";
 import { ColorPicker } from "@/components/input/color-picker";

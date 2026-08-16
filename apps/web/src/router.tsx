@@ -1,6 +1,5 @@
 import { createRouter } from "@tanstack/react-router";
 import { ErrorScreen } from "./components/layout/error-screen";
-import { LoadingScreen } from "./components/layout/loading-screen";
 import { NotFoundScreen } from "./components/layout/not-found-screen";
 import { getLocale, loadLocale } from "./libs/locale";
 import { orpc } from "./libs/orpc/client";

@@ -1,5 +1,5 @@
-import type { Style } from "@react-pdf/types";
 import type { ResolvedNodeStyle, ResolvedPageSize } from "@rbuilder/resume/stylesheet";
+import type { Style } from "@react-pdf/types";
 
 type ResolvedPdfPageSize = ResolvedPageSize;
 

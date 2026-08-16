@@ -1,4 +1,3 @@
-import { t } from "@lingui/core/macro";
 import { useStore } from "@tanstack/react-form";
 import { useCallback, useEffect, useRef } from "react";
 import { useDialogStore } from "@/dialogs/store";

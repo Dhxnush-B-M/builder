@@ -1,13 +1,8 @@
 import type { FormEvent } from "react";
+import { EyeIcon, EyeSlashIcon, SignInIcon, UserPlusIcon } from "@phosphor-icons/react";
 import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import {
-	EyeIcon,
-	EyeSlashIcon,
-	SignInIcon,
-	UserPlusIcon,
-} from "@phosphor-icons/react";
 import { supabase } from "@/libs/supabase/client";
 import { checkUserSubscriptionAndOnboardingFromSupabase, saveUserToSupabase } from "@/libs/supabase/db";
 
@@ -19,15 +14,18 @@ export const Route = createFileRoute("/auth/login")({
 			const supabaseUser = localStorage.getItem("rbuilder_supabase_user");
 			const userEmail = localStorage.getItem("rbuilder_user_email");
 			if (localUser || supabaseUser || userEmail) {
-				const email = userEmail || (localUser ? JSON.parse(localUser).email : "") || (supabaseUser ? JSON.parse(supabaseUser).email : "");
+				const email =
+					userEmail ||
+					(localUser ? JSON.parse(localUser).email : "") ||
+					(supabaseUser ? JSON.parse(supabaseUser).email : "");
 				const { paid, onboarded } = await checkUserSubscriptionAndOnboardingFromSupabase(email);
 				if (paid && onboarded) {
 					throw redirect({ to: "/dashboard/resumes", replace: true });
-				} else if (paid) {
-					throw redirect({ to: "/onboarding", replace: true });
-				} else {
-					throw redirect({ to: "/payment", replace: true });
 				}
+				if (paid) {
+					throw redirect({ to: "/onboarding", replace: true });
+				}
+				throw redirect({ to: "/payment", replace: true });
 			}
 		}
 	},
@@ -47,7 +45,7 @@ function AuthLoginPage() {
 	useEffect(() => {
 		if (typeof window === "undefined") return;
 		const hash = window.location.hash;
-		if (!hash || !hash.includes("access_token")) return;
+		if (!hash?.includes("access_token")) return;
 
 		const params = new URLSearchParams(hash.replace("#", "?"));
 		const accessToken = params.get("access_token");
@@ -61,10 +59,11 @@ function AuthLoginPage() {
 		})
 			.then((res) => res.json())
 			.then(async (googleUser) => {
-				if (googleUser && googleUser.email) {
+				if (googleUser?.email) {
 					const realEmail = googleUser.email;
 					const realName = googleUser.name || googleUser.given_name || realEmail.split("@")[0];
-					const realAvatar = googleUser.picture || `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(realEmail)}`;
+					const realAvatar =
+						googleUser.picture || `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(realEmail)}`;
 
 					localStorage.setItem(
 						"rbuilder_user",
@@ -195,11 +194,13 @@ function AuthLoginPage() {
 			if (mode === "login") {
 				void supabase.auth.signInWithPassword({ email: typedEmail, password }).catch(() => null);
 			} else {
-				void supabase.auth.signUp({
-					email: typedEmail,
-					password,
-					options: { data: { name: userName } },
-				}).catch(() => null);
+				void supabase.auth
+					.signUp({
+						email: typedEmail,
+						password,
+						options: { data: { name: userName } },
+					})
+					.catch(() => null);
 			}
 		} catch {
 			toast.success("Signed in successfully!");
@@ -210,23 +211,23 @@ function AuthLoginPage() {
 	}
 
 	return (
-		<div className="relative min-h-screen w-full bg-[#f4f5f8] dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 flex items-center justify-center p-4 selection:bg-zinc-900 selection:text-white">
+		<div className="relative flex min-h-screen w-full items-center justify-center bg-[#f4f5f8] p-4 text-zinc-900 selection:bg-zinc-900 selection:text-white dark:bg-zinc-950 dark:text-zinc-100">
 			{/* Subtle Background Mesh / Dot Pattern */}
 			<div
 				aria-hidden="true"
-				className="pointer-events-none absolute inset-0 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] dark:bg-[radial-gradient(#27272a_1px,transparent_1px)] [background-size:16px_16px] opacity-70"
+				className="pointer-events-none absolute inset-0 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] opacity-70 [background-size:16px_16px] dark:bg-[radial-gradient(#27272a_1px,transparent_1px)]"
 			/>
 
 			{/* Main Clean Floating Card Frame */}
-			<div className="relative z-10 w-full max-w-[420px] rounded-[28px] border border-zinc-200/80 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-8 shadow-2xl shadow-zinc-900/10 space-y-6">
+			<div className="relative z-10 w-full max-w-[420px] space-y-6 rounded-[28px] border border-zinc-200/80 bg-white p-8 shadow-2xl shadow-zinc-900/10 dark:border-zinc-800 dark:bg-zinc-900">
 				{/* Top Pill Segmented Switcher */}
-				<div className="flex items-center justify-center p-1 rounded-full bg-zinc-100 dark:bg-zinc-800/80 border border-zinc-200/60 dark:border-zinc-700/60 max-w-[240px] mx-auto">
+				<div className="mx-auto flex max-w-[240px] items-center justify-center rounded-full border border-zinc-200/60 bg-zinc-100 p-1 dark:border-zinc-700/60 dark:bg-zinc-800/80">
 					<button
 						type="button"
 						onClick={() => setMode("login")}
-						className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 px-4 rounded-full text-xs font-bold transition-all duration-200 ${
+						className={`flex flex-1 items-center justify-center gap-1.5 rounded-full px-4 py-1.5 font-bold text-xs transition-all duration-200 ${
 							mode === "login"
-								? "bg-white dark:bg-zinc-900 text-zinc-900 dark:text-white shadow-sm"
+								? "bg-white text-zinc-900 shadow-sm dark:bg-zinc-900 dark:text-white"
 								: "text-zinc-500 hover:text-zinc-900 dark:hover:text-white"
 						}`}
 					>
@@ -237,9 +238,9 @@ function AuthLoginPage() {
 					<button
 						type="button"
 						onClick={() => setMode("register")}
-						className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 px-4 rounded-full text-xs font-bold transition-all duration-200 ${
+						className={`flex flex-1 items-center justify-center gap-1.5 rounded-full px-4 py-1.5 font-bold text-xs transition-all duration-200 ${
 							mode === "register"
-								? "bg-white dark:bg-zinc-900 text-zinc-900 dark:text-white shadow-sm"
+								? "bg-white text-zinc-900 shadow-sm dark:bg-zinc-900 dark:text-white"
 								: "text-zinc-500 hover:text-zinc-900 dark:hover:text-white"
 						}`}
 					>
@@ -252,57 +253,59 @@ function AuthLoginPage() {
 				<form onSubmit={handleSubmit} className="space-y-4 pt-1">
 					{mode === "register" && (
 						<div className="space-y-1.5">
-							<label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">Full name</label>
+							<label htmlFor="login-fullname" className="font-semibold text-xs text-zinc-700 dark:text-zinc-300">Full name</label>
 							<input
+								id="login-fullname"
 								type="text"
 								required
 								value={name}
 								onChange={(e) => setName(e.target.value)}
 								placeholder="Enter your full name"
-								className="w-full px-4 py-3 text-sm rounded-xl border border-zinc-200 dark:border-zinc-700/80 bg-white dark:bg-zinc-900/90 text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 focus:border-zinc-900 dark:focus:border-white focus:outline-none focus:ring-1 focus:ring-zinc-900 transition-all"
+								className="w-full rounded-xl border border-zinc-200 bg-white px-4 py-3 text-sm text-zinc-900 transition-all placeholder:text-zinc-400 focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900 dark:border-zinc-700/80 dark:bg-zinc-900/90 dark:text-zinc-100 dark:focus:border-white"
 							/>
 						</div>
 					)}
 
 					<div className="space-y-1.5">
-						<label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">Email address</label>
+						<label htmlFor="login-email" className="font-semibold text-xs text-zinc-700 dark:text-zinc-300">Email address</label>
 						<input
+							id="login-email"
 							type="email"
 							required
 							value={email}
 							onChange={(e) => setEmail(e.target.value)}
 							placeholder="Enter your email address"
-							className="w-full px-4 py-3 text-sm rounded-xl border border-zinc-200 dark:border-zinc-700/80 bg-white dark:bg-zinc-900/90 text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 focus:border-zinc-900 dark:focus:border-white focus:outline-none focus:ring-1 focus:ring-zinc-900 transition-all"
+							className="w-full rounded-xl border border-zinc-200 bg-white px-4 py-3 text-sm text-zinc-900 transition-all placeholder:text-zinc-400 focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900 dark:border-zinc-700/80 dark:bg-zinc-900/90 dark:text-zinc-100 dark:focus:border-white"
 						/>
 					</div>
 
 					<div className="space-y-1.5">
 						<div className="flex items-center justify-between">
-							<label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">Password</label>
-							<a
-								href="#forgot-password"
-								onClick={(e) => {
-									e.preventDefault();
+							<label htmlFor="login-password" className="font-semibold text-xs text-zinc-700 dark:text-zinc-300">Password</label>
+							<button
+								type="button"
+								onClick={() => {
 									toast.info("Password reset link sent to your email address!");
 								}}
-								className="text-xs font-semibold text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white underline underline-offset-2"
+								className="font-semibold text-xs text-zinc-600 underline underline-offset-2 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white"
 							>
 								Forgot password?
-							</a>
+							</button>
 						</div>
 						<div className="relative">
 							<input
+								id="login-password"
 								type={showPassword ? "text" : "password"}
 								required
 								value={password}
 								onChange={(e) => setPassword(e.target.value)}
 								placeholder="Enter your password"
-								className="w-full pl-4 pr-11 py-3 text-sm rounded-xl border border-zinc-200 dark:border-zinc-700/80 bg-white dark:bg-zinc-900/90 text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 focus:border-zinc-900 dark:focus:border-white focus:outline-none focus:ring-1 focus:ring-zinc-900 transition-all"
+								className="w-full rounded-xl border border-zinc-200 bg-white py-3 pr-11 pl-4 text-sm text-zinc-900 transition-all placeholder:text-zinc-400 focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900 dark:border-zinc-700/80 dark:bg-zinc-900/90 dark:text-zinc-100 dark:focus:border-white"
 							/>
 							<button
 								type="button"
 								onClick={() => setShowPassword(!showPassword)}
-								className="absolute right-3.5 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200"
+								className="absolute top-1/2 right-3.5 -translate-y-1/2 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200"
 							>
 								{showPassword ? <EyeSlashIcon className="size-4" /> : <EyeIcon className="size-4" />}
 							</button>
@@ -313,16 +316,16 @@ function AuthLoginPage() {
 					<button
 						type="submit"
 						disabled={loading}
-						className="w-full py-3.5 px-4 rounded-xl bg-zinc-900 hover:bg-black dark:bg-white dark:hover:bg-zinc-100 text-white dark:text-zinc-900 font-bold text-sm shadow-md hover:shadow-lg transition-all active:scale-[0.99] disabled:opacity-50 mt-2"
+						className="mt-2 w-full rounded-xl bg-zinc-900 px-4 py-3.5 font-bold text-sm text-white shadow-md transition-all hover:bg-black hover:shadow-lg active:scale-[0.99] disabled:opacity-50 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-100"
 					>
 						{mode === "login" ? "Log In" : "Sign Up"}
 					</button>
 				</form>
 
 				{/* Divider */}
-				<div className="relative flex items-center justify-center my-2">
-					<div className="w-full border-t border-zinc-200 dark:border-zinc-800" />
-					<span className="absolute bg-white dark:bg-zinc-900 px-3 text-[11px] font-semibold text-zinc-400 uppercase tracking-wider">
+				<div className="relative my-2 flex items-center justify-center">
+					<div className="w-full border-zinc-200 border-t dark:border-zinc-800" />
+					<span className="absolute bg-white px-3 font-semibold text-[11px] text-zinc-400 uppercase tracking-wider dark:bg-zinc-900">
 						OR
 					</span>
 				</div>
@@ -333,7 +336,7 @@ function AuthLoginPage() {
 						type="button"
 						onClick={handleGoogleOAuth2}
 						disabled={loading}
-						className="w-full flex items-center justify-center gap-x-3 py-3 px-4 rounded-xl border border-zinc-200 dark:border-zinc-700/80 bg-white dark:bg-zinc-900 hover:bg-zinc-50 dark:hover:bg-zinc-800/60 font-semibold text-xs text-zinc-800 dark:text-zinc-200 shadow-sm hover:shadow transition-all active:scale-[0.99]"
+						className="flex w-full items-center justify-center gap-x-3 rounded-xl border border-zinc-200 bg-white px-4 py-3 font-semibold text-xs text-zinc-800 shadow-sm transition-all hover:bg-zinc-50 hover:shadow active:scale-[0.99] dark:border-zinc-700/80 dark:bg-zinc-900 dark:text-zinc-200 dark:hover:bg-zinc-800/60"
 					>
 						<svg className="size-4" viewBox="0 0 24 24">
 							<path
@@ -365,7 +368,7 @@ function AuthLoginPage() {
 							<button
 								type="button"
 								onClick={() => setMode("register")}
-								className="font-bold text-zinc-900 dark:text-white hover:underline underline-offset-4"
+								className="font-bold text-zinc-900 underline-offset-4 hover:underline dark:text-white"
 							>
 								Sign up
 							</button>
@@ -376,7 +379,7 @@ function AuthLoginPage() {
 							<button
 								type="button"
 								onClick={() => setMode("login")}
-								className="font-bold text-zinc-900 dark:text-white hover:underline underline-offset-4"
+								className="font-bold text-zinc-900 underline-offset-4 hover:underline dark:text-white"
 							>
 								Log in
 							</button>

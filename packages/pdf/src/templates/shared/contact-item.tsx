@@ -1,5 +1,5 @@
-import type { Style } from "@react-pdf/types";
 import type { CustomField } from "@rbuilder/schema/resume/data";
+import type { Style } from "@react-pdf/types";
 import type { IconName } from "phosphor-icons-react-pdf/dynamic";
 import { View } from "#react-pdf-renderer";
 import { resolvedPdfFlowProps } from "../../semantic/adapter";

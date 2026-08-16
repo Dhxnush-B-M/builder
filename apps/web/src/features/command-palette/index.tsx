@@ -3,13 +3,7 @@ import { Trans } from "@lingui/react/macro";
 import { useHotkeys } from "@tanstack/react-hotkeys";
 import { useEffect, useRef, useState } from "react";
 import { Command, CommandEmpty, CommandInput, CommandList } from "@rbuilder/ui/components/command";
-import {
-	Dialog,
-	DialogContent,
-	DialogDescription,
-	DialogHeader,
-	DialogTitle,
-} from "@rbuilder/ui/components/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@rbuilder/ui/components/dialog";
 import { NavigationCommandGroup } from "./pages/navigation";
 import { PreferencesCommandGroup } from "./pages/preferences";
 import { ResumesCommandGroup } from "./pages/resumes";

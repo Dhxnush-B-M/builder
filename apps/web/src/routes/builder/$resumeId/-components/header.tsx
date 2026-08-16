@@ -36,23 +36,21 @@ import {
 } from "@/features/resume/builder/draft";
 import { ResumeDownloadDialog } from "@/features/resume/export/download-dialog";
 import { useConfirm } from "@/hooks/use-confirm";
-import { getResumeErrorMessage } from "@/libs/error-message";
 import { orpc } from "@/libs/orpc/client";
 import { useBuilderSidebar } from "../-store/sidebar";
-import { BuilderVersionHistory } from "./version-history";
 
 export function BuilderHeader() {
 	// Subscribe to only the metadata fields this header renders. Selecting the whole resume re-renders
 	// the header on every keystroke (immer replaces the resume reference on each content edit).
 	const name = useCurrentBuilderResumeSelector((resume) => resume.name);
 	const isLocked = useCurrentBuilderResumeSelector((resume) => resume.isLocked);
-	const resumeId = useCurrentBuilderResumeSelector((resume) => resume.id);
+	const _resumeId = useCurrentBuilderResumeSelector((resume) => resume.id);
 	const { toggleSidebar } = useBuilderSidebar();
 
 	// Equal-width flex-1 side groups keep the center title group truly centered regardless of the
 	// wider Download button on the right.
 	return (
-		<div className="absolute inset-x-0 top-0 z-50 flex h-14 min-w-0 items-center gap-x-2 border-b border-white/20 dark:border-white/10 bg-background/60 backdrop-blur-xl shadow-sm px-1.5">
+		<div className="absolute inset-x-0 top-0 z-50 flex h-14 min-w-0 items-center gap-x-2 border-white/20 border-b bg-background/60 px-1.5 shadow-sm backdrop-blur-xl dark:border-white/10">
 			<div className="flex min-w-0 flex-1 items-center justify-start">
 				{/* Hidden below `md`: on mobile the sidebar panels never mount, so `toggleSidebar` no-ops — the bottom tab bar handles this. */}
 				<Button size="icon" variant="ghost" className="hidden md:flex" onClick={() => toggleSidebar("left")}>
@@ -88,7 +86,7 @@ export function BuilderHeader() {
 				<Button
 					size="icon"
 					variant="ghost"
-					className="ms-1 hidden md:flex text-primary hover:bg-primary/10"
+					className="ms-1 hidden text-primary hover:bg-primary/10 md:flex"
 					aria-label={t`Design & Templates`}
 					onClick={() => toggleSidebar("right")}
 				>
