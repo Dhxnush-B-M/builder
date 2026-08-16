@@ -121,50 +121,63 @@ function PaymentPage() {
 		};
 
 		const isScriptLoaded = await loadRazorpayScript();
-		if (isScriptLoaded && (window as any).Razorpay && razorpayKey) {
-			try {
-				const options = {
-					key: razorpayKey,
-					amount: amountInPaise,
-					currency: "INR",
-					name: "rbuilder",
-					description: `${plan.title} Subscription (${plan.price})`,
-					image: "/opengraph/logo.png",
-					prefill: {
-						name: userName,
-						email: userEmail,
-					},
-					theme: {
-						color: "#10b981",
-					},
-					handler: async function (response: any) {
-						// Real money payment succeeded - store razorpay_payment_id
-						const paymentId = response?.razorpay_payment_id;
-						await grantSubscriptionAndProceed(paymentId);
-					},
-					modal: {
-						ondismiss: function () {
-							setIsProcessing(false);
-							toast.info("Payment window closed. Select a plan when ready.");
-						},
-					},
-				};
-
-				const rzp = new (window as any).Razorpay(options);
-				rzp.on("payment.failed", function (resp: any) {
-					console.warn("Razorpay payment failed:", resp?.error?.description);
-					setIsProcessing(false);
-					toast.error(resp?.error?.description || "Payment failed. Please try again.");
-				});
-				rzp.open();
-				return;
-			} catch (err) {
-				console.warn("Razorpay popup error:", err);
-			}
+		if (!isScriptLoaded || !(window as any).Razorpay) {
+			setIsProcessing(false);
+			toast.error("Unable to load Razorpay payment SDK. Please check your internet connection.");
+			return;
 		}
 
-		// Fallback for development mode when VITE_RAZORPAY_KEY_ID is not configured
-		await grantSubscriptionAndProceed();
+		if (!razorpayKey) {
+			setIsProcessing(false);
+			toast.error("Razorpay Live Key (VITE_RAZORPAY_KEY_ID) is not configured in environment variables.");
+			return;
+		}
+
+		try {
+			const options = {
+				key: razorpayKey,
+				amount: amountInPaise,
+				currency: "INR",
+				name: "rbuilder",
+				description: `${plan.title} Subscription (${plan.price})`,
+				image: "/opengraph/logo.png",
+				prefill: {
+					name: userName,
+					email: userEmail,
+				},
+				theme: {
+					color: "#10b981",
+				},
+				handler: async function (response: any) {
+					// Real money payment succeeded - verify and store razorpay_payment_id
+					const paymentId = response?.razorpay_payment_id;
+					if (paymentId) {
+						await grantSubscriptionAndProceed(paymentId);
+					} else {
+						setIsProcessing(false);
+						toast.error("Payment verification failed. Payment ID missing.");
+					}
+				},
+				modal: {
+					ondismiss: function () {
+						setIsProcessing(false);
+						toast.info("Payment window closed.");
+					},
+				},
+			};
+
+			const rzp = new (window as any).Razorpay(options);
+			rzp.on("payment.failed", function (resp: any) {
+				console.warn("Razorpay payment failed:", resp?.error?.description);
+				setIsProcessing(false);
+				toast.error(resp?.error?.description || "Payment failed. Money was not deducted.");
+			});
+			rzp.open();
+		} catch (err) {
+			console.error("Razorpay popup initialization error:", err);
+			setIsProcessing(false);
+			toast.error("Failed to initialize Razorpay checkout popup.");
+		}
 	}
 
 	return (

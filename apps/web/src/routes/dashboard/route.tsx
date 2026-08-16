@@ -12,6 +12,14 @@ import { checkUserSubscriptionAndOnboardingFromSupabase } from "@/libs/supabase/
 export const Route = createFileRoute("/dashboard")({
 	component: RouteComponent,
 	beforeLoad: async ({ context }) => {
+		if (typeof window !== "undefined") {
+			const paymentStatus = localStorage.getItem("rbuilder_payment_status");
+			const onboardingCompleted = localStorage.getItem("rbuilder_onboarding_completed");
+			if (paymentStatus === "active" && onboardingCompleted === "true") {
+				return; // Instant access, no network delays
+			}
+		}
+
 		let isAuth = false;
 		let userEmail = "";
 		if (typeof window !== "undefined") {
@@ -50,16 +58,6 @@ export const Route = createFileRoute("/dashboard")({
 				throw redirect({ to: "/payment", replace: true });
 			}
 			if (!onboarded) {
-				throw redirect({ to: "/onboarding", replace: true });
-			}
-		} else if (typeof window !== "undefined") {
-			const paymentStatus = localStorage.getItem("rbuilder_payment_status");
-			if (paymentStatus !== "active") {
-				throw redirect({ to: "/payment", replace: true });
-			}
-
-			const onboardingCompleted = localStorage.getItem("rbuilder_onboarding_completed");
-			if (onboardingCompleted !== "true") {
 				throw redirect({ to: "/onboarding", replace: true });
 			}
 		}
