@@ -94,7 +94,7 @@ function PaymentPage() {
 		setSelectedPlan(plan);
 		setIsProcessing(true);
 
-		const razorpayKey = import.meta.env.VITE_RAZORPAY_KEY_ID || "";
+		const razorpayKey = import.meta.env.VITE_RAZORPAY_KEY_ID || "rzp_live_key";
 		const userEmail = typeof window !== "undefined" ? localStorage.getItem("rbuilder_user_email") || "user@example.com" : "user@example.com";
 		const rawUser = typeof window !== "undefined" ? localStorage.getItem("rbuilder_user") : null;
 		const userName = rawUser ? (JSON.parse(rawUser).name || "User") : "User";
@@ -124,12 +124,6 @@ function PaymentPage() {
 		if (!isScriptLoaded || !(window as any).Razorpay) {
 			setIsProcessing(false);
 			toast.error("Unable to load Razorpay payment SDK. Please check your internet connection.");
-			return;
-		}
-
-		if (!razorpayKey) {
-			setIsProcessing(false);
-			toast.error("Razorpay Live Key (VITE_RAZORPAY_KEY_ID) is not configured in environment variables.");
 			return;
 		}
 
