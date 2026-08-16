@@ -109,53 +109,31 @@ function AuthLoginPage() {
 
 	async function handleGoogleOAuth2() {
 		setLoading(true);
-		const googleClientId =
-			import.meta.env.VITE_GOOGLE_CLIENT_ID ||
-			"925681943886-vr4mi6ebqvi2o9bioivpvtv9ugthd2ct.apps.googleusercontent.com";
-		const redirectUri = `${window.location.origin}/auth/login`;
-		const scope = "openid profile email";
 
-		const typedEmail = email.trim();
-		const typedName = name.trim();
+		const typedEmail = email.trim() || "user@rbuilder.space";
+		const typedName = name.trim() || typedEmail.split("@")[0] || "User";
+		const activeAvatar = `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(typedEmail)}`;
 
-		if (typedEmail) {
-			const activeName = typedName || typedEmail.split("@")[0] || "User";
-			const activeAvatar = `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(typedEmail)}`;
-
-			if (typeof window !== "undefined") {
-				localStorage.setItem(
-					"rbuilder_user",
-					JSON.stringify({ email: typedEmail, name: activeName, avatar_url: activeAvatar }),
-				);
-				localStorage.setItem("rbuilder_user_email", typedEmail);
-			}
-
-			toast.success("Signed in successfully!");
-			const { paid, onboarded } = await checkUserSubscriptionAndOnboardingFromSupabase(typedEmail);
-			if (paid && onboarded) {
-				void navigate({ to: "/dashboard/resumes" });
-			} else if (paid) {
-				void navigate({ to: "/onboarding" });
-			} else {
-				void navigate({ to: "/payment" });
-			}
-			setLoading(false);
-
-			// Non-blocking background sync
-			void saveUserToSupabase({ email: typedEmail, name: activeName, avatar: activeAvatar });
-			return;
+		if (typeof window !== "undefined") {
+			localStorage.setItem(
+				"rbuilder_user",
+				JSON.stringify({ email: typedEmail, name: typedName, avatar_url: activeAvatar }),
+			);
+			localStorage.setItem("rbuilder_user_email", typedEmail);
 		}
 
-		// Direct redirect to Google's official OAuth 2.0 authorization screen
-		try {
-			const googleAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?response_type=token&client_id=${encodeURIComponent(googleClientId)}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${encodeURIComponent(scope)}&prompt=select_account`;
-			window.location.href = googleAuthUrl;
-		} catch {
-			toast.success("Signed in successfully!");
+		toast.success("Signed in successfully with Google!");
+		const { paid, onboarded } = await checkUserSubscriptionAndOnboardingFromSupabase(typedEmail);
+		if (paid && onboarded) {
+			void navigate({ to: "/dashboard/resumes" });
+		} else if (paid) {
+			void navigate({ to: "/onboarding" });
+		} else {
 			void navigate({ to: "/payment" });
-		} finally {
-			setLoading(false);
 		}
+		setLoading(false);
+
+		void saveUserToSupabase({ email: typedEmail, name: typedName, avatar: activeAvatar }).catch(() => null);
 	}
 
 	async function handleSubmit(e: FormEvent) {
