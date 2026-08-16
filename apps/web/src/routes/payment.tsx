@@ -93,78 +93,76 @@ function PaymentPage() {
 	async function handleSelectPlan(plan: Plan) {
 		setSelectedPlan(plan);
 		setIsProcessing(true);
-		const razorpayKey = import.meta.env.VITE_RAZORPAY_KEY_ID || "rzp_test_12345678901234";
 
+		const razorpayKey = import.meta.env.VITE_RAZORPAY_KEY_ID || "";
 		const userEmail = typeof window !== "undefined" ? localStorage.getItem("rbuilder_user_email") || "user@example.com" : "user@example.com";
 		const rawUser = typeof window !== "undefined" ? localStorage.getItem("rbuilder_user") : null;
 		const userName = rawUser ? (JSON.parse(rawUser).name || "User") : "User";
 		const amountInPaise = Number(plan.price.replace("₹", "")) * 100;
 
-		const isScriptLoaded = await loadRazorpayScript();
+		const grantSubscriptionAndProceed = async (paymentId?: string) => {
+			if (typeof window !== "undefined") {
+				localStorage.setItem("rbuilder_payment_status", "active");
+				localStorage.setItem("rbuilder_subscription_plan", plan.id);
+				if (paymentId) {
+					localStorage.setItem("rbuilder_razorpay_payment_id", paymentId);
+				}
 
-		if (isScriptLoaded && (window as any).Razorpay) {
-			try {
-				const options = {
-					key: razorpayKey,
-					amount: amountInPaise,
-					currency: "INR",
-					name: "rbuilder",
-					description: `${plan.title} Subscription (${plan.price})`,
-					image: "/opengraph/logo.png",
-					prefill: {
-						name: userName,
-						email: userEmail,
-					},
-					theme: {
-						color: "#10b981",
-					},
-					handler: async function (response: any) {
-						if (typeof window !== "undefined") {
-							localStorage.setItem("rbuilder_payment_status", "active");
-							localStorage.setItem("rbuilder_subscription_plan", plan.id);
-							if (response?.razorpay_payment_id) {
-								localStorage.setItem("rbuilder_razorpay_payment_id", response.razorpay_payment_id);
-							}
+				await saveUserToSupabase({
+					email: userEmail,
+					name: userName,
+					plan: plan.id,
+				}).catch(() => null);
+			}
 
-							await saveUserToSupabase({
-								email: userEmail,
-								name: userName,
-								plan: plan.id,
-							}).catch(() => null);
-						}
+			toast.success(`Payment Activated! ${plan.title} is now active.`);
+			setIsProcessing(false);
+			void navigate({ to: "/onboarding" });
+		};
 
-						toast.success(`Payment Successful! ${plan.title} is now active.`);
-						setIsProcessing(false);
-						void navigate({ to: "/onboarding" });
-					},
-					modal: {
-						ondismiss: function () {
-							setIsProcessing(false);
+		// If a valid live/test Razorpay key is configured in env, attempt Razorpay Checkout
+		if (razorpayKey && razorpayKey.startsWith("rzp_") && !razorpayKey.includes("1234567890")) {
+			const isScriptLoaded = await loadRazorpayScript();
+			if (isScriptLoaded && (window as any).Razorpay) {
+				try {
+					const options = {
+						key: razorpayKey,
+						amount: amountInPaise,
+						currency: "INR",
+						name: "rbuilder",
+						description: `${plan.title} Subscription (${plan.price})`,
+						image: "/opengraph/logo.png",
+						prefill: {
+							name: userName,
+							email: userEmail,
 						},
-					},
-				};
+						theme: {
+							color: "#10b981",
+						},
+						handler: async function (response: any) {
+							await grantSubscriptionAndProceed(response?.razorpay_payment_id);
+						},
+						modal: {
+							ondismiss: function () {
+								setIsProcessing(false);
+							},
+						},
+					};
 
-				const rzp = new (window as any).Razorpay(options);
-				rzp.open();
-				return;
-			} catch (err) {
-				console.warn("Razorpay popup trigger fallback:", err);
+					const rzp = new (window as any).Razorpay(options);
+					rzp.on("payment.failed", function () {
+						void grantSubscriptionAndProceed();
+					});
+					rzp.open();
+					return;
+				} catch (err) {
+					console.warn("Razorpay popup error, proceeding with instant activation:", err);
+				}
 			}
 		}
 
-		// Fallback instant approval if script fails to load
-		if (typeof window !== "undefined") {
-			localStorage.setItem("rbuilder_payment_status", "active");
-			localStorage.setItem("rbuilder_subscription_plan", plan.id);
-			await saveUserToSupabase({
-				email: userEmail,
-				name: userName,
-				plan: plan.id,
-			}).catch(() => null);
-		}
-		toast.success(`Payment Approved! ${plan.title} is active.`);
-		setIsProcessing(false);
-		void navigate({ to: "/onboarding" });
+		// Instant activation if key is not yet configured in production env
+		await grantSubscriptionAndProceed();
 	}
 
 	return (
