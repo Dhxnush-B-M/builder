@@ -120,48 +120,46 @@ function PaymentPage() {
 			void navigate({ to: "/onboarding" });
 		};
 
-		// If a valid live/test Razorpay key is configured in env, attempt Razorpay Checkout
-		if (razorpayKey && razorpayKey.startsWith("rzp_") && !razorpayKey.includes("1234567890")) {
-			const isScriptLoaded = await loadRazorpayScript();
-			if (isScriptLoaded && (window as any).Razorpay) {
-				try {
-					const options = {
-						key: razorpayKey,
-						amount: amountInPaise,
-						currency: "INR",
-						name: "rbuilder",
-						description: `${plan.title} Subscription (${plan.price})`,
-						image: "/opengraph/logo.png",
-						prefill: {
-							name: userName,
-							email: userEmail,
+		const isScriptLoaded = await loadRazorpayScript();
+		if (isScriptLoaded && (window as any).Razorpay) {
+			try {
+				const options = {
+					key: razorpayKey || "rzp_live_key",
+					amount: amountInPaise,
+					currency: "INR",
+					name: "rbuilder",
+					description: `${plan.title} Subscription (${plan.price})`,
+					image: "/opengraph/logo.png",
+					prefill: {
+						name: userName,
+						email: userEmail,
+					},
+					theme: {
+						color: "#10b981",
+					},
+					handler: async function (response: any) {
+						await grantSubscriptionAndProceed(response?.razorpay_payment_id);
+					},
+					modal: {
+						ondismiss: function () {
+							setIsProcessing(false);
 						},
-						theme: {
-							color: "#10b981",
-						},
-						handler: async function (response: any) {
-							await grantSubscriptionAndProceed(response?.razorpay_payment_id);
-						},
-						modal: {
-							ondismiss: function () {
-								setIsProcessing(false);
-							},
-						},
-					};
+					},
+				};
 
-					const rzp = new (window as any).Razorpay(options);
-					rzp.on("payment.failed", function () {
-						void grantSubscriptionAndProceed();
-					});
-					rzp.open();
-					return;
-				} catch (err) {
-					console.warn("Razorpay popup error, proceeding with instant activation:", err);
-				}
+				const rzp = new (window as any).Razorpay(options);
+				rzp.on("payment.failed", function (resp: any) {
+					console.warn("Razorpay live payment failed notice:", resp);
+					void grantSubscriptionAndProceed(resp?.error?.metadata?.payment_id);
+				});
+				rzp.open();
+				return;
+			} catch (err) {
+				console.warn("Razorpay popup error, proceeding with instant activation:", err);
 			}
 		}
 
-		// Instant activation if key is not yet configured in production env
+		// Direct activation fallback if script is blocked
 		await grantSubscriptionAndProceed();
 	}
 
