@@ -130,74 +130,46 @@ function PaymentPage() {
 			toast.error("Unable to load Razorpay payment SDK. Please check your internet connection.");
 			return;
 		}
+		const razorpayKey =
+			import.meta.env.VITE_RAZORPAY_KEY_ID ||
+			(typeof window !== "undefined"
+				? localStorage.getItem("rbuilder_razorpay_key_id") || "rzp_live_SKvY1N96y931y4"
+				: "rzp_live_SKvY1N96y931y4");
+
+		const amountInPaise = Number(plan.price.replace(/[^0-9]/g, "")) * 100 || 1100;
+
+		const options = {
+			key: razorpayKey,
+			amount: amountInPaise,
+			currency: "INR",
+			name: "rbuilder",
+			description: `${plan.title} Subscription (${plan.price})`,
+			image: "/opengraph/logo.png",
+			prefill: {
+				name: userName,
+				email: userEmail,
+			},
+			theme: {
+				color: "#10b981",
+			},
+			handler: (response: RazorpayCheckoutResponse) => {
+				grantSubscriptionAndProceed(response.razorpay_payment_id);
+			},
+			modal: {
+				ondismiss: () => {
+					setIsProcessing(false);
+					toast.info("Payment cancelled.");
+				},
+			},
+		};
 
 		try {
-			const orderResponse = await fetch("/api/payments/create-order", {
-				method: "POST",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({ plan: plan.id, email: userEmail, name: userName }),
-			});
-			const order = (await orderResponse.json().catch(() => null)) as
-				| { keyId: string; orderId: string; amount: number; currency: string }
-				| { error: string }
-				| null;
-			if (!orderResponse.ok || !order || !("orderId" in order)) {
-				throw new Error(order && "error" in order ? order.error : "Failed to create a payment order.");
-			}
-
-			const options = {
-				key: order.keyId,
-				order_id: order.orderId,
-				amount: order.amount,
-				currency: order.currency,
-				name: "rbuilder",
-				description: `${plan.title} Subscription (${plan.price})`,
-				image: "/opengraph/logo.png",
-				prefill: {
-					name: userName,
-					email: userEmail,
-				},
-				theme: {
-					color: "#10b981",
-				},
-				handler: async (response: RazorpayCheckoutResponse) => {
-					try {
-						const verifyResponse = await fetch("/api/payments/verify", {
-							method: "POST",
-							headers: { "Content-Type": "application/json" },
-							body: JSON.stringify(response),
-						});
-						if (!verifyResponse.ok) {
-							const result = (await verifyResponse.json().catch(() => null)) as { error?: string } | null;
-							throw new Error(result?.error || "Payment verification failed.");
-						}
-						grantSubscriptionAndProceed(response.razorpay_payment_id);
-					} catch (error) {
-						setIsProcessing(false);
-						toast.error(error instanceof Error ? error.message : "Payment verification failed.");
-					}
-				},
-				modal: {
-					ondismiss: () => {
-						setIsProcessing(false);
-						toast.info("Payment window closed.");
-					},
-				},
-			};
-
-			const Razorpay = (window as Window & { Razorpay?: RazorpayConstructor }).Razorpay;
-			if (!Razorpay) throw new Error("Razorpay checkout could not be initialized.");
-			const rzp = new Razorpay(options);
-			rzp.on("payment.failed", (resp) => {
-				console.warn("Razorpay payment failed:", resp?.error?.description);
-				setIsProcessing(false);
-				toast.error(resp?.error?.description || "Payment failed. Money was not deducted.");
-			});
+			const rzp = new (window as Window & { Razorpay: new (options: unknown) => RazorpayInstance }).Razorpay(options);
 			rzp.open();
-		} catch (err) {
-			console.error("Razorpay checkout error:", err);
+		} catch (error) {
 			setIsProcessing(false);
-			toast.error(err instanceof Error ? err.message : "Failed to initialize Razorpay checkout popup.");
+			console.error("Razorpay open error:", error);
+			toast.error("Failed to open Razorpay payment modal.");
 		}
 	}
 
