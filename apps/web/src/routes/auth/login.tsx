@@ -52,17 +52,11 @@ function AuthLoginPage() {
 			headers: { Authorization: `Bearer ${accessToken}` },
 		})
 			.then((res) => res.json())
-			.then(async (googleUser) => {
+			.then((googleUser) => {
 				if (googleUser && googleUser.email) {
 					const realEmail = googleUser.email;
 					const realName = googleUser.name || googleUser.given_name || realEmail.split("@")[0];
 					const realAvatar = googleUser.picture || `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(realEmail)}`;
-
-					await saveUserToSupabase({
-						email: realEmail,
-						name: realName,
-						avatar: realAvatar,
-					});
 
 					localStorage.setItem(
 						"rbuilder_user",
@@ -72,10 +66,18 @@ function AuthLoginPage() {
 							avatar_url: realAvatar,
 						}),
 					);
+					localStorage.setItem("rbuilder_user_email", realEmail);
 
 					window.history.replaceState(null, "", window.location.pathname);
 					toast.success("Signed in successfully!");
 					void navigate({ to: "/dashboard/resumes" });
+
+					// Non-blocking background sync to Supabase
+					void saveUserToSupabase({
+						email: realEmail,
+						name: realName,
+						avatar: realAvatar,
+					});
 				} else {
 					toast.error("Failed to authenticate.");
 				}
@@ -104,16 +106,20 @@ function AuthLoginPage() {
 			const activeName = typedName || typedEmail.split("@")[0] || "User";
 			const activeAvatar = `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(typedEmail)}`;
 
-			await saveUserToSupabase({ email: typedEmail, name: activeName, avatar: activeAvatar });
 			if (typeof window !== "undefined") {
 				localStorage.setItem(
 					"rbuilder_user",
 					JSON.stringify({ email: typedEmail, name: activeName, avatar_url: activeAvatar }),
 				);
+				localStorage.setItem("rbuilder_user_email", typedEmail);
 			}
+
 			toast.success("Signed in successfully!");
 			void navigate({ to: "/dashboard/resumes" });
 			setLoading(false);
+
+			// Non-blocking background sync
+			void saveUserToSupabase({ email: typedEmail, name: activeName, avatar: activeAvatar });
 			return;
 		}
 
@@ -144,27 +150,28 @@ function AuthLoginPage() {
 					"rbuilder_user",
 					JSON.stringify({ email: typedEmail, name: userName, avatar_url: userAvatar }),
 				);
+				localStorage.setItem("rbuilder_user_email", typedEmail);
 			}
 
-			await saveUserToSupabase({
+			toast.success(mode === "login" ? "Signed in successfully!" : "Account created successfully!");
+			void navigate({ to: "/dashboard/resumes" });
+
+			// Non-blocking background sync to Supabase
+			void saveUserToSupabase({
 				email: typedEmail,
 				name: userName,
 				avatar: userAvatar,
 			});
 
 			if (mode === "login") {
-				await supabase.auth.signInWithPassword({ email: typedEmail, password }).catch(() => null);
-				toast.success("Signed in successfully!");
+				void supabase.auth.signInWithPassword({ email: typedEmail, password }).catch(() => null);
 			} else {
-				await supabase.auth.signUp({
+				void supabase.auth.signUp({
 					email: typedEmail,
 					password,
 					options: { data: { name: userName } },
 				}).catch(() => null);
-				toast.success("Account created successfully!");
 			}
-
-			void navigate({ to: "/dashboard/resumes" });
 		} catch {
 			toast.success("Signed in successfully!");
 			void navigate({ to: "/dashboard/resumes" });
