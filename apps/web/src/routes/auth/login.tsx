@@ -41,44 +41,88 @@ function AuthLoginPage() {
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 
-	// Listen for Google OAuth 2.0 access token redirect callback
+	// Listen for Google OAuth callback & clean address bar immediately to prevent Chrome Safe Browsing warnings
 	useEffect(() => {
 		if (typeof window === "undefined") return;
-		const hash = window.location.hash;
-		if (!hash?.includes("access_token")) return;
 
-		const params = new URLSearchParams(hash.replace("#", "?"));
-		const accessToken = params.get("access_token");
-		if (!accessToken) return;
+		const hasHashToken = window.location.hash?.includes("access_token");
+		const hasCodeParam = window.location.search?.includes("code=");
 
-		setLoading(true);
+		if (hasHashToken || hasCodeParam) {
+			const hashParams = new URLSearchParams(window.location.hash.replace("#", "?"));
+			const accessToken = hashParams.get("access_token");
 
-		// Fetch user profile from Google userinfo API
-		fetch("https://www.googleapis.com/oauth2/v3/userinfo", {
-			headers: { Authorization: `Bearer ${accessToken}` },
-		})
-			.then((res) => res.json())
-			.then(async (googleUser) => {
-				if (googleUser?.email) {
-					const realEmail = googleUser.email;
-					const realName = googleUser.name || googleUser.given_name || realEmail.split("@")[0];
-					const realAvatar =
-						googleUser.picture || `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(realEmail)}`;
+			// Clean URL instantly to remove sensitive fragment from browser history & Chrome filters
+			window.history.replaceState(null, "", window.location.pathname);
 
-					localStorage.setItem(
-						"rbuilder_user",
-						JSON.stringify({
-							email: realEmail,
-							name: realName,
-							avatar_url: realAvatar,
-						}),
-					);
-					localStorage.setItem("rbuilder_user_email", realEmail);
+			if (accessToken) {
+				setLoading(true);
+				fetch("https://www.googleapis.com/oauth2/v3/userinfo", {
+					headers: { Authorization: `Bearer ${accessToken}` },
+				})
+					.then((res) => res.json())
+					.then(async (googleUser) => {
+						if (googleUser?.email) {
+							const realEmail = googleUser.email;
+							const realName = googleUser.name || googleUser.given_name || realEmail.split("@")[0];
+							const realAvatar =
+								googleUser.picture || `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(realEmail)}`;
 
-					window.history.replaceState(null, "", window.location.pathname);
-					toast.success("Signed in successfully!");
+							localStorage.setItem(
+								"rbuilder_user",
+								JSON.stringify({
+									email: realEmail,
+									name: realName,
+									avatar_url: realAvatar,
+								}),
+							);
+							localStorage.setItem("rbuilder_user_email", realEmail);
 
-					const { paid, onboarded } = await checkUserSubscriptionAndOnboardingFromSupabase(realEmail);
+							toast.success("Signed in successfully!");
+
+							const { paid, onboarded } = await checkUserSubscriptionAndOnboardingFromSupabase(realEmail);
+							if (paid && onboarded) {
+								void navigate({ to: "/dashboard/resumes" });
+							} else if (paid) {
+								void navigate({ to: "/onboarding" });
+							} else {
+								void navigate({ to: "/payment" });
+							}
+
+							void saveUserToSupabase({
+								email: realEmail,
+								name: realName,
+								avatar: realAvatar,
+							});
+						}
+					})
+					.catch((err) => {
+						console.error("Google userinfo fetch error:", err);
+						toast.error("Authentication error.");
+					})
+					.finally(() => {
+						setLoading(false);
+					});
+				return;
+			}
+		}
+
+		// Also check active Supabase Auth Session
+		supabase.auth
+			.getSession()
+			.then(async ({ data }) => {
+				if (data?.session?.user?.email) {
+					const uEmail = data.session.user.email;
+					const uName = data.session.user.user_metadata?.full_name || uEmail.split("@")[0];
+					const uAvatar =
+						data.session.user.user_metadata?.avatar_url ||
+						`https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(uEmail)}`;
+
+					localStorage.setItem("rbuilder_user", JSON.stringify({ email: uEmail, name: uName, avatar_url: uAvatar }));
+					localStorage.setItem("rbuilder_user_email", uEmail);
+					localStorage.setItem("rbuilder_supabase_user", JSON.stringify(data.session.user));
+
+					const { paid, onboarded } = await checkUserSubscriptionAndOnboardingFromSupabase(uEmail);
 					if (paid && onboarded) {
 						void navigate({ to: "/dashboard/resumes" });
 					} else if (paid) {
@@ -86,34 +130,13 @@ function AuthLoginPage() {
 					} else {
 						void navigate({ to: "/payment" });
 					}
-
-					// Non-blocking background sync to Supabase
-					void saveUserToSupabase({
-						email: realEmail,
-						name: realName,
-						avatar: realAvatar,
-					});
-				} else {
-					toast.error("Failed to authenticate.");
 				}
 			})
-			.catch((err) => {
-				console.error("Google userinfo fetch error:", err);
-				toast.error("Authentication error.");
-			})
-			.finally(() => {
-				setLoading(false);
-			});
+			.catch(() => null);
 	}, [navigate]);
 
 	async function handleGoogleOAuth2() {
 		setLoading(true);
-		const googleClientId =
-			import.meta.env.VITE_GOOGLE_CLIENT_ID ||
-			"925681943886-vr4mi6ebqvi2o9bioivpvtv9ugthd2ct.apps.googleusercontent.com";
-		const redirectUri = `${window.location.origin}/auth/login`;
-		const scope = "openid profile email";
-
 		const typedEmail = email.trim();
 		const typedName = name.trim();
 
@@ -144,14 +167,25 @@ function AuthLoginPage() {
 			return;
 		}
 
-		// Direct redirect to Google's official OAuth 2.0 authorization screen
 		try {
-			const googleAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?response_type=token&client_id=${encodeURIComponent(googleClientId)}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${encodeURIComponent(scope)}&prompt=select_account`;
-			window.location.href = googleAuthUrl;
+			// Trigger Supabase Google OAuth (uses clean authorization code flow)
+			const { data, error } = await supabase.auth.signInWithOAuth({
+				provider: "google",
+				options: {
+					redirectTo: `${window.location.origin}/auth/login`,
+				},
+			});
+
+			if (error || !data?.url) {
+				const googleClientId =
+					import.meta.env.VITE_GOOGLE_CLIENT_ID ||
+					"925681943886-vr4mi6ebqvi2o9bioivpvtv9ugthd2ct.apps.googleusercontent.com";
+				const redirectUri = `${window.location.origin}/auth/login`;
+				const googleAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?response_type=token&client_id=${encodeURIComponent(googleClientId)}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=openid%20profile%20email&prompt=select_account`;
+				window.location.href = googleAuthUrl;
+			}
 		} catch {
-			toast.success("Signed in successfully!");
-			void navigate({ to: "/payment" });
-		} finally {
+			toast.error("Unable to launch Google Login.");
 			setLoading(false);
 		}
 	}
