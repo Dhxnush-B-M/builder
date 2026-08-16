@@ -32,25 +32,21 @@ const defaultFlags = {
 	allowUnsafeAiBaseUrl: false,
 };
 
-export const getRouter = async () => {
-	const queryClient = getQueryClient();
-	const theme = getTheme();
-	const locale = getLocale();
+const queryClient = getQueryClient();
+const theme = getTheme();
+const locale = getLocale();
 
-	loadLocale(locale).catch(() => null);
+loadLocale(locale).catch(() => null);
 
-	const router = createRouter({
-		routeTree,
-		scrollRestoration: true,
-		defaultViewTransition: true,
-		defaultStructuralSharing: true,
-		defaultPendingMs: 0,
-		defaultPendingMinMs: 0,
-		defaultErrorComponent: ErrorScreen,
-		defaultPendingComponent: () => null,
-		defaultNotFoundComponent: NotFoundScreen,
-		context: { orpc, queryClient, theme, locale, session: null, flags: defaultFlags },
-	});
-
-	return router;
-};
+export const router = createRouter({
+	routeTree,
+	scrollRestoration: true,
+	defaultViewTransition: true,
+	defaultStructuralSharing: true,
+	defaultPendingMs: 0,
+	defaultPendingMinMs: 0,
+	defaultErrorComponent: ErrorScreen,
+	defaultPendingComponent: () => null,
+	defaultNotFoundComponent: NotFoundScreen,
+	context: { orpc, queryClient, theme, locale, session: null, flags: defaultFlags },
+});
