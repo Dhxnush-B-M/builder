@@ -399,6 +399,21 @@ export async function checkUserSubscriptionAndOnboardingFromSupabase(
 	const cleanEmail = (email || "").trim().toLowerCase();
 	if (!cleanEmail) return { paid: false, onboarded: false };
 
+	if (typeof window !== "undefined") {
+		const paymentStatus = localStorage.getItem("rbuilder_payment_status");
+		const onboardingCompleted = localStorage.getItem("rbuilder_onboarding_completed");
+		const paymentEmail = localStorage.getItem("rbuilder_payment_email");
+		const paidLocally =
+			(paymentStatus === "active" && (!paymentEmail || paymentEmail === cleanEmail)) ||
+			localStorage.getItem(`rbuilder_paid_${cleanEmail}`) === "true";
+		const onboardedLocally =
+			onboardingCompleted === "true" || localStorage.getItem(`rbuilder_onboarded_${cleanEmail}`) === "true";
+
+		if (paidLocally || onboardedLocally) {
+			return { paid: paidLocally, onboarded: onboardedLocally };
+		}
+	}
+
 	try {
 		const { data: detail } = await supabase.from("user_details").select("*").eq("email", cleanEmail).maybeSingle();
 		if (detail?.plan === "monthly" || detail?.plan === "quarterly") {
