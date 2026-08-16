@@ -8,20 +8,27 @@ export const Route = createFileRoute("/onboarding")({
 	component: OnboardingPage,
 	beforeLoad: async () => {
 		if (typeof window !== "undefined") {
-			const localUser = localStorage.getItem("rbuilder_user");
-			const supabaseUser = localStorage.getItem("rbuilder_supabase_user");
 			const storedEmail = localStorage.getItem("rbuilder_user_email");
-			const userEmail =
-				storedEmail ||
-				(localUser ? JSON.parse(localUser).email : "") ||
-				(supabaseUser ? JSON.parse(supabaseUser).email : "");
+			const localUser = localStorage.getItem("rbuilder_user");
+			let parsedEmail = "";
+			if (localUser) {
+				try {
+					parsedEmail = JSON.parse(localUser).email || "";
+				} catch {
+					// ignore
+				}
+			}
+			const userEmail = (storedEmail || parsedEmail || "").trim().toLowerCase();
 
-			if (!userEmail) {
+			if (!userEmail || userEmail === "guest@rbuilder.com" || userEmail === "guest") {
 				throw redirect({ to: "/auth/login", replace: true });
 			}
 
 			const paymentStatus = localStorage.getItem("rbuilder_payment_status");
-			const isPaidLocally = paymentStatus === "active" || localStorage.getItem(`rbuilder_paid_${userEmail}`) === "true";
+			const paymentEmail = localStorage.getItem("rbuilder_payment_email");
+			const isPaidLocally =
+				(paymentStatus === "active" && (!paymentEmail || paymentEmail === userEmail)) ||
+				localStorage.getItem(`rbuilder_paid_${userEmail}`) === "true";
 
 			if (!isPaidLocally) {
 				const { paid } = await checkUserSubscriptionAndOnboardingFromSupabase(userEmail);

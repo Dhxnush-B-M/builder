@@ -7,15 +7,19 @@ export const Route = createFileRoute("/payment")({
 	component: PaymentPage,
 	beforeLoad: async () => {
 		if (typeof window !== "undefined") {
-			const localUser = localStorage.getItem("rbuilder_user");
-			const supabaseUser = localStorage.getItem("rbuilder_supabase_user");
 			const storedEmail = localStorage.getItem("rbuilder_user_email");
-			const userEmail =
-				storedEmail ||
-				(localUser ? JSON.parse(localUser).email : "") ||
-				(supabaseUser ? JSON.parse(supabaseUser).email : "");
+			const localUser = localStorage.getItem("rbuilder_user");
+			let parsedEmail = "";
+			if (localUser) {
+				try {
+					parsedEmail = JSON.parse(localUser).email || "";
+				} catch {
+					// ignore
+				}
+			}
+			const userEmail = (storedEmail || parsedEmail || "").trim().toLowerCase();
 
-			if (!userEmail) {
+			if (!userEmail || userEmail === "guest@rbuilder.com" || userEmail === "guest") {
 				throw redirect({ to: "/auth/login", replace: true });
 			}
 		}
