@@ -37,14 +37,14 @@ export const getRouter = async () => {
 	const theme = getTheme();
 	const locale = getLocale();
 
-	await loadLocale(locale);
+	loadLocale(locale).catch(() => null);
 
 	const router = createRouter({
 		routeTree,
 		scrollRestoration: true,
 		defaultViewTransition: true,
 		defaultStructuralSharing: true,
-		defaultPendingMs: 5000,
+		defaultPendingMs: 0,
 		defaultPendingMinMs: 0,
 		defaultErrorComponent: ErrorScreen,
 		defaultPendingComponent: () => null,
