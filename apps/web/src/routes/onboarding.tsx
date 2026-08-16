@@ -67,17 +67,19 @@ function OnboardingPage() {
 	}
 
 	return (
-		<div className="relative min-h-screen w-full bg-zinc-950 text-zinc-100 flex flex-col items-center justify-center p-4 md:p-8 font-sans selection:bg-emerald-500 selection:text-black">
-			{/* Ambient Gradient Mesh Background */}
-			<div aria-hidden="true" className="pointer-events-none fixed inset-0 flex items-center justify-center opacity-30">
-				<div className="size-[600px] animate-pulse rounded-full bg-gradient-to-tr from-emerald-500/20 via-blue-500/20 to-purple-500/20 blur-3xl" />
+		<div className="relative min-h-screen w-full bg-slate-50 text-slate-900 flex flex-col items-center justify-center p-4 md:p-8 font-sans selection:bg-emerald-500 selection:text-white">
+			{/* Ambient Luminous Mesh Background */}
+			<div aria-hidden="true" className="pointer-events-none fixed inset-0 flex items-center justify-center opacity-70">
+				<div className="size-[700px] animate-pulse rounded-full bg-gradient-to-tr from-emerald-200/50 via-teal-100/60 to-cyan-200/40 blur-3xl" />
+			</div>
+			<div aria-hidden="true" className="pointer-events-none fixed top-10 left-10 opacity-60">
+				<div className="size-[400px] rounded-full bg-gradient-to-br from-emerald-100/60 to-blue-100/50 blur-3xl" />
 			</div>
 
-
-			{/* Main Floating Glassmorphic Container */}
-			<div className="relative z-10 w-full max-w-[460px] rounded-[32px] border border-zinc-800 bg-zinc-900/90 p-8 md:p-10 shadow-2xl backdrop-blur-2xl space-y-6">
+			{/* Main White Glassy Panel */}
+			<div className="relative z-10 w-full max-w-[480px] rounded-[36px] border border-white/80 bg-white/85 p-8 md:p-11 shadow-2xl shadow-slate-200/60 backdrop-blur-3xl space-y-7">
 				{/* Top Logo & Title */}
-				<div className="text-center space-y-2">
+				<div className="text-center space-y-2.5">
 					<a
 						href="/"
 						onClick={(e) => {
@@ -91,31 +93,26 @@ function OnboardingPage() {
 							}
 							window.location.href = "/";
 						}}
-						className="inline-flex items-center justify-center gap-2 mb-2 cursor-pointer"
+						className="inline-flex items-center justify-center gap-2 mb-1 cursor-pointer hover:opacity-80 transition-opacity"
 					>
-						<img src="/opengraph/logo.png" alt="rbuilder logo" className="size-10 rounded-full border border-emerald-500/50" />
+						<img src="/opengraph/logo.png" alt="rbuilder logo" className="size-11 rounded-full border-2 border-emerald-500/30 shadow-md" />
 					</a>
 
-					<div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-bold">
-						<CheckCircleIcon className="size-4" />
-						<span>Payment Verified • Step 2 of 2</span>
-					</div>
-
-					<h1 className="text-2xl md:text-3xl font-extrabold text-white tracking-tight">
-						Complete Your Profile
+					<h1 className="text-2xl md:text-3xl font-extrabold text-slate-900 tracking-tight">
+						Enter Your Details
 					</h1>
 
-					<p className="text-xs md:text-sm text-zinc-400 leading-relaxed">
-						Enter your name and phone number to finalize your account and access your dashboard.
+					<p className="text-xs md:text-sm text-slate-500 leading-relaxed max-w-sm mx-auto">
+						Please provide your name and mobile number to access your resume builder dashboard.
 					</p>
 				</div>
 
 				{/* Form Input Fields */}
-				<form onSubmit={handleSubmit} className="space-y-4 pt-2">
+				<form onSubmit={handleSubmit} className="space-y-4 pt-1">
 					{/* Full Name */}
 					<div className="space-y-1.5">
-						<label htmlFor="user-name" className="text-xs font-semibold text-zinc-300 flex items-center gap-1.5">
-							<UserIcon className="size-3.5 text-emerald-400" />
+						<label htmlFor="user-name" className="text-xs font-bold text-slate-700 flex items-center gap-1.5">
+							<UserIcon className="size-4 text-emerald-600" />
 							<span>Full Name</span>
 						</label>
 						<input
@@ -125,21 +122,21 @@ function OnboardingPage() {
 							value={name}
 							onChange={(e) => setName(e.target.value)}
 							placeholder="Enter your full name"
-							className="w-full px-4 py-3 text-sm rounded-xl border border-zinc-700 bg-zinc-950 text-white placeholder:text-zinc-500 focus:border-emerald-400 focus:outline-none focus:ring-1 focus:ring-emerald-400 transition-all"
+							className="w-full px-4 py-3.5 text-sm font-medium rounded-2xl border border-slate-200 bg-white/90 text-slate-900 placeholder:text-slate-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 shadow-sm transition-all"
 						/>
 					</div>
 
 					{/* Phone Number */}
 					<div className="space-y-1.5">
-						<label htmlFor="user-phone" className="text-xs font-semibold text-zinc-300 flex items-center gap-1.5">
-							<DeviceMobileIcon className="size-3.5 text-emerald-400" />
+						<label htmlFor="user-phone" className="text-xs font-bold text-slate-700 flex items-center gap-1.5">
+							<DeviceMobileIcon className="size-4 text-emerald-600" />
 							<span>Phone Number</span>
 						</label>
 						<div className="flex gap-2">
 							<select
 								value={countryCode}
 								onChange={(e) => setCountryCode(e.target.value)}
-								className="px-3 py-3 rounded-xl border border-zinc-700 bg-zinc-950 text-xs font-bold text-emerald-400 focus:border-emerald-400 focus:outline-none"
+								className="px-3.5 py-3.5 rounded-2xl border border-slate-200 bg-white/90 text-xs font-bold text-slate-800 focus:border-emerald-500 focus:outline-none shadow-sm"
 							>
 								<option value="+91">🇮🇳 +91</option>
 								<option value="+1">🇺🇸 +1</option>
@@ -155,30 +152,24 @@ function OnboardingPage() {
 								value={phone}
 								onChange={(e) => setPhone(e.target.value)}
 								placeholder="Enter 10-digit mobile number"
-								className="flex-1 px-4 py-3 text-sm rounded-xl border border-zinc-700 bg-zinc-950 text-white placeholder:text-zinc-500 focus:border-emerald-400 focus:outline-none focus:ring-1 focus:ring-emerald-400 transition-all"
+								className="flex-1 px-4 py-3.5 text-sm font-medium rounded-2xl border border-slate-200 bg-white/90 text-slate-900 placeholder:text-slate-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 shadow-sm transition-all"
 							/>
 						</div>
-					</div>
-
-					{/* Privacy Note */}
-					<div className="flex items-center gap-2 text-[11px] text-zinc-500 pt-1">
-						<ShieldCheckIcon className="size-4 text-emerald-400 shrink-0" />
-						<span>Your data is stored securely in Supabase DB ('user_details' table).</span>
 					</div>
 
 					{/* Submit Button */}
 					<button
 						type="submit"
 						disabled={isSubmitting}
-						className="w-full py-3.5 px-4 rounded-xl bg-emerald-400 hover:bg-emerald-300 text-zinc-950 font-extrabold text-sm shadow-lg shadow-emerald-500/20 transition-all active:scale-[0.99] disabled:opacity-50 mt-4 flex items-center justify-center gap-2"
+						className="w-full py-4 px-6 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-sm shadow-xl shadow-emerald-600/25 transition-all active:scale-[0.99] disabled:opacity-50 mt-5 flex items-center justify-center gap-2"
 					>
 						{isSubmitting ? (
 							<>
-								<div className="size-4 border-2 border-zinc-950 border-t-transparent rounded-full animate-spin" />
-								<span>Saving to Supabase...</span>
+								<div className="size-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+								<span>Saving Details...</span>
 							</>
 						) : (
-							<span>Save & Enter Dashboard</span>
+							<span>Submit & Continue</span>
 						)}
 					</button>
 				</form>
