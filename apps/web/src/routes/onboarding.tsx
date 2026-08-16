@@ -56,11 +56,11 @@ function OnboardingPage() {
 				phone: fullPhone,
 			});
 
-			toast.success("Profile details saved to Supabase!");
-			void navigate({ to: "/dashboard/resumes" });
+			toast.success("Profile details saved! Please choose your plan to activate.");
+			void navigate({ to: "/payment" });
 		} catch {
-			toast.success("Details saved!");
-			void navigate({ to: "/dashboard/resumes" });
+			toast.success("Profile details saved!");
+			void navigate({ to: "/payment" });
 		} finally {
 			setIsSubmitting(false);
 		}

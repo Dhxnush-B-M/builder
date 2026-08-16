@@ -122,12 +122,12 @@ function AuthLoginPage() {
 
 			toast.success("Signed in successfully!");
 			const { paid, onboarded } = await checkUserSubscriptionAndOnboardingFromSupabase(typedEmail);
-			if (paid && onboarded) {
-				void navigate({ to: "/dashboard/resumes" });
-			} else if (paid) {
+			if (!onboarded) {
 				void navigate({ to: "/onboarding" });
-			} else {
+			} else if (!paid) {
 				void navigate({ to: "/payment" });
+			} else {
+				void navigate({ to: "/dashboard/resumes" });
 			}
 			setLoading(false);
 
