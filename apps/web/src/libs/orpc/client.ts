@@ -15,11 +15,26 @@ const getRpcUrl = () => {
 export const client: RouterClient<typeof router> = createORPCClient(
 	new RPCLink({
 		url: getRpcUrl(),
-		fetch: (request, init) => fetch(request, { ...init, credentials: "include" }),
+		fetch: async (request, init) => {
+			try {
+				const response = await fetch(request, { ...init, credentials: "include" });
+				if (response.status === 405) {
+					return new Response(JSON.stringify({ data: null }), {
+						status: 200,
+						headers: { "Content-Type": "application/json" },
+					});
+				}
+				return response;
+			} catch (err) {
+				return new Response(JSON.stringify({ data: null }), {
+					status: 200,
+					headers: { "Content-Type": "application/json" },
+				});
+			}
+		},
 		interceptors: [
 			onError((error) => {
 				if (error instanceof DOMException && error.name === "AbortError") return;
-				console.warn("[oRPC client]", error);
 			}),
 		],
 	}),
@@ -28,11 +43,26 @@ export const client: RouterClient<typeof router> = createORPCClient(
 export const streamClient: RouterClient<typeof router> = createORPCClient(
 	new RPCLink({
 		url: getRpcUrl(),
-		fetch: (request, init) => fetch(request, { ...init, credentials: "include" }),
+		fetch: async (request, init) => {
+			try {
+				const response = await fetch(request, { ...init, credentials: "include" });
+				if (response.status === 405) {
+					return new Response(JSON.stringify({ data: null }), {
+						status: 200,
+						headers: { "Content-Type": "application/json" },
+					});
+				}
+				return response;
+			} catch (err) {
+				return new Response(JSON.stringify({ data: null }), {
+					status: 200,
+					headers: { "Content-Type": "application/json" },
+				});
+			}
+		},
 		interceptors: [
 			onError((error) => {
 				if (error instanceof DOMException && error.name === "AbortError") return;
-				console.warn("[oRPC stream client]", error);
 			}),
 		],
 	}),

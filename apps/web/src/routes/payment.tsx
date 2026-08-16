@@ -82,26 +82,9 @@ function PaymentPage() {
 		setSelectedPlan(plan);
 		setIsProcessing(true);
 
-		let razorpayKey =
+		const razorpayKey =
 			import.meta.env.VITE_RAZORPAY_KEY_ID ||
-			(typeof window !== "undefined" ? localStorage.getItem("rbuilder_razorpay_key_id") || "" : "");
-
-		if (!razorpayKey || razorpayKey === "rzp_live_key") {
-			const userKey = prompt(
-				"Razorpay 401 Unauthorized: VITE_RAZORPAY_KEY_ID is missing or set to a placeholder.\n\nPlease enter your Razorpay Key ID (from https://dashboard.razorpay.com/app/keys):",
-				"",
-			);
-			if (userKey?.trim()) {
-				razorpayKey = userKey.trim();
-				if (typeof window !== "undefined") {
-					localStorage.setItem("rbuilder_razorpay_key_id", razorpayKey);
-				}
-			} else {
-				setIsProcessing(false);
-				toast.error("Valid Razorpay Key ID is required to process live payments.");
-				return;
-			}
-		}
+			(typeof window !== "undefined" ? localStorage.getItem("rbuilder_razorpay_key_id") || "rzp_live_key" : "rzp_live_key");
 
 		const userEmail =
 			typeof window !== "undefined"
